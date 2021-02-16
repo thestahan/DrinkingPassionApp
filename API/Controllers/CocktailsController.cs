@@ -1,4 +1,5 @@
 ﻿using API.Dtos;
+using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Infrastructure.Data;
@@ -13,10 +14,12 @@ namespace API.Controllers
     public class CocktailsController : ControllerBase
     {
         private readonly ICocktailRepository _cocktailRepo;
+        private readonly IMapper _mapper;
 
-        public CocktailsController(ICocktailRepository cocktailRepo)
+        public CocktailsController(ICocktailRepository cocktailRepo, IMapper mapper)
         {
             _cocktailRepo = cocktailRepo;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -38,13 +41,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Cocktail>> AddCocktail(CocktailToAddDto cocktailDto)
         {
-            var cocktail = new Cocktail
-            {
-                Name = cocktailDto.Name,
-                Description = cocktailDto.Description,
-                Picture = cocktailDto.Picture,
-                PreparationInstruction = cocktailDto.PreparationInstruction
-            };
+            var cocktail = _mapper.Map<Cocktail>(cocktailDto);
 
             var ingredients = new List<Ingredient>();
 
@@ -61,8 +58,9 @@ namespace API.Controllers
             cocktail.Ingredients = ingredients;
 
             var createdCocktail =  await _cocktailRepo.AddCocktailAsync(cocktail);
+            var cocktailToReturn = _cocktailRepo.GetCocktailByIdAsync(createdCocktail.Id);
 
-            return Ok();
+            return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
         }
     }
 }

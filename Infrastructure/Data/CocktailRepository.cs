@@ -25,7 +25,9 @@ namespace Infrastructure.Data
 
         public async Task<Cocktail> GetCocktailByIdAsync(int id)
         {
-            return await _context.Cocktails.FindAsync(id);
+            return await _context.Cocktails
+                .Include(x => x.Ingredients).ThenInclude(x => x.Product)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IReadOnlyList<Cocktail>> GetCocktailsAsync()
