@@ -43,47 +43,30 @@ namespace Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Amount = table.Column<double>(type: "REAL", nullable: false),
-                    ProductId = table.Column<int>(type: "INTEGER", nullable: true)
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CocktailId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ingredients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ingredients_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CocktailIngredient",
-                columns: table => new
-                {
-                    CocktailsId = table.Column<int>(type: "INTEGER", nullable: false),
-                    IngredientsId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CocktailIngredient", x => new { x.CocktailsId, x.IngredientsId });
-                    table.ForeignKey(
-                        name: "FK_CocktailIngredient_Cocktails_CocktailsId",
-                        column: x => x.CocktailsId,
+                        name: "FK_Ingredients_Cocktails_CocktailId",
+                        column: x => x.CocktailId,
                         principalTable: "Cocktails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CocktailIngredient_Ingredients_IngredientsId",
-                        column: x => x.IngredientsId,
-                        principalTable: "Ingredients",
+                        name: "FK_Ingredients_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CocktailIngredient_IngredientsId",
-                table: "CocktailIngredient",
-                column: "IngredientsId");
+                name: "IX_Ingredients_CocktailId",
+                table: "Ingredients",
+                column: "CocktailId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ingredients_ProductId",
@@ -94,13 +77,10 @@ namespace Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CocktailIngredient");
+                name: "Ingredients");
 
             migrationBuilder.DropTable(
                 name: "Cocktails");
-
-            migrationBuilder.DropTable(
-                name: "Ingredients");
 
             migrationBuilder.DropTable(
                 name: "Products");

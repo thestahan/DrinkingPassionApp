@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-
-namespace Core.Entities
+﻿namespace Core.Entities
 {
-    public class Ingredient
+    public class Ingredient : BaseEntity
     {
-        public int Id { get; set; }
         public double Amount { get; set; }
         public Product Product { get; set; }
-        public ICollection<Cocktail> Cocktails { get; set; }
+        public int ProductId { get; set; }
+        public Cocktail Cocktail { get; set; }
+        public int CocktailId { get; set; }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.Entities
+namespace API.Dtos
 {
-    public class Cocktail : BaseEntity
+    public class CocktailToAddDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Picture { get; set; }
         public string Description { get; set; }
         public string PreparationInstruction { get; set; }
-        public ICollection<Ingredient> Ingredients { get; set; }
+        public ICollection<IngredientToAddDto> Ingredients { get; set; }
     }
 }
