@@ -31,34 +31,25 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cocktail>> GetCocktailById(int id)
+        public async Task<ActionResult<CocktailToReturnDto>> GetCocktailById(int id)
         {
             var cocktail = await _cocktailRepo.GetCocktailByIdAsync(id);
 
-            return Ok(cocktail);
+            var cocktailToReturn = _mapper.Map<CocktailToReturnDto>(cocktail);
+
+            return Ok(cocktailToReturn);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Cocktail>> AddCocktail(CocktailToAddDto cocktailDto)
+        public async Task<ActionResult<Cocktail>> AddCocktail(CocktailToAddDto cocktailToAddDto)
         {
-            var cocktail = _mapper.Map<Cocktail>(cocktailDto);
-
-            var ingredients = new List<Ingredient>();
-
-            foreach (var ingredient in cocktailDto.Ingredients)
-            {
-                ingredients.Add(new Ingredient
-                {
-                    Amount = ingredient.Amount,
-                    ProductId = ingredient.ProductId,
-                    Cocktail = cocktail
-                });
-            }
-
-            cocktail.Ingredients = ingredients;
+            var cocktail = _mapper.Map<Cocktail>(cocktailToAddDto);
 
             var createdCocktail =  await _cocktailRepo.AddCocktailAsync(cocktail);
-            var cocktailToReturn = _cocktailRepo.GetCocktailByIdAsync(createdCocktail.Id);
+
+            var createdCocktailWithIngredients = await _cocktailRepo.GetCocktailByIdAsync(createdCocktail.Id);
+
+            var cocktailToReturn = _mapper.Map<CocktailToReturnDto>(createdCocktailWithIngredients);
 
             return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
         }

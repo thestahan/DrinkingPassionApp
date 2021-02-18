@@ -1,6 +1,7 @@
 ﻿using API.Dtos;
 using AutoMapper;
 using Core.Entities;
+using System.Collections.Generic;
 
 namespace API.Helpers
 {
@@ -8,7 +9,13 @@ namespace API.Helpers
     {
         public MappingProfiles()
         {
-            CreateMap<Cocktail, CocktailToAddDto>();
+            CreateMap<Cocktail, CocktailToReturnDto>();
+            CreateMap<Ingredient, IngredientToReturnDto>()
+                .ForMember(
+                    dest => dest.Name,
+                    opt => opt.MapFrom(src => src.Product.Name));
+            CreateMap<CocktailToAddDto, Cocktail>();
+            CreateMap<IngredientToAddDto, Ingredient>();
         }
     }
 }
