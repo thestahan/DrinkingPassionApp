@@ -10,9 +10,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CocktailsController : ControllerBase
+    public class CocktailsController : BaseApiController
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Cocktail> _repo;
