@@ -9,7 +9,10 @@ namespace API.Helpers
     {
         public MappingProfiles()
         {
-            CreateMap<Cocktail, CocktailToReturnDto>();
+            CreateMap<Cocktail, CocktailToReturnDto>()
+                .ForMember(
+                    dest => dest.Picture,
+                    opt => opt.MapFrom<CocktailUrlResolver>());
             CreateMap<Ingredient, IngredientToReturnDto>()
                 .ForMember(
                     dest => dest.Name,

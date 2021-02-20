@@ -31,7 +31,6 @@ namespace API
             services.AddDbContext<AppDbContext>(x =>
                 x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
             services.AddScoped<IProductRespository, ProductRepository>();
-            services.AddScoped<IIngredientRepository, IngredientRepository>();
             services.AddScoped<ICocktailRepository, CocktailRepository>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -49,6 +48,8 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 
