@@ -10,9 +10,9 @@ namespace API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductRespository _repo;
+        private readonly IGenericRepository<Product> _repo;
 
-        public ProductsController(IProductRespository repo)
+        public ProductsController(IGenericRepository<Product> repo)
         {
             _repo = repo;
         }
@@ -20,7 +20,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            var products = await _repo.GetProductsAsync();
+            var products = await _repo.ListAllAsync();
 
             return Ok(products);
         }
@@ -28,13 +28,13 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return await _repo.GetProductByIdAsync(id);
+            return await _repo.GetByIdAsync(id);
         }
 
         [HttpPost]
         public async Task<ActionResult<Product>> AddProduct(Product product)
         {
-            var createdProduct = await _repo.AddProductAsync(product);
+            var createdProduct = await _repo.AddAsync(product);
 
             return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.Id }, product);
         }

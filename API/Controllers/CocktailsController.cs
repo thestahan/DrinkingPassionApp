@@ -2,6 +2,7 @@
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -13,27 +14,33 @@ namespace API.Controllers
     [ApiController]
     public class CocktailsController : ControllerBase
     {
-        private readonly ICocktailRepository _cocktailRepo;
         private readonly IMapper _mapper;
+        private readonly IGenericRepository<Cocktail> _repo;
 
-        public CocktailsController(ICocktailRepository cocktailRepo, IMapper mapper)
+        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> repo)
         {
-            _cocktailRepo = cocktailRepo;
             _mapper = mapper;
+            _repo = repo;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Cocktail>>> GetCocktails()
         {
-            var cocktails = await _cocktailRepo.GetCocktailsAsync();
+            var spec = new CocktailsWithIngredientsSpecification();
 
-            return Ok(cocktails);
+            var cocktailsFromDb = await _repo.ListAsync(spec);
+
+            var cocktailsToReturn = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
+
+            return Ok(cocktailsToReturn);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<CocktailToReturnDto>> GetCocktailById(int id)
         {
-            var cocktail = await _cocktailRepo.GetCocktailByIdAsync(id);
+            var spec = new CocktailsWithIngredientsSpecification(id);
+
+            var cocktail = await _repo.GetEntityWithSpec(spec);
 
             var cocktailToReturn = _mapper.Map<CocktailToReturnDto>(cocktail);
 
@@ -45,9 +52,11 @@ namespace API.Controllers
         {
             var cocktail = _mapper.Map<Cocktail>(cocktailToAddDto);
 
-            var createdCocktail =  await _cocktailRepo.AddCocktailAsync(cocktail);
+            var createdCocktail =  await _repo.AddAsync(cocktail);
 
-            var createdCocktailWithIngredients = await _cocktailRepo.GetCocktailByIdAsync(createdCocktail.Id);
+            var spec = new CocktailsWithIngredientsSpecification(createdCocktail.Id);
+
+            var createdCocktailWithIngredients = await _repo.GetEntityWithSpec(spec);
 
             var cocktailToReturn = _mapper.Map<CocktailToReturnDto>(createdCocktailWithIngredients);
 
