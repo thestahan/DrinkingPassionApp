@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Interfaces;
+using AutoMapper;
+using API.Dtos;
 
 namespace API.Controllers
 {
@@ -11,10 +13,12 @@ namespace API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IGenericRepository<Product> _repo;
+        private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> repo)
+        public ProductsController(IGenericRepository<Product> repo, IMapper mapper)
         {
             _repo = repo;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -22,19 +26,29 @@ namespace API.Controllers
         {
             var products = await _repo.ListAllAsync();
 
-            return Ok(products);
+            var productsToReturn = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
+
+            return Ok(productsToReturn);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return await _repo.GetByIdAsync(id);
+            var product = await _repo.GetByIdAsync(id);
+
+            var productToReturn = _mapper.Map<ProductToReturnDto>(product);
+
+            return Ok(productToReturn);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> AddProduct(Product product)
+        public async Task<ActionResult<Product>> AddProduct(ProductToAddDto product)
         {
-            var createdProduct = await _repo.AddAsync(product);
+            var productToAdd = _mapper.Map<Product>(product);
+
+            var createdProduct = await _repo.AddAsync(productToAdd);
+
+            var productToReturn = _mapper.Map<ProductToReturnDto>(createdProduct);
 
             return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.Id }, product);
         }

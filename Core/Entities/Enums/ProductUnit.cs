@@ -2,10 +2,10 @@
 {
     public enum ProductUnit
     {
-        Mililiter,
+        Mililitr,
         Gram,
         Dash,
-        Teaspoon,
-        Tablespoon
+        Łyżeczka,
+        Łyżka
     }
 }
