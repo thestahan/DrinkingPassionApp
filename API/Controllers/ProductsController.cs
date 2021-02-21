@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Core.Interfaces;
 using AutoMapper;
 using API.Dtos;
+using API.Errors;
 
 namespace API.Controllers
 {
@@ -35,6 +36,8 @@ namespace API.Controllers
             var product = await _repo.GetByIdAsync(id);
 
             var productToReturn = _mapper.Map<ProductToReturnDto>(product);
+
+            if (productToReturn == null) return NotFound(new ApiResponse(404));
 
             return Ok(productToReturn);
         }
