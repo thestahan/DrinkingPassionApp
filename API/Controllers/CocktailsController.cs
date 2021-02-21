@@ -1,18 +1,16 @@
 ﻿using API.Dtos;
+using API.Errors;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CocktailsController : ControllerBase
+    public class CocktailsController : BaseApiController
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Cocktail> _repo;
@@ -41,6 +39,8 @@ namespace API.Controllers
             var spec = new CocktailsWithIngredientsSpecification(id);
 
             var cocktail = await _repo.GetEntityWithSpec(spec);
+
+            if (cocktail == null) return NotFound(new ApiResponse(404));
 
             var cocktailToReturn = _mapper.Map<CocktailToReturnDto>(cocktail);
 

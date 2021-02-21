@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 using Core.Interfaces;
 using AutoMapper;
 using API.Dtos;
+using API.Errors;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<Product> _repo;
         private readonly IMapper _mapper;
@@ -37,6 +36,8 @@ namespace API.Controllers
             var product = await _repo.GetByIdAsync(id);
 
             var productToReturn = _mapper.Map<ProductToReturnDto>(product);
+
+            if (productToReturn == null) return NotFound(new ApiResponse(404));
 
             return Ok(productToReturn);
         }
