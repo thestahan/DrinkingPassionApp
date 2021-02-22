@@ -6,6 +6,7 @@ using Core.Interfaces;
 using AutoMapper;
 using API.Dtos;
 using API.Errors;
+using Core.Specifications;
 
 namespace API.Controllers
 {
@@ -23,7 +24,9 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            var products = await _repo.ListAllAsync();
+            var spec = new ProductsWithTypesAndUnitsSpecification();
+
+            var products = await _repo.ListAsync(spec);
 
             var productsToReturn = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
 
@@ -33,7 +36,9 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _repo.GetByIdAsync(id);
+            var spec = new ProductsWithTypesAndUnitsSpecification(id);
+
+            var product = await _repo.GetEntityWithSpec(spec);
 
             var productToReturn = _mapper.Map<ProductToReturnDto>(product);
 
@@ -49,9 +54,13 @@ namespace API.Controllers
 
             var createdProduct = await _repo.AddAsync(productToAdd);
 
-            var productToReturn = _mapper.Map<ProductToReturnDto>(createdProduct);
+            var spec = new ProductsWithTypesAndUnitsSpecification(createdProduct.Id);
 
-            return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.Id }, product);
+            var createdProductWithTypeAndUnit = await _repo.GetEntityWithSpec(spec);
+
+            var productToReturn = _mapper.Map<ProductToReturnDto>(createdProductWithTypeAndUnit);
+
+            return CreatedAtAction(nameof(GetProduct), new { id = productToReturn.Id }, productToReturn);
         }
     }
 }
