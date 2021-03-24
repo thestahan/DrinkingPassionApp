@@ -1,6 +1,7 @@
 ﻿using API.Dtos;
 using AutoMapper;
 using Core.Entities;
+using Core.Entities.Identity;
 
 namespace API.Helpers
 {
@@ -30,6 +31,10 @@ namespace API.Helpers
                     dest => dest.ProductType,
                     opt => opt.MapFrom(src => src.ProductType.Name));
             CreateMap<ProductToAddDto, Product>();
+            CreateMap<RegisterDto, AppUser>()
+                .ForMember(
+                    dest => dest.UserName,
+                    opt => opt.MapFrom(src => src.Email));
         }
     }
 }

@@ -30,6 +30,8 @@ namespace API
 
             services.AddApplicationServices();
 
+            services.AddIdentityServices();
+
             services.AddSwaggerDocumentation();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
