@@ -24,17 +24,21 @@ namespace API
         {
             services.AddControllers().AddNewtonsoftJson(options => 
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
             services.AddDbContext<AppDbContext>(x =>
                 x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
-
             services.AddApplicationServices();
 
             services.AddIdentityServices(_config);
 
             services.AddSwaggerDocumentation();
-
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,8 +57,6 @@ namespace API
             app.UseRouting();
 
             app.UseStaticFiles();
-
-            app.UseAuthentication();
 
             app.UseAuthorization();
 

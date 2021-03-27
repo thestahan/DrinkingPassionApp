@@ -1,5 +1,6 @@
 ﻿using API.Dtos;
 using API.Errors;
+using API.Helpers;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
@@ -22,15 +23,20 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Cocktail>>> GetCocktails()
+        public async Task<ActionResult<Pagination<Cocktail>>> GetCocktails([FromQuery]CocktailSpecParams cocktailParams)
         {
-            var spec = new CocktailsWithIngredientsSpecification();
+            var spec = new CocktailsWithIngredientsSpecification(cocktailParams);
+
+            var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams);
+
+            var totalItems = await _repo.CountAsync(countSpec);
 
             var cocktailsFromDb = await _repo.ListAsync(spec);
 
-            var cocktailsToReturn = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
+            var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
 
-            return Ok(cocktailsToReturn);
+            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex, 
+                cocktailParams. PageIndex, totalItems, data));
         }
 
         [HttpGet("{id}")]
