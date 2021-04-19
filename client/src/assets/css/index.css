@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* .router-link-active {
+  @apply border-blue-500 bg-indigo-700 !important;
+}
+
+.nav-link {
+  @apply inline-block rounded hover:border-black text-white hover:bg-gray-600 py-2 px-5 m-2;
+}
+
+.nav-link-sm {
+  @apply block px-3 py-2 rounded-md text-base text-white font-medium hover:bg-gray-600;
+} */

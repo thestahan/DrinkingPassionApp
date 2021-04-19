@@ -1,5 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
+import Home from "../components/pages/Home.vue";
+
+import UserRegister from "../components/pages/users/UserRegister.vue";
+import UserLogin from "../components/pages/users/UserLogin.vue";
+import UserProfile from "../components/pages/users/UserProfile.vue";
+import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
+import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";
+import NotFound from "../components/pages/NotFound.vue";
 
 const routes = [
   {
@@ -8,13 +15,34 @@ const routes = [
     component: Home,
   },
   {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+    path: "/register",
+    name: "Register",
+    component: UserRegister,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: UserLogin,
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: UserProfile,
+  },
+  {
+    path: "/cocktails",
+    name: "Cocktails",
+    component: CocktailsList,
+  },
+  {
+    path: "/cocktails/:id",
+    name: "Cocktail",
+    component: CocktailDetails,
+  },
+  {
+    path: "/:notFound().*",
+    name: "NotFound",
+    component: NotFound,
   },
 ];
 
