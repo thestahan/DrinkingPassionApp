@@ -88,6 +88,7 @@
       </form>
     </div>
   </div>
+  <spinner v-if="isLoading"></spinner>
 </template>
 
 <script>
@@ -101,10 +102,13 @@ export default {
     return {
       email: "",
       password: "",
+      isLoading: false,
     };
   },
   methods: {
     submitLogin() {
+      this.isLoading = true;
+      console.log(this.isLoading);
       fetch("https://localhost:5001/api/accounts/login", {
         method: "POST",
         headers: {
@@ -116,9 +120,17 @@ export default {
         }),
       })
         .then((response) => response.json())
-        .then((data) => console.log(data))
+        .then((data) => {
+          console.log(data);
+          this.$store.commit("setUser", {
+            displayName: data.displayName,
+            token: data.token,
+          });
+          this.isLoading = false;
+        })
         .catch((error) => {
           console.log(error);
+          this.isLoading = false;
         });
     },
   },
