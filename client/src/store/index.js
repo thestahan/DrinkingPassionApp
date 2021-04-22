@@ -2,6 +2,8 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
+    displayName: "",
+    token: "",
     navigation: [
       {
         displayName: "Strona główna",
@@ -24,15 +26,9 @@ export default createStore({
     },
   },
   mutations: {
-    removeCurrentActivePage(state) {
-      const elIndex = state.navigation.findIndex((x) => x.current);
-      state.navigation[elIndex].current = false;
-    },
-    setActivePage(state, payload) {
-      const elIndex = state.navigation.findIndex(
-        (x) => x.name === payload.value
-      );
-      state.navigation[elIndex].current = true;
+    setUser(state, payload) {
+      state.displayName = payload.displayName;
+      state.token = payload.token;
     },
   },
   actions: {},
