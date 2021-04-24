@@ -21,7 +21,7 @@
           </router-link>
         </p>
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent="submitLogin">
+      <form class="mt-8 space-y-6" @submit.prevent="submitSignIn">
         <input type="hidden" name="remember" value="true" />
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
@@ -88,7 +88,6 @@
       </form>
     </div>
   </div>
-  <spinner v-if="isLoading"></spinner>
 </template>
 
 <script>
@@ -103,35 +102,23 @@ export default {
       email: "",
       password: "",
       isLoading: false,
+      isFormValid: true,
     };
   },
   methods: {
-    submitLogin() {
-      this.isLoading = true;
-      console.log(this.isLoading);
-      fetch("https://localhost:5001/api/accounts/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: this.email,
-          password: this.password,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          this.$store.commit("setUser", {
-            displayName: data.displayName,
-            token: data.token,
-          });
-          this.isLoading = false;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.isLoading = false;
-        });
+    submitSignIn() {
+      this.isFormValid = true;
+      if (
+        (!this.email && !this.email.includes("@")) ||
+        this.password.length < 8
+      ) {
+        this.isFormValid = false;
+        return;
+      }
+      this.$store.dispatch("signIn", {
+        email: this.email,
+        password: this.password,
+      });
     },
   },
 };
