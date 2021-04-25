@@ -71,6 +71,8 @@
           </div>
         </div>
 
+        <form-errors :errors="errors"></form-errors>
+
         <div>
           <button
             type="submit"
@@ -92,33 +94,46 @@
 
 <script>
 import { LockClosedIcon } from "@heroicons/vue/solid";
+import FormErrors from "../../utilities/FormErrors.vue";
 
 export default {
   components: {
     LockClosedIcon,
+    FormErrors,
   },
   data() {
     return {
       email: "",
       password: "",
+      errors: [],
       isLoading: false,
-      isFormValid: true,
     };
   },
   methods: {
     submitSignIn() {
-      this.isFormValid = true;
-      if (
-        (!this.email && !this.email.includes("@")) ||
-        this.password.length < 8
-      ) {
-        this.isFormValid = false;
-        return;
-      }
+      this.errors = [];
+      this.checkForm();
+
+      if (this.errors.length) return;
+
       this.$store.dispatch("signIn", {
         email: this.email,
         password: this.password,
       });
+    },
+
+    checkForm() {
+      if (!this.isEmailValid(this.email.trim())) {
+        this.errors.push("Wprowadzony adres email jest niepoprawny");
+      }
+      if (this.password.trim().length < 8) {
+        this.errors.push("Hasło musi zawierać minimum 8 znaków");
+      }
+    },
+
+    isEmailValid(email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
     },
   },
 };
