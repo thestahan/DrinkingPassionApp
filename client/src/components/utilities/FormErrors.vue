@@ -20,6 +20,11 @@ export default {
   components: {
     XCircleIcon,
   },
-  props: ["errors"],
+  props: {
+    errors: {
+      type: Array,
+      required: true,
+    },
+  },
 };
 </script>

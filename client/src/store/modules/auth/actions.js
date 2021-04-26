@@ -17,7 +17,7 @@ export default {
 
     if (!response.ok) {
       const error = new Error(
-        responseData.message || "Failed to authenticate."
+        'Dane logowania są niepoprawne. Spróbuj ponownie lub kliknij "Zapomniałeś hasła?", by zmienić hasło.'
       );
       throw error;
     }
@@ -48,7 +48,8 @@ export default {
 
     if (!response.ok) {
       const error = new Error(
-        responseData.message || "Failed to authenticate."
+        responseData.message ||
+          "Nie udało się zarejestrować konta z podanymi danymi."
       );
       throw error;
     }

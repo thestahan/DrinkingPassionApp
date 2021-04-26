@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-7xl mx-auto">
-    <navbar v-if="isAuthenticated || !isHomePage"></navbar>
+    <navbar v-if="!isHomePage"></navbar>
     <router-view />
   </div>
 </template>

@@ -107,19 +107,28 @@ export default {
       password: "",
       errors: [],
       isLoading: false,
+      reponseError: null,
     };
   },
   methods: {
-    submitSignIn() {
+    async submitSignIn() {
       this.errors = [];
       this.checkForm();
 
       if (this.errors.length) return;
 
-      this.$store.dispatch("signIn", {
-        email: this.email,
-        password: this.password,
-      });
+      this.isLoading = true;
+
+      try {
+        await this.$store.dispatch("signIn", {
+          email: this.email,
+          password: this.password,
+        });
+      } catch (err) {
+        this.errors.push(err.message || "Logowanie nie powiodło się");
+      }
+
+      this.isLoading = false;
     },
 
     checkForm() {
