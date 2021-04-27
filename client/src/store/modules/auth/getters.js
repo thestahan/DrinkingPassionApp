@@ -1,6 +1,6 @@
 export default {
   isAuthenticated: (state) => {
-    return state.isAuthenticated;
+    return !!state.token;
   },
   displayName: (state) => {
     return state.displayName;

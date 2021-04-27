@@ -59,4 +59,13 @@ export default {
       token: responseData.token,
     });
   },
+
+  logout(context) {
+    console.log("logged out");
+    context.commit("setUser", {
+      token: null,
+      displayName: null,
+      isAuthenticated: false,
+    });
+  },
 };
