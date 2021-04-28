@@ -90,16 +90,19 @@
       </form>
     </div>
   </div>
+  <spinner v-if="isLoading"></spinner>
 </template>
 
 <script>
 import { LockClosedIcon } from "@heroicons/vue/solid";
 import FormErrors from "../../utilities/FormErrors.vue";
+import Spinner from "../../utilities/Spinner.vue";
 
 export default {
   components: {
     LockClosedIcon,
     FormErrors,
+    Spinner,
   },
   data() {
     return {
