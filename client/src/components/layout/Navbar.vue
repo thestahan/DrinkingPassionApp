@@ -169,7 +169,7 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch("logout");
-      console.log(this.$store.getters.displayName);
+      this.$router.replace("/");
     },
   },
 };

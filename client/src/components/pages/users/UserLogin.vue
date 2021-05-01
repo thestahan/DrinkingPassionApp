@@ -127,6 +127,8 @@ export default {
           email: this.email,
           password: this.password,
         });
+
+        this.$router.replace("/cocktails");
       } catch (err) {
         this.errors.push(err.message || "Logowanie nie powiodło się");
       }
