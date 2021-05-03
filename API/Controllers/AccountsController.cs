@@ -6,6 +6,8 @@ using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -38,7 +40,6 @@ namespace API.Controllers
             return new UserDto
             {
                 Email = user.Email,
-                Token = _tokenService.CreateToken(user),
                 DisplayName = user.DisplayName
             };
         }
@@ -60,11 +61,16 @@ namespace API.Controllers
 
             if (!result.Succeeded) return Unauthorized(new ApiResponse(401));
 
+            var jwt = _tokenService.CreateToken(user);
+            var handler = new JwtSecurityTokenHandler();
+            var expiresIn = handler.ReadJwtToken(jwt).Claims.FirstOrDefault(c => c.Type == "exp").Value;
+
             return new UserDto
             {
                 Email = user.Email,
-                Token = _tokenService.CreateToken(user),
-                DisplayName = user.DisplayName
+                DisplayName = user.DisplayName,
+                Token = jwt,
+                TokenExpiration = expiresIn
             };
         }
 
