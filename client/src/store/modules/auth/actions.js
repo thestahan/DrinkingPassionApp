@@ -22,6 +22,9 @@ export default {
       throw error;
     }
 
+    localStorage.setItem("token", responseData.token);
+    localStorage.setItem("displayName", responseData.displayName);
+
     context.commit("setUser", {
       displayName: responseData.displayName,
       token: responseData.token,
@@ -54,14 +57,31 @@ export default {
       throw error;
     }
 
+    localStorage.setItem("token", responseData.token);
+    localStorage.setItem("displayName", responseData.displayName);
+
     context.commit("setUser", {
       displayName: responseData.displayName,
       token: responseData.token,
     });
   },
 
+  tryLogin(context) {
+    const token = localStorage.getItem("token");
+    const displayName = localStorage.getItem("displayName");
+
+    if (token && displayName) {
+      context.commit("setUser", {
+        displayName: displayName,
+        token: token,
+      });
+    }
+  },
+
   logout(context) {
-    console.log("logged out");
+    localStorage.removeItem("token");
+    localStorage.removeItem("displayName");
+
     context.commit("setUser", {
       token: null,
       displayName: null,

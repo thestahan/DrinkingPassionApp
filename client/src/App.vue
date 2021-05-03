@@ -20,5 +20,8 @@ export default {
       return this.$route.name === "Home";
     },
   },
+  created() {
+    this.$store.dispatch("tryLogin");
+  },
 };
 </script>
