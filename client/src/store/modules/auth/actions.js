@@ -24,10 +24,12 @@ export default {
 
     localStorage.setItem("token", responseData.token);
     localStorage.setItem("displayName", responseData.displayName);
+    localStorage.setItem("tokenExpiration", responseData.tokenExpiration);
 
     context.commit("setUser", {
       displayName: responseData.displayName,
       token: responseData.token,
+      tokenExpiration: responseData.tokenExpiration,
     });
   },
 
@@ -56,14 +58,6 @@ export default {
       );
       throw error;
     }
-
-    localStorage.setItem("token", responseData.token);
-    localStorage.setItem("displayName", responseData.displayName);
-
-    context.commit("setUser", {
-      displayName: responseData.displayName,
-      token: responseData.token,
-    });
   },
 
   tryLogin(context) {
@@ -81,6 +75,7 @@ export default {
   logout(context) {
     localStorage.removeItem("token");
     localStorage.removeItem("displayName");
+    localStorage.removeItem("tokenExpiration");
 
     context.commit("setUser", {
       token: null,

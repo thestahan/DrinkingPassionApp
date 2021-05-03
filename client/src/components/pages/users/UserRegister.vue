@@ -94,18 +94,26 @@
     </div>
   </div>
   <spinner v-if="isLoading"></spinner>
+  <base-success-modal
+    title="Sukces!"
+    content="Rejestracja przebiegła pomyślnie. Możesz zalogować się na swoje konto."
+    :open="openModal"
+    @close-modal="redirectToLogin"
+  ></base-success-modal>
 </template>
 
 <script>
 import { LockClosedIcon } from "@heroicons/vue/solid";
 import FormErrors from "../../utilities/FormErrors.vue";
 import Spinner from "../../utilities/Spinner.vue";
+import BaseSuccessModal from "../../utilities/modals/BaseSuccessModal.vue";
 
 export default {
   components: {
     LockClosedIcon,
     FormErrors,
     Spinner,
+    BaseSuccessModal,
   },
   data() {
     FormErrors;
@@ -116,6 +124,7 @@ export default {
       displayName: "",
       errors: [],
       isLoading: false,
+      openModal: false,
     };
   },
   methods: {
@@ -134,6 +143,12 @@ export default {
       });
 
       this.isLoading = false;
+
+      this.openModal = true;
+    },
+
+    redirectToLogin() {
+      this.$router.replace("/login");
     },
 
     checkForm() {
