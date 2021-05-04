@@ -21,7 +21,7 @@
           </router-link>
         </p>
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent="submitLogin">
+      <form class="mt-8 space-y-6" @submit.prevent="submitSignIn">
         <input type="hidden" name="remember" value="true" />
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
@@ -71,6 +71,8 @@
           </div>
         </div>
 
+        <form-errors :errors="errors"></form-errors>
+
         <div>
           <button
             type="submit"
@@ -93,45 +95,59 @@
 
 <script>
 import { LockClosedIcon } from "@heroicons/vue/solid";
+import FormErrors from "../../utilities/FormErrors.vue";
+import Spinner from "../../utilities/Spinner.vue";
 
 export default {
   components: {
     LockClosedIcon,
+    FormErrors,
+    Spinner,
   },
   data() {
     return {
       email: "",
       password: "",
+      errors: [],
       isLoading: false,
+      reponseError: null,
     };
   },
   methods: {
-    submitLogin() {
+    async submitSignIn() {
+      this.errors = [];
+      this.checkForm();
+
+      if (this.errors.length) return;
+
       this.isLoading = true;
-      console.log(this.isLoading);
-      fetch("https://localhost:5001/api/accounts/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+
+      try {
+        await this.$store.dispatch("signIn", {
           email: this.email,
           password: this.password,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          this.$store.commit("setUser", {
-            displayName: data.displayName,
-            token: data.token,
-          });
-          this.isLoading = false;
-        })
-        .catch((error) => {
-          console.log(error);
-          this.isLoading = false;
         });
+
+        this.$router.replace("/cocktails");
+      } catch (err) {
+        this.errors.push(err.message || "Logowanie nie powiodło się");
+      }
+
+      this.isLoading = false;
+    },
+
+    checkForm() {
+      if (!this.isEmailValid(this.email.trim())) {
+        this.errors.push("Wprowadzony adres email jest niepoprawny");
+      }
+      if (this.password.trim().length < 8) {
+        this.errors.push("Hasło musi zawierać minimum 8 znaków");
+      }
+    },
+
+    isEmailValid(email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
     },
   },
 };

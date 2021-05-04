@@ -7,6 +7,7 @@ import UserProfile from "../components/pages/users/UserProfile.vue";
 import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
 import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";
 import NotFound from "../components/pages/NotFound.vue";
+import store from "../store/index.js";
 
 const routes = [
   {
@@ -18,16 +19,19 @@ const routes = [
     path: "/register",
     name: "Register",
     component: UserRegister,
+    meta: { requiresUnauth: true },
   },
   {
     path: "/login",
     name: "Login",
     component: UserLogin,
+    meta: { requiresUnauth: true },
   },
   {
     path: "/profile",
     name: "Profile",
     component: UserProfile,
+    meta: { requiresAuth: true },
   },
   {
     path: "/cocktails",
@@ -49,6 +53,16 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach(function (to, _, next) {
+  if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
+    next("/login");
+  } else if (to.meta.requiresUnauth && store.getters.isAuthenticated) {
+    next("/profile");
+  } else {
+    next();
+  }
 });
 
 export default router;

@@ -21,7 +21,7 @@
           </router-link>
         </p>
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent="submitRegister">
+      <form class="mt-8 space-y-6" @submit.prevent="submitSignUp">
         <input type="hidden" name="remember" value="true" />
         <div class="rounded-md shadow-sm -space-y-px">
           <div class="pb-4">
@@ -55,12 +55,27 @@
               id="password"
               type="password"
               required=""
+              minlength="8"
               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               v-model="password"
             />
           </div>
+          <div class="pb-4">
+            <label for="passwordConfirm" class="sr-only">Powtórz hasło</label>
+            <label for="passwordConfirm" class="text-gray-700"
+              >Powtórz hasło</label
+            >
+            <input
+              id="passwordConfirm"
+              type="password"
+              required=""
+              minlength="8"
+              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              v-model="passwordConfirm"
+            />
+          </div>
         </div>
-
+        <form-errors :errors="errors"></form-errors>
         <div>
           <button
             type="submit"
@@ -78,42 +93,82 @@
       </form>
     </div>
   </div>
+  <spinner v-if="isLoading"></spinner>
+  <base-success-modal
+    title="Sukces!"
+    content="Rejestracja przebiegła pomyślnie. Możesz zalogować się na swoje konto."
+    :open="openModal"
+    @close-modal="redirectToLogin"
+  ></base-success-modal>
 </template>
 
 <script>
 import { LockClosedIcon } from "@heroicons/vue/solid";
+import FormErrors from "../../utilities/FormErrors.vue";
+import Spinner from "../../utilities/Spinner.vue";
+import BaseSuccessModal from "../../utilities/modals/BaseSuccessModal.vue";
 
 export default {
   components: {
     LockClosedIcon,
+    FormErrors,
+    Spinner,
+    BaseSuccessModal,
   },
   data() {
+    FormErrors;
     return {
       email: "",
       password: "",
+      passwordConfirm: "",
       displayName: "",
+      errors: [],
+      isLoading: false,
+      openModal: false,
     };
   },
   methods: {
-    submitRegister() {
-      fetch("https://localhost:5001/api/accounts/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: this.email,
-          password: this.password,
-          displayName: this.displayName,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+    submitSignUp() {
+      this.errors = [];
+      this.checkForm();
+
+      if (this.errors.length) return;
+
+      this.isLoading = true;
+
+      this.$store.dispatch("signUp", {
+        email: this.email.trim(),
+        password: this.password.trim(),
+        displayName: this.displayName.trim(),
+      });
+
+      this.isLoading = false;
+
+      this.openModal = true;
+    },
+
+    redirectToLogin() {
+      this.$router.replace("/login");
+    },
+
+    checkForm() {
+      if (!this.isEmailValid(this.email.trim())) {
+        this.errors.push("Wprowadzony adres email jest niepoprawny");
+      }
+      if (this.displayName.trim().length < 3) {
+        this.errors.push("Nazwa wyświetlana musi zawierać minimum 3 znaki");
+      }
+      if (this.password.trim().length < 8) {
+        this.errors.push("Hasło musi zawierać minimum 8 znaków");
+      }
+      if (this.password.trim() != this.passwordConfirm.trim()) {
+        this.errors.push("Wprowadzone hasła nie są identyczne");
+      }
+    },
+
+    isEmailValid(email) {
+      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
     },
   },
 };
