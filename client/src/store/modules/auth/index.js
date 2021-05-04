@@ -7,8 +7,8 @@ export default {
     return {
       displayName: null,
       token: null,
-      tokenExpiration: null,
       isAuthenticated: false,
+      didAutoLogout: false,
     };
   },
   mutations,

@@ -1,3 +1,5 @@
+let timer;
+
 export default {
   async signIn(context, payload) {
     this.isLoading = true;
@@ -22,18 +24,26 @@ export default {
       throw error;
     }
 
+    console.log(responseData);
+
+    const expiresIn = +responseData.tokenExpiration * 1000;
+    const expirationDate = new Date().getTime() + expiresIn;
+
     localStorage.setItem("token", responseData.token);
     localStorage.setItem("displayName", responseData.displayName);
-    localStorage.setItem("tokenExpiration", responseData.tokenExpiration);
+    localStorage.setItem("tokenExpiration", expirationDate);
+
+    timer = setTimeout(function () {
+      context.dispatch("autoLogout");
+    }, expiresIn);
 
     context.commit("setUser", {
       displayName: responseData.displayName,
       token: responseData.token,
-      tokenExpiration: responseData.tokenExpiration,
     });
   },
 
-  async signUp(context, payload) {
+  async signUp(_, payload) {
     const response = await fetch(
       "https://localhost:5001/api/accounts/register",
       {
@@ -63,6 +73,17 @@ export default {
   tryLogin(context) {
     const token = localStorage.getItem("token");
     const displayName = localStorage.getItem("displayName");
+    const tokenExpiration = localStorage.getItem("tokenExpiration");
+
+    const expiresIn = +tokenExpiration - new Date().getTime();
+
+    if (expiresIn < 0) {
+      return;
+    }
+
+    timer = setTimeout(function () {
+      context.dispatch("autoLogout");
+    }, expiresIn);
 
     if (token && displayName) {
       context.commit("setUser", {
@@ -77,10 +98,16 @@ export default {
     localStorage.removeItem("displayName");
     localStorage.removeItem("tokenExpiration");
 
+    clearTimeout(timer);
+
     context.commit("setUser", {
       token: null,
       displayName: null,
-      isAuthenticated: false,
     });
+  },
+
+  autoLogout(context) {
+    context.dispatch("logout");
+    context.commit("setAutoLogout");
   },
 };
