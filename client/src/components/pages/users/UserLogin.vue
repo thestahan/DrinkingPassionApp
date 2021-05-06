@@ -1,108 +1,121 @@
 <template>
-  <div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-">
+  <div class="p-d-flex p-jc-center">
+    <div class="p-px-3" style="max-width: 28rem; width: 100%">
       <div>
         <img
-          class="mx-auto h-12 w-auto"
+          class="p-mx-auto"
           src="https://www.svgrepo.com/show/119676/cocktail-glass.svg"
-          alt="DrinkingPassion"
+          alt="DrinkingPassion logo"
+          style="height: 3rem"
         />
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Zaloguj się
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          lub
-          {{ " " }}
-          <router-link
-            to="/register"
-            class="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            załóż konto
-          </router-link>
-        </p>
+        <div class="p-text-center p-mt-3">
+          <h2 class="p-text-bold" style="font-size: 2rem">Zaloguj się</h2>
+          <p style="font-size: 0.9rem">
+            lub
+            <router-link
+              to="/register"
+              class="p-text-bold"
+              style="color: var(--primary-color)"
+              >załóż konto</router-link
+            >
+          </p>
+        </div>
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent="submitSignIn">
-        <input type="hidden" name="remember" value="true" />
-        <div class="rounded-md shadow-sm -space-y-px">
-          <div>
-            <label for="email-address" class="sr-only">Email address</label>
-            <input
-              id="email-address"
-              type="email"
-              required=""
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Adres email"
-              v-model="email"
-            />
+      <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid p-mt-5">
+        <div class="p-field p-pb-2">
+          <div class="p-float-label">
+            <InputText
+              id="email"
+              v-model="v$.email.$model"
+              :class="{ 'p-invalid': v$.email.$invalid && submitted }"
+            ></InputText>
+            <label for="email">Adres email</label>
           </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <input
+          <span v-if="v$.email.$error && submitted"
+            ><span
+              id="email-error"
+              v-for="(error, index) of v$.email.$errors"
+              :key="index"
+            >
+              <small class="p-error">{{ error.$message }}</small>
+            </span></span
+          >
+          <small
+            v-else-if="
+              (v$.email.$invalid && submitted) || v$.email.$pending.$response
+            "
+            class="p-error"
+            >{{ v$.email.required.$message.replace("Value", "Email") }}</small
+          >
+        </div>
+        <div class="p-field">
+          <div class="p-float-label">
+            <InputText
               id="password"
               type="password"
-              required
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              placeholder="Hasło"
               v-model="password"
-            />
+              :class="{ 'p-invalid': v$.password.$invalid && submitted }"
+            ></InputText>
+            <label for="password">Hasło</label>
           </div>
-        </div>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input
-              id="remember_me"
-              name="remember_me"
-              type="checkbox"
-              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-            />
-            <label for="remember_me" class="ml-2 block text-sm text-gray-900">
-              Zapamiętaj mnie
-            </label>
-          </div>
-
-          <div class="text-sm">
-            <a
-              href="#"
-              class="font-medium text-indigo-600 hover:text-indigo-500"
-            >
-              Zapomniałeś hasła?
-            </a>
-          </div>
-        </div>
-
-        <form-errors :errors="errors"></form-errors>
-
-        <div>
-          <button
-            type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          <small
+            v-if="
+              (v$.password.$invalid && submitted) ||
+              v$.password.$pending.$response
+            "
+            class="p-error"
+            >{{ v$.password.required.$message }}</small
           >
-            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-              <LockClosedIcon
-                class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                aria-hidden="true"
-              />
-            </span>
-            Zaloguj się
-          </button>
+        </div>
+        <div class="p-d-flex p-jc-between" style="font-size: 0.9rem">
+          <div class="p-field-checkbox">
+            <Checkbox
+              id="remember-me"
+              v-model="rememberMe"
+              :binary="true"
+            ></Checkbox>
+            <label for="remember-me">Zapamiętaj mnie</label>
+          </div>
+          <div>
+            <router-link
+              to="/register"
+              class="p-text-bold"
+              style="color: var(--primary-color)"
+              >Zapomniałeś hasła?</router-link
+            >
+          </div>
+        </div>
+        <div>
+          <Button
+            type="submit"
+            label="Zaloguj się"
+            style="width: 100%"
+          ></Button>
         </div>
       </form>
     </div>
   </div>
+
   <spinner v-if="isLoading"></spinner>
 </template>
 
 <script>
-import { LockClosedIcon } from "@heroicons/vue/solid";
-import FormErrors from "../../utilities/FormErrors.vue";
 import Spinner from "../../utilities/Spinner.vue";
+import InputText from "primevue/inputtext";
+import Checkbox from "primevue/checkbox";
+import Button from "primevue/button";
+import useVuelidate from "@vuelidate/core";
+import { required, email, helpers } from "@vuelidate/validators";
 
 export default {
   components: {
-    LockClosedIcon,
-    FormErrors,
     Spinner,
+    InputText,
+    Checkbox,
+    Button,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
     return {
@@ -111,14 +124,17 @@ export default {
       errors: [],
       isLoading: false,
       reponseError: null,
+      submitted: false,
+      rememberMe: false,
     };
   },
   methods: {
-    async submitSignIn() {
-      this.errors = [];
-      this.checkForm();
+    async handleSubmit(isFormValid) {
+      this.submitted = true;
 
-      if (this.errors.length) return;
+      if (!isFormValid) {
+        return;
+      }
 
       this.isLoading = true;
 
@@ -134,21 +150,19 @@ export default {
       }
 
       this.isLoading = false;
+      //this.toggleDialog();
     },
-
-    checkForm() {
-      if (!this.isEmailValid(this.email.trim())) {
-        this.errors.push("Wprowadzony adres email jest niepoprawny");
-      }
-      if (this.password.trim().length < 8) {
-        this.errors.push("Hasło musi zawierać minimum 8 znaków");
-      }
-    },
-
-    isEmailValid(email) {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
-    },
+  },
+  validations() {
+    return {
+      email: {
+        required: helpers.withMessage("To pole jest wymagane", required),
+        email: helpers.withMessage("Wprowadź poprawny adres email", email),
+      },
+      password: {
+        required: helpers.withMessage("To pole jest wymagane", required),
+      },
+    };
   },
 };
 </script>
