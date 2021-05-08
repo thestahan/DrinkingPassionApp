@@ -1,4 +1,4 @@
-﻿using API.Dtos;
+﻿using API.Dtos.Products;
 using API.Errors;
 using AutoMapper;
 using Core.Entities;

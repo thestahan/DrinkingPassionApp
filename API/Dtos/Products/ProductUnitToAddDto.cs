@@ -1,4 +1,4 @@
-﻿namespace API.Dtos
+﻿namespace API.Dtos.Products
 {
     public class ProductUnitToAddDto
     {
