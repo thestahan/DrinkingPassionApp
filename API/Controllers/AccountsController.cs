@@ -30,18 +30,16 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpGet]
-        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        [HttpGet("details")]
+        public async Task<ActionResult<UserDetailsDto>> GetUserDetails()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
 
             var user = await _userManager.FindByEmailAsync(email);
 
-            return new UserDto
-            {
-                Email = user.Email,
-                DisplayName = user.DisplayName
-            };
+            var userToReturn = _mapper.Map<UserDetailsDto>(user);
+
+            return userToReturn;
         }
 
         [HttpGet("emailexists")]
@@ -51,7 +49,7 @@ namespace API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+        public async Task<ActionResult<UserLoginReturnDto>> Login(UserLoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
@@ -65,7 +63,7 @@ namespace API.Controllers
             var handler = new JwtSecurityTokenHandler();
             var expiresIn = handler.ReadJwtToken(jwt).Claims.FirstOrDefault(c => c.Type == "exp").Value;
 
-            return new UserDto
+            return new UserLoginReturnDto
             {
                 Email = user.Email,
                 DisplayName = user.DisplayName,
@@ -75,7 +73,7 @@ namespace API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+        public async Task<ActionResult<UserRegisterReturnDto>> Register(UserRegisterDto registerDto)
         {
             if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
             {
@@ -90,10 +88,9 @@ namespace API.Controllers
 
             if (!result.Succeeded) return BadRequest(new ApiResponse(400));
 
-            return new UserDto
+            return new UserRegisterReturnDto
             {
                 Email = user.Email,
-                Token = _tokenService.CreateToken(user),
                 DisplayName = user.DisplayName
             };
         }

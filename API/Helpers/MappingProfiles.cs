@@ -34,7 +34,8 @@ namespace API.Helpers
                     dest => dest.ProductType,
                     opt => opt.MapFrom(src => src.ProductType.Name));
             CreateMap<ProductToAddDto, Product>();
-            CreateMap<RegisterDto, AppUser>()
+            CreateMap<AppUser, UserDetailsDto>();
+            CreateMap<UserRegisterDto, AppUser>()
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));

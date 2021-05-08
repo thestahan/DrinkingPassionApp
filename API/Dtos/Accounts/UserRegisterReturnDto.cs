@@ -1,8 +1,9 @@
 ﻿namespace API.Dtos.Accounts
 {
-    public class LoginDto
+    public class UserRegisterReturnDto
     {
         public string Email { get; set; }
-        public string Password { get; set; }
+
+        public string DisplayName { get; set; }
     }
 }
