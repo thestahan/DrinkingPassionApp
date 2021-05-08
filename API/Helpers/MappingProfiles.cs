@@ -1,4 +1,7 @@
-﻿using API.Dtos;
+﻿using API.Dtos.Accounts;
+using API.Dtos.Cocktails;
+using API.Dtos.Ingredients;
+using API.Dtos.Products;
 using AutoMapper;
 using Core.Entities;
 using Core.Entities.Identity;
@@ -31,7 +34,8 @@ namespace API.Helpers
                     dest => dest.ProductType,
                     opt => opt.MapFrom(src => src.ProductType.Name));
             CreateMap<ProductToAddDto, Product>();
-            CreateMap<RegisterDto, AppUser>()
+            CreateMap<AppUser, UserDetailsDto>();
+            CreateMap<UserRegisterDto, AppUser>()
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));

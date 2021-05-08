@@ -1,4 +1,4 @@
-﻿using API.Dtos;
+﻿using API.Dtos.Cocktails;
 using API.Errors;
 using API.Helpers;
 using AutoMapper;

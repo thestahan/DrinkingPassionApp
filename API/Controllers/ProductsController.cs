@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Interfaces;
 using AutoMapper;
-using API.Dtos;
 using API.Errors;
 using Core.Specifications;
+using API.Dtos.Products;
 
 namespace API.Controllers
 {
