@@ -1,98 +1,111 @@
 <template>
-  <div class="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-">
+  <div class="p-d-flex p-jc-center p-mt-6">
+    <div class="p-px-3" style="max-width: 28rem; width: 100%">
       <div>
         <img
-          class="mx-auto h-12 w-auto"
+          class="p-mx-auto"
           src="https://www.svgrepo.com/show/119676/cocktail-glass.svg"
-          alt="DrinkingPassion"
+          alt="DrinkingPassion logo"
+          style="height: 3rem"
         />
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Załóż konto
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          lub
-          {{ " " }}
-          <router-link
-            to="/login"
-            class="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            zaloguj na istniejące konto
-          </router-link>
-        </p>
-      </div>
-      <form class="mt-8 space-y-6" @submit.prevent="submitSignUp">
-        <input type="hidden" name="remember" value="true" />
-        <div class="rounded-md shadow-sm -space-y-px">
-          <div class="pb-4">
-            <label for="email-address" class="sr-only">Nazwa wyświetlana</label>
-            <label for="email-address" class="text-gray-700"
-              >Nazwa wyświetlana</label
+        <div class="p-text-center p-mt-3">
+          <h2 class="p-text-bold" style="font-size: 2rem">Załóż konto</h2>
+          <p style="font-size: 0.9rem">
+            lub
+            <router-link
+              to="/login"
+              class="p-text-bold"
+              style="color: var(--primary-color)"
+              >zaloguj się na istniejące konto</router-link
             >
-            <input
-              id="displayName"
-              type="text"
-              required=""
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              v-model="displayName"
-            />
-          </div>
-          <div class="pb-4">
-            <label for="email-address" class="sr-only">Adres email</label>
-            <label for="email-address" class="text-gray-700">Adres email</label>
-            <input
-              id="email-address"
-              type="email"
-              required=""
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              v-model="email"
-            />
-          </div>
-          <div class="pb-4">
-            <label for="password" class="sr-only">Hasło</label>
-            <label for="password" class="text-gray-700">Hasło</label>
-            <input
-              id="password"
-              type="password"
-              required=""
-              minlength="8"
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              v-model="password"
-            />
-          </div>
-          <div class="pb-4">
-            <label for="passwordConfirm" class="sr-only">Powtórz hasło</label>
-            <label for="passwordConfirm" class="text-gray-700"
-              >Powtórz hasło</label
-            >
-            <input
-              id="passwordConfirm"
-              type="password"
-              required=""
-              minlength="8"
-              class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-              v-model="passwordConfirm"
-            />
-          </div>
+          </p>
         </div>
-        <form-errors :errors="errors"></form-errors>
-        <div>
-          <button
-            type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      </div>
+      <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid p-mt-5">
+        <div class="p-field p-pb-2">
+          <div class="p-float-label">
+            <InputText
+              id="displayName"
+              v-model="v$.displayName.$model"
+              :class="{ 'p-invalid': v$.displayName.$invalid && submitted }"
+            ></InputText>
+            <label for="displayName">Nazwa wyświetlana</label>
+          </div>
+          <small
+            v-if="
+              (v$.displayName.$invalid && submitted) ||
+              v$.displayName.$pending.$response
+            "
+            class="p-error"
+            >{{ v$.displayName.required.$message }}</small
           >
-            <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-              <LockClosedIcon
-                class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
-                aria-hidden="true"
-              />
-            </span>
-            Zarejestruj się
-          </button>
+        </div>
+        <div class="p-field p-pb-2">
+          <div class="p-float-label">
+            <InputText
+              id="email"
+              v-model="v$.email.$model"
+              :class="{ 'p-invalid': v$.email.$invalid && submitted }"
+            ></InputText>
+            <label for="email">Adres email</label>
+          </div>
+          <small
+            v-if="
+              (v$.email.$invalid && submitted) || v$.email.$pending.$response
+            "
+            class="p-error"
+            >{{ v$.email.required.$message }}</small
+          >
+        </div>
+        <div class="p-field p-pb-2">
+          <div class="p-float-label">
+            <InputText
+              id="password"
+              v-model="v$.password.$model"
+              :class="{ 'p-invalid': v$.password.$invalid && submitted }"
+              type="password"
+            ></InputText>
+            <label for="password">Hasło</label>
+          </div>
+          <small
+            v-if="
+              (v$.password.$invalid && submitted) ||
+              v$.password.$pending.$response
+            "
+            class="p-error"
+            >{{ v$.password.required.$message }}</small
+          >
+        </div>
+        <div class="p-field p-pb-2">
+          <div class="p-float-label">
+            <InputText
+              id="passwordConfirm"
+              v-model="v$.passwordConfirm.$model"
+              :class="{ 'p-invalid': v$.passwordConfirm.$invalid && submitted }"
+              type="password"
+            ></InputText>
+            <label for="passwordConfirm">Powtórz hasło</label>
+          </div>
+          <small
+            v-if="
+              (v$.passwordConfirm.$invalid && submitted) ||
+              v$.passwordConfirm.$pending.$response
+            "
+            class="p-error"
+            >{{ v$.passwordConfirm.repeatPassword.$message }}</small
+          >
+        </div>
+        <div>
+          <Button
+            type="submit"
+            label="Zarejestruj się"
+            style="width: 100%"
+          ></Button>
         </div>
       </form>
     </div>
   </div>
+
   <spinner v-if="isLoading"></spinner>
   <base-success-modal
     title="Sukces!"
@@ -103,44 +116,61 @@
 </template>
 
 <script>
-import { LockClosedIcon } from "@heroicons/vue/solid";
-import FormErrors from "../../utilities/FormErrors.vue";
 import Spinner from "../../utilities/Spinner.vue";
 import BaseSuccessModal from "../../utilities/modals/BaseSuccessModal.vue";
+import InputText from "primevue/inputtext";
+import Button from "primevue/button";
+import useVuelidate from "@vuelidate/core";
+import {
+  required,
+  email,
+  helpers,
+  sameAs,
+  minLength,
+} from "@vuelidate/validators";
 
 export default {
   components: {
-    LockClosedIcon,
-    FormErrors,
     Spinner,
     BaseSuccessModal,
+    InputText,
+    Button,
+  },
+  setup() {
+    return { v$: useVuelidate() };
   },
   data() {
-    FormErrors;
     return {
       email: "",
       password: "",
       passwordConfirm: "",
       displayName: "",
-      errors: [],
       isLoading: false,
       openModal: false,
+      submitted: false,
     };
   },
   methods: {
-    submitSignUp() {
-      this.errors = [];
-      this.checkForm();
+    async handleSubmit(isFormValid) {
+      this.submitted = true;
 
-      if (this.errors.length) return;
+      if (!isFormValid) {
+        return;
+      }
 
       this.isLoading = true;
 
-      this.$store.dispatch("signUp", {
-        email: this.email.trim(),
-        password: this.password.trim(),
-        displayName: this.displayName.trim(),
-      });
+      try {
+        await this.$store.dispatch("signUp", {
+          email: this.email.trim(),
+          password: this.password.trim(),
+          displayName: this.displayName.trim(),
+        });
+
+        this.redirectToLogin();
+      } catch (err) {
+        console.log("Logowanie nie powiodło się");
+      }
 
       this.isLoading = false;
 
@@ -150,26 +180,30 @@ export default {
     redirectToLogin() {
       this.$router.replace("/login");
     },
-
-    checkForm() {
-      if (!this.isEmailValid(this.email.trim())) {
-        this.errors.push("Wprowadzony adres email jest niepoprawny");
-      }
-      if (this.displayName.trim().length < 3) {
-        this.errors.push("Nazwa wyświetlana musi zawierać minimum 3 znaki");
-      }
-      if (this.password.trim().length < 8) {
-        this.errors.push("Hasło musi zawierać minimum 8 znaków");
-      }
-      if (this.password.trim() != this.passwordConfirm.trim()) {
-        this.errors.push("Wprowadzone hasła nie są identyczne");
-      }
-    },
-
-    isEmailValid(email) {
-      var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return re.test(email);
-    },
+  },
+  validations() {
+    return {
+      displayName: {
+        required: helpers.withMessage("To pole jest wymagane", required),
+        minLength: helpers.withMessage(
+          "Nazwa musi zawierać więcej niż 3 znaki",
+          minLength(3)
+        ),
+      },
+      email: {
+        required: helpers.withMessage("To pole jest wymagane", required),
+        email: helpers.withMessage("Wprowadź poprawny adres email", email),
+      },
+      password: {
+        required: helpers.withMessage("To pole jest wymagane", required),
+      },
+      passwordConfirm: {
+        repeatPassword: helpers.withMessage(
+          "Podane hasła muszą być identyczne",
+          sameAs("password")
+        ),
+      },
+    };
   },
 };
 </script>

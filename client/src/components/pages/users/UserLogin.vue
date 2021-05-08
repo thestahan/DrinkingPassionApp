@@ -1,5 +1,5 @@
 <template>
-  <div class="p-d-flex p-jc-center">
+  <div class="p-d-flex p-jc-center p-mt-6">
     <div class="p-px-3" style="max-width: 28rem; width: 100%">
       <div>
         <img
