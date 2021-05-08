@@ -1,4 +1,4 @@
-﻿using API.Dtos;
+﻿using API.Dtos.Accounts;
 using API.Errors;
 using AutoMapper;
 using Core.Entities.Identity;

@@ -1,4 +1,7 @@
-﻿using API.Dtos;
+﻿using API.Dtos.Accounts;
+using API.Dtos.Cocktails;
+using API.Dtos.Ingredients;
+using API.Dtos.Products;
 using AutoMapper;
 using Core.Entities;
 using Core.Entities.Identity;

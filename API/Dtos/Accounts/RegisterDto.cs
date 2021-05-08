@@ -1,7 +1,7 @@
 ﻿using Core.Entities.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos
+namespace API.Dtos.Accounts
 {
     public class RegisterDto
     {
@@ -17,6 +17,7 @@ namespace API.Dtos
         [Required]
         public string Password { get; set; }
 
+        [Required]
         public BartenderType BartenderType { get; set; }
     }
 }
