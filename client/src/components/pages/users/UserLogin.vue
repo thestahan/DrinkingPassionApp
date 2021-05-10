@@ -150,7 +150,6 @@ export default {
       }
 
       this.isLoading = false;
-      //this.toggleDialog();
     },
   },
   validations() {

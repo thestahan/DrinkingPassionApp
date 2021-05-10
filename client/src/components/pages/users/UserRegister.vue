@@ -21,86 +21,101 @@
           </p>
         </div>
       </div>
-      <form @submit.prevent="handleSubmit(!v$.$invalid)" class="p-fluid p-mt-5">
+      <form @submit.prevent="submitForm()" class="p-fluid p-mt-5">
         <div class="p-field p-pb-2">
           <div class="p-float-label">
             <InputText
               id="displayName"
-              v-model="v$.displayName.$model"
-              :class="{ 'p-invalid': v$.displayName.$invalid && submitted }"
+              v-model="displayName"
+              :class="{ 'p-invalid': v$.displayName.$error }"
             ></InputText>
             <label for="displayName">Nazwa wyświetlana</label>
           </div>
-          <small
-            v-if="
-              (v$.displayName.$invalid && submitted) ||
-              v$.displayName.$pending.$response
-            "
-            class="p-error"
-            >{{ v$.displayName.required.$message }}</small
-          >
+          <p v-for="error of v$.displayName.$errors" :key="error.$uid">
+            <small class="p-error">{{ error.$message }}</small>
+          </p>
         </div>
         <div class="p-field p-pb-2">
           <div class="p-float-label">
             <InputText
               id="email"
-              v-model="v$.email.$model"
-              :class="{ 'p-invalid': v$.email.$invalid && submitted }"
+              v-model.trim="email"
+              :class="{ 'p-invalid': v$.email.$error }"
             ></InputText>
             <label for="email">Adres email</label>
           </div>
-          <small
-            v-if="
-              (v$.email.$invalid && submitted) || v$.email.$pending.$response
-            "
-            class="p-error"
-            >{{ v$.email.required.$message }}</small
-          >
+          <p v-for="error of v$.email.$errors" :key="error.$uid">
+            <small class="p-error">{{ error.$message }}</small>
+          </p>
         </div>
         <div class="p-field p-pb-2">
           <div class="p-float-label">
             <InputText
               id="password"
-              v-model="v$.password.$model"
-              :class="{ 'p-invalid': v$.password.$invalid && submitted }"
+              v-model.trim="password"
               type="password"
+              :class="{ 'p-invalid': v$.password.$error }"
             ></InputText>
             <label for="password">Hasło</label>
           </div>
-          <small
-            v-if="
-              (v$.password.$invalid && submitted) ||
-              v$.password.$pending.$response
-            "
-            class="p-error"
-            >{{ v$.password.required.$message }}</small
-          >
+          <p v-for="error of v$.password.$errors" :key="error.$uid">
+            <small class="p-error">{{ error.$message }}</small>
+          </p>
         </div>
-        <div class="p-field p-pb-2">
+        <div class="p-field">
           <div class="p-float-label">
             <InputText
               id="passwordConfirm"
-              v-model="v$.passwordConfirm.$model"
-              :class="{ 'p-invalid': v$.passwordConfirm.$invalid && submitted }"
+              v-model="passwordConfirm"
               type="password"
+              :class="{ 'p-invalid': v$.passwordConfirm.$error }"
             ></InputText>
             <label for="passwordConfirm">Powtórz hasło</label>
           </div>
-          <small
-            v-if="
-              (v$.passwordConfirm.$invalid && submitted) ||
-              v$.passwordConfirm.$pending.$response
-            "
-            class="p-error"
-            >{{ v$.passwordConfirm.repeatPassword.$message }}</small
-          >
+          <p v-for="error of v$.passwordConfirm.$errors" :key="error.$uid">
+            <small class="p-error">{{ error.$message }}</small>
+          </p>
         </div>
-        <div>
-          <Button
-            type="submit"
-            label="Zarejestruj się"
-            style="width: 100%"
-          ></Button>
+        <div class="p-mb-2">
+          <p class="p-mb-2">Które zdanie najlepiej Cię określa?</p>
+          <div class="p-field-radiobutton">
+            <RadioButton
+              id="hobbyst"
+              name="bartenderType"
+              value="hobbyst"
+              v-model="bartenderType"
+              :class="{ 'p-invalid': v$.bartenderType.$error }"
+            />
+            <label for="hobbyst"
+              ><span class="p-text-bold" style="color: var(--primary-color)"
+                >Hobbysta</span
+              >
+              - tworzę koktajle głównie w domu</label
+            >
+          </div>
+          <div class="p-field-radiobutton">
+            <RadioButton
+              id="professionalist"
+              name="bartenderType"
+              value="professionalist"
+              v-model="bartenderType"
+              :class="{ 'p-invalid': v$.bartenderType.$error }"
+            />
+            <label for="professionalist"
+              ><span class="p-text-bold" style="color: var(--primary-color)"
+                >Zawodowiec</span
+              >
+              - tworzę koktajle głównie w barach</label
+            >
+          </div>
+          <Divider></Divider>
+          <div>
+            <Button
+              type="submit"
+              label="Zarejestruj się"
+              style="width: 100%"
+            ></Button>
+          </div>
         </div>
       </form>
     </div>
@@ -120,6 +135,8 @@ import Spinner from "../../utilities/Spinner.vue";
 import BaseSuccessModal from "../../utilities/modals/BaseSuccessModal.vue";
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
+import RadioButton from "primevue/radiobutton";
+import Divider from "primevue/divider";
 import useVuelidate from "@vuelidate/core";
 import {
   required,
@@ -135,9 +152,13 @@ export default {
     BaseSuccessModal,
     InputText,
     Button,
+    RadioButton,
+    Divider,
   },
   setup() {
-    return { v$: useVuelidate() };
+    return {
+      v$: useVuelidate(),
+    };
   },
   data() {
     return {
@@ -145,16 +166,19 @@ export default {
       password: "",
       passwordConfirm: "",
       displayName: "",
+      bartenderType: "",
       isLoading: false,
       openModal: false,
       submitted: false,
     };
   },
   methods: {
-    async handleSubmit(isFormValid) {
+    async submitForm() {
       this.submitted = true;
 
-      if (!isFormValid) {
+      this.v$.$touch();
+
+      if (this.v$.$error) {
         return;
       }
 
@@ -162,9 +186,9 @@ export default {
 
       try {
         await this.$store.dispatch("signUp", {
-          email: this.email.trim(),
-          password: this.password.trim(),
-          displayName: this.displayName.trim(),
+          email: this.email,
+          password: this.password,
+          displayName: this.displayName,
         });
 
         this.redirectToLogin();
@@ -196,12 +220,19 @@ export default {
       },
       password: {
         required: helpers.withMessage("To pole jest wymagane", required),
+        minLength: helpers.withMessage(
+          "Hasło musi zawierać minimum 8 znaków",
+          minLength(8)
+        ),
       },
       passwordConfirm: {
         repeatPassword: helpers.withMessage(
           "Podane hasła muszą być identyczne",
-          sameAs("password")
+          sameAs(this.password)
         ),
+      },
+      bartenderType: {
+        required,
       },
     };
   },
