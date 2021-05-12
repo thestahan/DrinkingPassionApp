@@ -13,9 +13,9 @@ namespace API.Extensions
     {
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
         {
-            var builder = services.AddIdentityCore<AppUser>();
+            var builder = services.AddIdentityCore<AppUser>().AddRoles<IdentityRole>();
 
-            builder = new IdentityBuilder(builder.UserType, builder.Services);
+            builder = new IdentityBuilder(builder.UserType, builder.RoleType, builder.Services);
             builder.AddEntityFrameworkStores<AppDbContext>();
             builder.AddSignInManager<SignInManager<AppUser>>();
 
