@@ -60,11 +60,11 @@ namespace API.Controllers
 
             if (!result.Succeeded) return Unauthorized(new ApiResponse(401));
 
-            var jwt = _tokenService.CreateToken(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var jwt = _tokenService.CreateToken(user, userRoles);
             var handler = new JwtSecurityTokenHandler();
             var expiresIn = handler.ReadJwtToken(jwt).Claims.FirstOrDefault(c => c.Type == "exp").Value;
-
-            var roles = await _userManager.GetRolesAsync(user);
 
             return new UserLoginReturnDto
             {
@@ -72,7 +72,7 @@ namespace API.Controllers
                 DisplayName = user.DisplayName,
                 Token = jwt,
                 TokenExpiration = expiresIn,
-                Roles = roles
+                Roles = userRoles
             };
         }
 

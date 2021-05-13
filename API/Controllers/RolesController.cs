@@ -1,14 +1,18 @@
-﻿using API.Errors;
+﻿using API.Dtos.Roles;
+using API.Errors;
 using Core.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     [ApiController]
     public class RolesController : ControllerBase
     {
@@ -42,13 +46,17 @@ namespace API.Controllers
         }
 
         [HttpPost("AddUserToRole")]
-        public async Task<ActionResult> AddUserToRole(string email)
+        public async Task<ActionResult> AddUserToRole(AddUserToRoleDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(dto.UserEmail);
 
-            if (user == null) return BadRequest(new ApiResponse(400));
+            if (user == null) return BadRequest(new ApiResponse(400, "User with atemptted email wasn't found"));
 
-            await _userManager.AddToRoleAsync(user, "Admin");
+            var roleExists = await _roleManager.RoleExistsAsync(dto.Role);
+
+            if (!roleExists) return BadRequest(new ApiResponse(400, "Attempted role doesn't exist"));
+
+            await _userManager.AddToRoleAsync(user, dto.Role);
 
             return Ok();
         }
