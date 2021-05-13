@@ -1,5 +1,6 @@
 ﻿using Core.Entities.Enums;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 
 namespace Core.Entities.Identity
 {

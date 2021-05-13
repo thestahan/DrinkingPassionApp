@@ -1,5 +1,6 @@
 ﻿using API.Dtos.Accounts;
 using API.Errors;
+using API.Extensions;
 using AutoMapper;
 using Core.Entities.Identity;
 using Core.Interfaces;
@@ -59,7 +60,9 @@ namespace API.Controllers
 
             if (!result.Succeeded) return Unauthorized(new ApiResponse(401));
 
-            var jwt = _tokenService.CreateToken(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var jwt = _tokenService.CreateToken(user, userRoles);
             var handler = new JwtSecurityTokenHandler();
             var expiresIn = handler.ReadJwtToken(jwt).Claims.FirstOrDefault(c => c.Type == "exp").Value;
 
@@ -68,7 +71,8 @@ namespace API.Controllers
                 Email = user.Email,
                 DisplayName = user.DisplayName,
                 Token = jwt,
-                TokenExpiration = expiresIn
+                TokenExpiration = expiresIn,
+                Roles = userRoles
             };
         }
 
@@ -87,6 +91,8 @@ namespace API.Controllers
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded) return BadRequest(new ApiResponse(400));
+
+            await _userManager.AddToRoleAsync(user, "User");
 
             return new UserRegisterReturnDto
             {
