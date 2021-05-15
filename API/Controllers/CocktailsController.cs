@@ -25,7 +25,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<Pagination<Cocktail>>> GetCocktails([FromQuery]CocktailSpecParams cocktailParams)
         {
-            var spec = new CocktailsWithIngredientsSpecification(cocktailParams);
+            var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams);
 
             var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams);
 
@@ -35,20 +35,20 @@ namespace API.Controllers
 
             var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
 
-            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex, 
-                cocktailParams. PageIndex, totalItems, data));
+            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
+                cocktailParams.PageSize, totalItems, data));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CocktailToReturnDto>> GetCocktailById(int id)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailById(int id)
         {
-            var spec = new CocktailsWithIngredientsSpecification(id);
+            var spec = new CocktailWithIngredientsSpecification(id);
 
             var cocktail = await _repo.GetEntityWithSpec(spec);
 
             if (cocktail == null) return NotFound(new ApiResponse(404));
 
-            var cocktailToReturn = _mapper.Map<CocktailToReturnDto>(cocktail);
+            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktail);
 
             return Ok(cocktailToReturn);
         }
@@ -60,11 +60,11 @@ namespace API.Controllers
 
             var createdCocktail =  await _repo.AddAsync(cocktail);
 
-            var spec = new CocktailsWithIngredientsSpecification(createdCocktail.Id);
+            var spec = new CocktailWithIngredientsSpecification(createdCocktail.Id);
 
             var createdCocktailWithIngredients = await _repo.GetEntityWithSpec(spec);
 
-            var cocktailToReturn = _mapper.Map<CocktailToReturnDto>(createdCocktailWithIngredients);
+            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(createdCocktailWithIngredients);
 
             return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
         }

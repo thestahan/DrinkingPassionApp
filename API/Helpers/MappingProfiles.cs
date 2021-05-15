@@ -16,10 +16,20 @@ namespace API.Helpers
             CreateMap<ProductUnitToAddDto, ProductUnit>();
             CreateMap<ProductType, ProductTypeToReturnDto>();
             CreateMap<ProductTypeToAddDto, ProductType>();
+            CreateMap<Cocktail, CocktailDetailsToReturnDto>()
+                .ForMember(
+                    dest => dest.Picture,
+                    opt => opt.MapFrom<CocktailUrlResolver>())
+                .ForMember(
+                    dest => dest.BaseIngredient,
+                    opt => opt.MapFrom(src => src.BaseProduct.Name));
             CreateMap<Cocktail, CocktailToReturnDto>()
                 .ForMember(
                     dest => dest.Picture,
-                    opt => opt.MapFrom<CocktailUrlResolver>());
+                    opt => opt.MapFrom<CocktailUrlResolver>())
+                .ForMember(
+                    dest => dest.BaseIngredient,
+                    opt => opt.MapFrom(src => src.BaseProduct.Name));
             CreateMap<Ingredient, IngredientToReturnDto>()
                 .ForMember(
                     dest => dest.Name,
