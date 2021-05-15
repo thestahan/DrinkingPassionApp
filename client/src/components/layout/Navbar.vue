@@ -34,7 +34,8 @@
               <router-link
                 v-if="!isAuthenticated"
                 to="/login"
-                class="font-medium text-indigo-600 hover:text-indigo-500"
+                class="font-medium"
+                style="color: var(--primary-color)"
                 >Zaloguj się</router-link
               >
             </div>
@@ -108,7 +109,8 @@
         <router-link
           v-if="!isAuthenticated"
           to="/login"
-          class="block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100"
+          class="block w-full px-5 py-3 text-center font-medium bg-gray-50 hover:bg-gray-100"
+          style="color: var(--primary-color)"
         >
           Zaloguj się
         </router-link>

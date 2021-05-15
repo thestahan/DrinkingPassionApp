@@ -47,7 +47,8 @@
             >
             <router-link
               to="/login"
-              class="font-medium text-indigo-600 hover:text-indigo-500"
+              class="font-medium"
+              style="color: var(--primary-color)"
               >Zaloguj się</router-link
             >
           </div>
@@ -97,7 +98,8 @@
             </div>
             <router-link
               to="/login"
-              class="block w-full px-5 py-3 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100"
+              class="block w-full px-5 py-3 text-center font-medium bg-gray-50 hover:bg-gray-100"
+              style="color: var(--primary-color)"
             >
               Zaloguj się
             </router-link>
@@ -114,7 +116,7 @@
           >
             <span class="block xl:inline">Najlepsze koktajle</span>
             {{ " " }}
-            <span class="block text-indigo-600 xl:inline"
+            <span class="block xl:inline" style="color: var(--primary-color)"
               >w jednym miejscu</span
             >
           </h1>
@@ -129,7 +131,8 @@
             <div class="rounded-md shadow">
               <router-link
                 to="/register"
-                class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10"
+                class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white md:py-4 md:text-lg md:px-10"
+                style="background-color: var(--primary-color); :hover: var()"
               >
                 Utwórz konto
               </router-link>
@@ -137,7 +140,11 @@
             <div class="mt-3 sm:mt-0 sm:ml-3">
               <router-link
                 to="/cocktails"
-                class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 md:py-4 md:text-lg md:px-10"
+                class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md md:py-4 md:text-lg md:px-10"
+                style="
+                  color: var(--green-700);
+                  background-color: var(--green-100);
+                "
               >
                 Przejdź do koktajli
               </router-link>

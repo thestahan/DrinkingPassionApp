@@ -169,13 +169,10 @@ export default {
       bartenderType: "",
       isLoading: false,
       openModal: false,
-      submitted: false,
     };
   },
   methods: {
     async submitForm() {
-      this.submitted = true;
-
       this.v$.$touch();
 
       if (this.v$.$error) {
