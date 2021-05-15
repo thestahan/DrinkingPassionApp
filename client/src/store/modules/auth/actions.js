@@ -1,9 +1,10 @@
+/* eslint-disable prettier/prettier */
 let timer;
 
 export default {
   async signIn(context, payload) {
     this.isLoading = true;
-    console.log(this.isLoading);
+
     const response = await fetch("https://localhost:5001/api/accounts/login", {
       method: "POST",
       headers: {
@@ -24,8 +25,6 @@ export default {
       throw error;
     }
 
-    console.log(responseData);
-
     const expiresIn = +responseData.tokenExpiration * 1000;
     const expirationDate = new Date().getTime() + expiresIn;
 
@@ -44,27 +43,23 @@ export default {
   },
 
   async signUp(_, payload) {
-    const response = await fetch(
-      "https://localhost:5001/api/accounts/register",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: payload.email,
-          password: payload.password,
-          displayName: payload.displayName,
-        }),
-      }
-    );
+    const response = await fetch("https://localhost:5001/api/accounts/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: payload.email,
+        password: payload.password,
+        displayName: payload.displayName,
+      }),
+    });
 
     const responseData = await response.json();
 
     if (!response.ok) {
       const error = new Error(
-        responseData.message ||
-          "Nie udało się zarejestrować konta z podanymi danymi."
+        responseData.message || "Nie udało się zarejestrować konta z podanymi danymi."
       );
       throw error;
     }

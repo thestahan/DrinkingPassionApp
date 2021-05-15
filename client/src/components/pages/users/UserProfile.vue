@@ -25,14 +25,17 @@ export default {
       this.isLoading = true;
 
       const token = this.$store.getters.token;
-      console.log(token);
-      const response = await fetch("https://localhost:5001/api/accounts", {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
+
+      const response = await fetch(
+        "https://localhost:5001/api/accounts/details",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       this.isLoading = false;
 
