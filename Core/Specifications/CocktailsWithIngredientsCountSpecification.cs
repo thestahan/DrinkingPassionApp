@@ -3,15 +3,15 @@ using System.Linq;
 
 namespace Core.Specifications
 {
-    public class CocktailsWithIngredientsSpecification : BaseSpecification<Cocktail>
+    public class CocktailsWithIngredientsCountSpecification : BaseSpecification<Cocktail>
     {
-        public CocktailsWithIngredientsSpecification(CocktailSpecParams cocktailParams)
+        public CocktailsWithIngredientsCountSpecification(CocktailSpecParams cocktailParams)
             : base(x =>
                 (string.IsNullOrEmpty(cocktailParams.Search) || x.Name.ToLower().Contains(cocktailParams.Search)) &&
                 (!cocktailParams.ProductId.HasValue || x.Ingredients.Any(y => y.ProductId == cocktailParams.ProductId))
             )
         {
-            AddInclude("Ingredients.Product");
+            AddInclude(x => x.BaseProduct);
             AddOrderBy(x => x.Name);
             ApplyPaging(cocktailParams.PageSize * (cocktailParams.PageIndex - 1), cocktailParams.PageSize);
 
@@ -27,11 +27,6 @@ namespace Core.Specifications
                         break;
                 }
             }
-        }
-
-        public CocktailsWithIngredientsSpecification(int id) : base(x => x.Id == id)
-        {
-            AddInclude("Ingredients.Product");
         }
     }
 }

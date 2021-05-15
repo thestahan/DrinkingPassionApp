@@ -20,6 +20,11 @@ namespace Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Cocktail>()
+                .HasOne(x => x.BaseProduct)
+                .WithMany()
+                .HasForeignKey(x => x.BaseProductId);
         }
     }
 }
