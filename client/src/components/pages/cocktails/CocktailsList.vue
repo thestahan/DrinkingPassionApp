@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header class="p-mb-6">
     <h2 class="p-text-center main-font heading-font">
       Lista wszystkich koktajli
     </h2>

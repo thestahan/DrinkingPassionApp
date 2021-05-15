@@ -12,8 +12,14 @@
         <div class="p-col">
           <div class="p-card-title">{{ cocktail.name }}</div>
           <div class="p-card-content">
-            <div class="p-card-subtitle">Składnik bazowy: Tequila</div>
-            <div class="p-card-subtitle">Ilość składników: 6</div>
+            <div class="p-card-subtitle">
+              <span class="card-subtext">Składnik bazowy</span>:
+              {{ cocktail.baseIngredient }}
+            </div>
+            <div class="p-card-subtitle">
+              <span class="card-subtext">Ilość składników:</span>
+              {{ cocktail.ingredientsCount }}
+            </div>
           </div>
         </div>
       </div>
@@ -35,6 +41,11 @@ export default {
 <style scoped>
 .p-card {
   background-color: var(--green-50);
+}
+
+.card-subtext {
+  font-weight: 600;
+  color: var(--green-600);
 }
 
 .cocktail-picture {
