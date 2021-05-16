@@ -7,6 +7,7 @@ using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -63,15 +64,13 @@ namespace API.Controllers
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var jwt = _tokenService.CreateToken(user, userRoles);
-            var handler = new JwtSecurityTokenHandler();
-            var expiresIn = handler.ReadJwtToken(jwt).Claims.FirstOrDefault(c => c.Type == "exp").Value;
 
             return new UserLoginReturnDto
             {
                 Email = user.Email,
                 DisplayName = user.DisplayName,
                 Token = jwt,
-                TokenExpiration = expiresIn,
+                TokenExpiration = "86400",
                 Roles = userRoles
             };
         }

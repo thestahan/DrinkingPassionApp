@@ -35,3 +35,7 @@ export default {
   },
 };
 </script>
+
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;500&display=swap");
+</style>

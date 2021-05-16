@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.main-font {
+  font-family: "Noto Sans JP", sans-serif;
+}
+
 /* .router-link-active {
   @apply border-blue-500 bg-indigo-700 !important;
 }
