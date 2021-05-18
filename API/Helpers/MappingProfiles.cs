@@ -12,7 +12,7 @@ namespace API.Helpers
     {
         public MappingProfiles()
         {
-            CreateMap<ProductUnit, ProductToReturnDto>();
+            CreateMap<ProductUnit, ProductUnitToReturnDto>();
             CreateMap<ProductUnitToAddDto, ProductUnit>();
             CreateMap<ProductType, ProductTypeToReturnDto>();
             CreateMap<ProductTypeToAddDto, ProductType>();
