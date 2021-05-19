@@ -1,6 +1,6 @@
 ﻿using Core.Entities.Enums;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+using System;
 
 namespace Core.Entities.Identity
 {
@@ -9,5 +9,6 @@ namespace Core.Entities.Identity
         public string DisplayName { get; set; }
         public string Avatar { get; set; }
         public BartenderType BartenderType { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }
