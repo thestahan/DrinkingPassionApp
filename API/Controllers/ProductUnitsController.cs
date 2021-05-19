@@ -25,7 +25,7 @@ namespace API.Controllers
         {
             var units = await _repo.ListAllAsync();
 
-            var unitsToReturn = _mapper.Map<IReadOnlyList<ProductUnit>>(units);
+            var unitsToReturn = _mapper.Map<IReadOnlyList<ProductUnitToReturnDto>>(units);
 
             return Ok(unitsToReturn);
         }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities.Identity;
 using Infrastructure.Data;
@@ -8,7 +6,6 @@ using Infrastructure.Data.Migrations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -28,6 +25,10 @@ namespace API
                 {
                     var context = services.GetRequiredService<AppDbContext>();
                     await context.Database.MigrateAsync();
+                    await AppDataDbContextSeed.SeedDataAsync(context);
+
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    await AppRolesDbContextSeed.SeedRolesAsync(roleManager);
 
                     var userManager = services.GetRequiredService<UserManager<AppUser>>();
                     await AppIdentityDbContextSeed.SeedUserAsync(userManager);
