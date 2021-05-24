@@ -1,5 +1,9 @@
 <template>
-  <div class="p-col-12 p-md-6 p-xl-4">
+  <router-link
+    :to="'/cocktails/' + cocktail.id"
+    tag="div"
+    class="p-col-12 p-md-6 p-xl-4"
+  >
     <div class="p-card p-component">
       <div class="p-grid">
         <div class="p-col-fixed p-m-2">
@@ -24,7 +28,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
