@@ -2,7 +2,7 @@
   <div v-if="cocktail">
     <div class="p-d-sm-none p-grid p-flex-column p-ml-2 p-mr-2">
       <div class="p-col">
-        <header class="p-mb-4 p-text-center">
+        <header class="p-mb-3 p-text-center">
           <h3
             class="main-font heading-font"
             style="font-weight: 400; font-size: 1.8rem"
@@ -40,7 +40,7 @@
     <div
       class="p-d-none p-d-sm-flex p-grid p-ai-center vertical-container p-m-4"
     >
-      <div class="p-col-5">
+      <div class="p-col-6">
         <header class="p-mb-4 p-text-center">
           <h3
             class="main-font heading-font"
@@ -68,7 +68,7 @@
         </section>
       </div>
 
-      <div class="p-col-7">
+      <div class="p-col-6">
         <img
           class="cocktail-details-picture p-m-auto p-shadow-10"
           alt="Zdjęcie koktajlu"
@@ -78,11 +78,15 @@
     </div>
     <div class="p-grid p-ml-2 p-mr-2 p-text-justify">
       <div class="p-col-12 p-sm-6">
-        <h3>Opis koktajlu</h3>
+        <h3 class="main-font p-mb-2" style="color: var(--primary-color)">
+          Opis koktajlu
+        </h3>
         <span>{{ cocktail.description }}</span>
       </div>
       <div class="p-col-12 p-sm-6">
-        <h3>Przygotowanie</h3>
+        <h3 class="main-font p-mb-2" style="color: var(--primary-color)">
+          Przygotowanie
+        </h3>
         <span>{{ cocktail.description }}</span>
       </div>
     </div>
@@ -93,6 +97,8 @@
 export default {
   data() {
     return {
+      breadcrumbHome: { icon: "pi pi-home", to: "/" },
+      breadcrumbItems: [{ label: "Koktajle", url: "/cocktails" }],
       cocktail: null,
       isLoading: false,
     };
@@ -100,6 +106,9 @@ export default {
   computed: {
     cocktailId() {
       return this.$route.params.id;
+    },
+    cocktailName() {
+      return this.cocktail.name;
     },
   },
   created() {
@@ -129,6 +138,10 @@ export default {
       }
 
       this.cocktail = responseData;
+      this.breadcrumbItems.push({
+        label: this.cocktailName,
+        url: "/cocktails/" + this.cocktailId,
+      });
 
       console.log(this.cocktail);
     },
