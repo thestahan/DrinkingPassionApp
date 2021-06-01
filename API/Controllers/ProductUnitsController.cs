@@ -43,7 +43,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductUnitToAddDto>> AddProductUnit(ProductUnitToAddDto unitToAddDto)
+        public async Task<ActionResult<ProductUnitToReturnDto>> AddProductUnit(ProductUnitToAddDto unitToAddDto)
         {
             var unit = _mapper.Map<ProductUnit>(unitToAddDto);
 
@@ -52,6 +52,32 @@ namespace API.Controllers
             var unitToReturn = _mapper.Map<ProductUnitToReturnDto>(createdUnit);
 
             return CreatedAtAction(nameof(GetProductUnitById), new { id = unitToReturn.Id }, unitToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ProductUnitToReturnDto>> UpdateProductUnit(int id, ProductUnitToUpdateDto unitToUpdate)
+        {
+            if (id != unitToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
+
+            if (!await _repo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
+
+            var unit = _mapper.Map<ProductUnit>(unitToUpdate);
+
+            await _repo.UpdateAsync(unit);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProductUnit(int id)
+        {
+            var productUnit = await _repo.GetByIdAsync(id);
+
+            if (productUnit == null) return NotFound(new ApiResponse(404));
+
+            await _repo.DeleteAsync(productUnit);
+
+            return NoContent();
         }
     }
 }

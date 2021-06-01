@@ -13,7 +13,8 @@ namespace Core.Interfaces
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
         Task<T> AddAsync(T entity);
         Task<int> CountAsync(ISpecification<T> spec);
-        Task<T> UpdateAsync(T entity);
+        Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
+        Task<bool> EntityExists(int id);
     }
 }

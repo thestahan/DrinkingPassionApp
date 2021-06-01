@@ -14,6 +14,7 @@ namespace API.Helpers
         {
             CreateMap<ProductUnit, ProductUnitToReturnDto>();
             CreateMap<ProductUnitToAddDto, ProductUnit>();
+            CreateMap<ProductUnitToUpdateDto, ProductUnit>();
             CreateMap<ProductType, ProductTypeToReturnDto>();
             CreateMap<ProductTypeToAddDto, ProductType>();
             CreateMap<Cocktail, CocktailDetailsToReturnDto>()
