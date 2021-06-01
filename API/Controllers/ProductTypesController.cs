@@ -53,5 +53,31 @@ namespace API.Controllers
 
             return CreatedAtAction(nameof(GetProductTypeById), new { id = typeToReturn.Id }, typeToReturn);
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateProductType(int id, ProductTypeToUpdateDto typeToUpdate)
+        {
+            if (id != typeToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
+
+            if (!await _repo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
+
+            var type = _mapper.Map<ProductType>(typeToUpdate);
+
+            await _repo.UpdateAsync(type);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProductType(int id)
+        {
+            var productType = await _repo.GetByIdAsync(id);
+
+            if (productType == null) return NotFound(new ApiResponse(404));
+
+            await _repo.DeleteAsync(productType);
+
+            return NoContent();
+        }
     }
 }

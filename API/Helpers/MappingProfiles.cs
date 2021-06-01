@@ -17,6 +17,7 @@ namespace API.Helpers
             CreateMap<ProductUnitToUpdateDto, ProductUnit>();
             CreateMap<ProductType, ProductTypeToReturnDto>();
             CreateMap<ProductTypeToAddDto, ProductType>();
+            CreateMap<ProductTypeToUpdateDto, ProductType>();
             CreateMap<Cocktail, CocktailDetailsToReturnDto>()
                 .ForMember(
                     dest => dest.Picture,

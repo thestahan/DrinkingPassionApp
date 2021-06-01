@@ -55,7 +55,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ProductUnitToReturnDto>> UpdateProductUnit(int id, ProductUnitToUpdateDto unitToUpdate)
+        public async Task<ActionResult> UpdateProductUnit(int id, ProductUnitToUpdateDto unitToUpdate)
         {
             if (id != unitToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
 
