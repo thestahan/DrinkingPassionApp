@@ -43,9 +43,16 @@ namespace API.Helpers
                     dest => dest.ProductUnit,
                     opt => opt.MapFrom(src => src.ProductUnit.Name))
                 .ForMember(
+                    dest => dest.ProductUnitId,
+                    opt => opt.MapFrom(src => src.ProductUnit.Id))
+                .ForMember(
                     dest => dest.ProductType,
-                    opt => opt.MapFrom(src => src.ProductType.Name));
+                    opt => opt.MapFrom(src => src.ProductType.Name))
+                .ForMember(
+                    dest => dest.ProductTypeId,
+                    opt => opt.MapFrom(src => src.ProductType.Id));
             CreateMap<ProductToAddDto, Product>();
+            CreateMap<ProductToUpdateDto, Product>();
             CreateMap<AppUser, UserDetailsDto>();
             CreateMap<UserRegisterDto, AppUser>()
                 .ForMember(

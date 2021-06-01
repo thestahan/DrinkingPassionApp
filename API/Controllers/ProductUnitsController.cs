@@ -21,7 +21,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductUnitToReturnDto>>> GetProductUnits()
+        public async Task<ActionResult<IReadOnlyList<ProductUnitToReturnDto>>> GetProductUnits()
         {
             var units = await _repo.ListAllAsync();
 

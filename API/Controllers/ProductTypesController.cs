@@ -21,11 +21,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductTypeToReturnDto>>> GetProductTypes()
+        public async Task<ActionResult<IReadOnlyList<ProductTypeToReturnDto>>> GetProductTypes()
         {
             var types = await _repo.ListAllAsync();
 
-            var typesToReturn = _mapper.Map<IReadOnlyList<ProductType>>(types);
+            var typesToReturn = _mapper.Map<IReadOnlyList<ProductTypeToReturnDto>>(types);
 
             return Ok(typesToReturn);
         }
