@@ -78,9 +78,9 @@ namespace API.Controllers
 
             if (!await _productUnitsRepo.EntityExists(productToUpdate.ProductUnitId)) return BadRequest(new ApiResponse(400, "Product unit of given id does not exist"));
 
-            if (id != productToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
+            if (id != productToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with product's id"));
 
-            if (!await _productsRepo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
+            if (!await _productsRepo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Product does not exist"));
 
             var product = _mapper.Map<Product>(productToUpdate);
 

@@ -7,6 +7,7 @@ using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -23,7 +24,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Pagination<Cocktail>>> GetCocktails([FromQuery]CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery]CocktailSpecParams cocktailParams)
         {
             var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams);
 
@@ -54,7 +55,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Cocktail>> AddCocktail(CocktailToAddDto cocktailToAddDto)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> AddCocktail(CocktailToAddDto cocktailToAddDto)
         {
             var cocktail = _mapper.Map<Cocktail>(cocktailToAddDto);
 
@@ -67,6 +68,36 @@ namespace API.Controllers
             var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(createdCocktailWithIngredients);
 
             return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCocktailInfo(int id, CocktailInfoToUpdateDto cocktailToUpdate)
+        {
+            if (id != cocktailToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
+
+            if (!await _repo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Cocktail does not exist"));
+
+            var cocktailFromDb = await _repo.GetByIdAsync(id);
+
+            var cocktail = CocktailUpdateHelpers.ApplyCocktailInfoChangesToCocktail(cocktailToUpdate, cocktailFromDb);
+
+            await _repo.UpdateAsync(cocktail);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProduct(int id)
+        {
+            var spec = new CocktailWithIngredientsOnlySpecification(id);
+
+            var cocktail = await _repo.GetEntityWithSpec(spec);
+
+            if (cocktail == null) return NotFound(new ApiResponse(404));
+
+            await _repo.DeleteAsync(cocktail);
+
+            return NoContent();
         }
     }
 }

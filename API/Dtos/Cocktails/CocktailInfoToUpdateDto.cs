@@ -1,11 +1,11 @@
-﻿using API.Dtos.Ingredients;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace API.Dtos.Cocktails
 {
-    public class CocktailToAddDto
+    public class CocktailInfoToUpdateDto
     {
+        public int Id { get; set; }
+
         [Required]
         [StringLength(maximumLength: 60, MinimumLength = 2)]
         public string Name { get; set; }
@@ -15,11 +15,5 @@ namespace API.Dtos.Cocktails
         public string Description { get; set; }
 
         public string PreparationInstruction { get; set; }
-
-        [Required]
-        public int BaseProductId { get; set; }
-
-        [Required]
-        public ICollection<IngredientToAddDto> Ingredients { get; set; }
     }
 }

@@ -50,11 +50,6 @@ namespace Infrastructure.Data
             return await ApplySpecification(spec).CountAsync();
         }
 
-        private IQueryable<T> ApplySpecification(ISpecification<T> spec)
-        {
-            return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
-        }
-
         public async Task UpdateAsync(T entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
@@ -70,6 +65,11 @@ namespace Infrastructure.Data
         public async Task<bool> EntityExists(int id)
         {
             return await _context.Set<T>().AnyAsync(x => x.Id == id);
+        }
+
+        private IQueryable<T> ApplySpecification(ISpecification<T> spec)
+        {
+            return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
         }
     }
 }
