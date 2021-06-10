@@ -59,7 +59,7 @@ namespace API.Controllers
         {
             if (id != unitToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
 
-            if (!await _repo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
+            if (!await _repo.EntityExistsAsync(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
 
             var unit = _mapper.Map<ProductUnit>(unitToUpdate);
 
@@ -71,11 +71,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteProductUnit(int id)
         {
-            var productUnit = await _repo.GetByIdAsync(id);
-
-            if (productUnit == null) return NotFound(new ApiResponse(404));
-
-            await _repo.DeleteAsync(productUnit);
+            if (! await _repo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
 
             return NoContent();
         }

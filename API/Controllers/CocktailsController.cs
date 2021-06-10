@@ -1,4 +1,5 @@
 ﻿using API.Dtos.Cocktails;
+using API.Dtos.Ingredients;
 using API.Errors;
 using API.Helpers;
 using AutoMapper;
@@ -7,7 +8,6 @@ using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -15,12 +15,14 @@ namespace API.Controllers
     public class CocktailsController : BaseApiController
     {
         private readonly IMapper _mapper;
-        private readonly IGenericRepository<Cocktail> _repo;
+        private readonly IGenericRepository<Cocktail> _cocktailsRepo;
+        private readonly IGenericRepository<Ingredient> _ingredientsRepo;
 
-        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> repo)
+        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo)
         {
             _mapper = mapper;
-            _repo = repo;
+            _cocktailsRepo = cocktailsRepo;
+            _ingredientsRepo = ingredientsRepo;
         }
 
         [HttpGet]
@@ -30,9 +32,9 @@ namespace API.Controllers
 
             var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams);
 
-            var totalItems = await _repo.CountAsync(countSpec);
+            var totalItems = await _cocktailsRepo.CountAsync(countSpec);
 
-            var cocktailsFromDb = await _repo.ListAsync(spec);
+            var cocktailsFromDb = await _cocktailsRepo.ListAsync(spec);
 
             var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
 
@@ -45,7 +47,7 @@ namespace API.Controllers
         {
             var spec = new CocktailWithIngredientsSpecification(id);
 
-            var cocktail = await _repo.GetEntityWithSpec(spec);
+            var cocktail = await _cocktailsRepo.GetEntityWithSpec(spec);
 
             if (cocktail == null) return NotFound(new ApiResponse(404));
 
@@ -59,11 +61,11 @@ namespace API.Controllers
         {
             var cocktail = _mapper.Map<Cocktail>(cocktailToAddDto);
 
-            var createdCocktail =  await _repo.AddAsync(cocktail);
+            var createdCocktail =  await _cocktailsRepo.AddAsync(cocktail);
 
             var spec = new CocktailWithIngredientsSpecification(createdCocktail.Id);
 
-            var createdCocktailWithIngredients = await _repo.GetEntityWithSpec(spec);
+            var createdCocktailWithIngredients = await _cocktailsRepo.GetEntityWithSpec(spec);
 
             var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(createdCocktailWithIngredients);
 
@@ -73,17 +75,55 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCocktailInfo(int id, CocktailInfoToUpdateDto cocktailToUpdate)
         {
+            if (!await _cocktailsRepo.EntityExistsAsync(id)) return BadRequest(new ApiResponse(404, "Cocktail does not exist"));
+
             if (id != cocktailToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
 
-            if (!await _repo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Cocktail does not exist"));
-
-            var cocktailFromDb = await _repo.GetByIdAsync(id);
+            var cocktailFromDb = await _cocktailsRepo.GetByIdAsync(id);
 
             var cocktail = CocktailUpdateHelpers.ApplyCocktailInfoChangesToCocktail(cocktailToUpdate, cocktailFromDb);
 
-            await _repo.UpdateAsync(cocktail);
+            await _cocktailsRepo.UpdateAsync(cocktail);
 
             return NoContent();
+        }
+
+        [HttpPost("{cocktailId}/ingredients")]
+        public async Task<ActionResult<IngredientToReturnDto>> AddIngredientToCocktail(int cocktailId, IngredientToAddDto ingredient)
+        {
+            var ingredientToAdd = _mapper.Map<Ingredient>(ingredient);
+
+            ingredientToAdd.CocktailId = cocktailId;
+
+            var createdIngredient = await _ingredientsRepo.AddAsync(ingredientToAdd);
+
+            var ingredientToReturn = _mapper.Map<IngredientToReturnDto>(createdIngredient);
+
+            return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailId }, ingredientToReturn);
+        }
+
+        [HttpPut("{cocktailId}/ingredients/{id}")]
+        public async Task<ActionResult> UpdateCocktailIngredient(int cocktailId, int id, IngredientToUpdateDto ingredient)
+        {
+            if (!await _cocktailsRepo.EntityExistsAsync(cocktailId)) return BadRequest(new ApiResponse(404, "Cocktail does not exist"));
+
+            var spec = new CocktailIngredientExistsSpecification(cocktailId, id);
+
+            if (!await _ingredientsRepo.EntityExistsWithSpecAsync(spec)) return BadRequest(new ApiResponse(400, "Ingredient was not found in given cocktail"));
+
+            var ingredientToUpdate = _mapper.Map<Ingredient>(ingredient);
+
+            ingredientToUpdate.CocktailId = cocktailId;
+
+            await _ingredientsRepo.UpdateAsync(ingredientToUpdate);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{cocktailId}/ingredients/{id}")]
+        public async Task<ActionResult> DeleteCocktailIngredient(int cocktailId, int id)
+        {
+            return Ok();
         }
 
         [HttpDelete("{id}")]
@@ -91,11 +131,11 @@ namespace API.Controllers
         {
             var spec = new CocktailWithIngredientsOnlySpecification(id);
 
-            var cocktail = await _repo.GetEntityWithSpec(spec);
+            var cocktail = await _cocktailsRepo.GetEntityWithSpec(spec);
 
             if (cocktail == null) return NotFound(new ApiResponse(404));
 
-            await _repo.DeleteAsync(cocktail);
+            await _cocktailsRepo.DeleteAsync(cocktail);
 
             return NoContent();
         }

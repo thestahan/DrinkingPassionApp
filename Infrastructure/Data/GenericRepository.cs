@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity, new()
     {
         private readonly AppDbContext _context;
 
@@ -53,18 +53,39 @@ namespace Infrastructure.Data
         public async Task UpdateAsync(T entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
+            _context.Entry(entity).Property(x => x.CreatedDate).IsModified = false;
+
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task<bool> DeleteByIdAsync(int id)
         {
-            _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync();
+            var entity = new T() { Id = id };
+
+            _context.Attach(entity).State = EntityState.Deleted;
+
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
         }
 
-        public async Task<bool> EntityExists(int id)
+        public async Task<bool> DeleteAsync(T entity)
+        {
+            _context.Attach(entity).State = EntityState.Deleted;
+
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
+        }
+
+        public async Task<bool> EntityExistsAsync(int id)
         {
             return await _context.Set<T>().AnyAsync(x => x.Id == id);
+        }
+
+        public async Task<bool> EntityExistsWithSpecAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).AnyAsync();
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)

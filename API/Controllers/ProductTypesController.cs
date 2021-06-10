@@ -59,7 +59,7 @@ namespace API.Controllers
         {
             if (id != typeToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
 
-            if (!await _repo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
+            if (!await _repo.EntityExistsAsync(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
 
             var type = _mapper.Map<ProductType>(typeToUpdate);
 
@@ -71,11 +71,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteProductType(int id)
         {
-            var productType = await _repo.GetByIdAsync(id);
-
-            if (productType == null) return NotFound(new ApiResponse(404));
-
-            await _repo.DeleteAsync(productType);
+            if (! await _repo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
 
             return NoContent();
         }

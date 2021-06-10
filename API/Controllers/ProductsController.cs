@@ -54,9 +54,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductToReturnDto>> AddProduct(ProductToAddDto product)
         {
-            if (!await _productTypesRepo.EntityExists(product.ProductTypeId)) return BadRequest(new ApiResponse(400, "Product type of given id does not exist"));
+            if (!await _productTypesRepo.EntityExistsAsync(product.ProductTypeId)) return BadRequest(new ApiResponse(400, "Product type of given id does not exist"));
 
-            if (!await _productUnitsRepo.EntityExists(product.ProductUnitId)) return BadRequest(new ApiResponse(400, "Product unit of given id does not exist"));
+            if (!await _productUnitsRepo.EntityExistsAsync(product.ProductUnitId)) return BadRequest(new ApiResponse(400, "Product unit of given id does not exist"));
 
             var productToAdd = _mapper.Map<Product>(product);
 
@@ -74,13 +74,13 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateProduct(int id, ProductToUpdateDto productToUpdate)
         {
-            if (!await _productTypesRepo.EntityExists(productToUpdate.ProductTypeId)) return BadRequest(new ApiResponse(400, "Product type of given id does not exist"));
+            if (!await _productTypesRepo.EntityExistsAsync(productToUpdate.ProductTypeId)) return BadRequest(new ApiResponse(400, "Product type of given id does not exist"));
 
-            if (!await _productUnitsRepo.EntityExists(productToUpdate.ProductUnitId)) return BadRequest(new ApiResponse(400, "Product unit of given id does not exist"));
+            if (!await _productUnitsRepo.EntityExistsAsync(productToUpdate.ProductUnitId)) return BadRequest(new ApiResponse(400, "Product unit of given id does not exist"));
 
             if (id != productToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with product's id"));
 
-            if (!await _productsRepo.EntityExists(id)) return BadRequest(new ApiResponse(400, "Product does not exist"));
+            if (!await _productsRepo.EntityExistsAsync(id)) return BadRequest(new ApiResponse(400, "Product does not exist"));
 
             var product = _mapper.Map<Product>(productToUpdate);
 
@@ -92,11 +92,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteProduct(int id)
         {
-            var product = await _productsRepo.GetByIdAsync(id);
-
-            if (product == null) return NotFound(new ApiResponse(404));
-
-            await _productsRepo.DeleteAsync(product);
+            if (!await _productsRepo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
 
             return NoContent();
         }
