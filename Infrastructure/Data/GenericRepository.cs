@@ -60,13 +60,20 @@ namespace Infrastructure.Data
 
         public async Task<bool> DeleteByIdAsync(int id)
         {
-            var entity = new T() { Id = id };
+            try
+            {
+                var entity = new T() { Id = id };
 
-            _context.Attach(entity).State = EntityState.Deleted;
+                _context.Attach(entity).State = EntityState.Deleted;
 
-            var result = await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-            return result > 0;
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> DeleteAsync(T entity)

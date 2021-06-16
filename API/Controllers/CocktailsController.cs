@@ -123,7 +123,15 @@ namespace API.Controllers
         [HttpDelete("{cocktailId}/ingredients/{id}")]
         public async Task<ActionResult> DeleteCocktailIngredient(int cocktailId, int id)
         {
-            return Ok();
+            var spec = new CocktailIngredientExistsSpecification(cocktailId, id);
+
+            if (!await _ingredientsRepo.EntityExistsWithSpecAsync(spec)) return BadRequest(new ApiResponse(400, "Ingredient was not found in given cocktail"));
+
+            if (!await _ingredientsRepo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
+
+            // update ingredients count and base product if needed
+
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
