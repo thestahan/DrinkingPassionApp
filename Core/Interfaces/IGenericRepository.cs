@@ -1,6 +1,8 @@
 ﻿using Core.Entities;
 using Core.Specifications;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Core.Interfaces
@@ -14,6 +16,7 @@ namespace Core.Interfaces
         Task<T> AddAsync(T entity);
         Task<int> CountAsync(ISpecification<T> spec);
         Task UpdateAsync(T entity);
+        Task UpdateSpecifiedPropertiesAsync(T entity, params string[] properties);
         Task<bool> DeleteAsync(T entity);
         Task<bool> DeleteByIdAsync(int id);
         Task<bool> EntityExistsAsync(int id);

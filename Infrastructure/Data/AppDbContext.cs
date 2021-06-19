@@ -39,6 +39,18 @@ namespace Infrastructure.Data
         }
 
         //TODO, cosider using db trigger in production
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.Entity is BaseEntity && e.State == EntityState.Modified);
 
+            foreach (var entityEntry in entries)
+            {
+                ((BaseEntity)entityEntry.Entity).ModifiedDate = DateTime.UtcNow;
+            }
+
+            return await base.SaveChangesAsync(true, cancellationToken);
+        }
     }
 }

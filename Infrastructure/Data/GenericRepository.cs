@@ -4,6 +4,7 @@ using Core.Specifications;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Data
@@ -54,6 +55,18 @@ namespace Infrastructure.Data
         {
             _context.Entry(entity).State = EntityState.Modified;
             _context.Entry(entity).Property(x => x.CreatedDate).IsModified = false;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateSpecifiedPropertiesAsync(T entity, params string[] properties)
+        {
+            _context.Entry(entity).State = EntityState.Unchanged;
+
+            foreach (var property in properties)
+            {
+                _context.Entry(entity).Property(property).IsModified = true;
+            }
 
             await _context.SaveChangesAsync();
         }

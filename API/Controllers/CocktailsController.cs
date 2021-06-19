@@ -97,6 +97,8 @@ namespace API.Controllers
 
             var createdIngredient = await _ingredientsRepo.AddAsync(ingredientToAdd);
 
+            await UpdateCocktailIngredientsCount(cocktailId);
+
             var ingredientToReturn = _mapper.Map<IngredientToReturnDto>(createdIngredient);
 
             return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailId }, ingredientToReturn);
@@ -123,13 +125,9 @@ namespace API.Controllers
         [HttpDelete("{cocktailId}/ingredients/{id}")]
         public async Task<ActionResult> DeleteCocktailIngredient(int cocktailId, int id)
         {
-            var spec = new CocktailIngredientExistsSpecification(cocktailId, id);
-
-            if (!await _ingredientsRepo.EntityExistsWithSpecAsync(spec)) return BadRequest(new ApiResponse(400, "Ingredient was not found in given cocktail"));
-
             if (!await _ingredientsRepo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
 
-            // update ingredients count and base product if needed
+            await UpdateCocktailIngredientsCount(cocktailId);
 
             return NoContent();
         }
@@ -146,6 +144,17 @@ namespace API.Controllers
             await _cocktailsRepo.DeleteAsync(cocktail);
 
             return NoContent();
+        }
+
+        private async Task UpdateCocktailIngredientsCount(int cocktailId)
+        {
+            var spec = new IngredientsCountForCocktailSpecification(cocktailId);
+
+            var ingredientsCount = await _ingredientsRepo.CountAsync(spec);
+
+            var cocktailToUpdate = new Cocktail { Id = cocktailId, IngredientsCount = ingredientsCount };
+
+            await _cocktailsRepo.UpdateSpecifiedPropertiesAsync(cocktailToUpdate, nameof(cocktailToUpdate.IngredientsCount));
         }
     }
 }
