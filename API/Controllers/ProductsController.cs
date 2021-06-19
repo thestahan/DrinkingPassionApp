@@ -12,21 +12,25 @@ namespace API.Controllers
 {
     public class ProductsController : BaseApiController
     {
-        private readonly IGenericRepository<Product> _repo;
+        private readonly IGenericRepository<Product> _productsRepo;
+        private readonly IGenericRepository<ProductUnit> _productUnitsRepo;
+        private readonly IGenericRepository<ProductType> _productTypesRepo;
         private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> repo, IMapper mapper)
+        public ProductsController(IGenericRepository<Product> productsRepo, IGenericRepository<ProductUnit> productUnitsRepo, IGenericRepository<ProductType> productTypesRepo, IMapper mapper)
         {
-            _repo = repo;
+            _productsRepo = productsRepo;
+            _productUnitsRepo = productUnitsRepo;
+            _productTypesRepo = productTypesRepo;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
         {
             var spec = new ProductsWithTypesAndUnitsSpecification();
 
-            var products = await _repo.ListAsync(spec);
+            var products = await _productsRepo.ListAsync(spec);
 
             var productsToReturn = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
 
@@ -34,11 +38,11 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {
             var spec = new ProductsWithTypesAndUnitsSpecification(id);
 
-            var product = await _repo.GetEntityWithSpec(spec);
+            var product = await _productsRepo.GetEntityWithSpec(spec);
 
             var productToReturn = _mapper.Map<ProductToReturnDto>(product);
 
@@ -48,19 +52,49 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> AddProduct(ProductToAddDto product)
+        public async Task<ActionResult<ProductToReturnDto>> AddProduct(ProductToAddDto product)
         {
+            if (!await _productTypesRepo.EntityExistsAsync(product.ProductTypeId)) return BadRequest(new ApiResponse(400, "Product type of given id does not exist"));
+
+            if (!await _productUnitsRepo.EntityExistsAsync(product.ProductUnitId)) return BadRequest(new ApiResponse(400, "Product unit of given id does not exist"));
+
             var productToAdd = _mapper.Map<Product>(product);
 
-            var createdProduct = await _repo.AddAsync(productToAdd);
+            var createdProduct = await _productsRepo.AddAsync(productToAdd);
 
             var spec = new ProductsWithTypesAndUnitsSpecification(createdProduct.Id);
 
-            var createdProductWithTypeAndUnit = await _repo.GetEntityWithSpec(spec);
+            var createdProductWithTypeAndUnit = await _productsRepo.GetEntityWithSpec(spec);
 
             var productToReturn = _mapper.Map<ProductToReturnDto>(createdProductWithTypeAndUnit);
 
             return CreatedAtAction(nameof(GetProduct), new { id = productToReturn.Id }, productToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateProduct(int id, ProductToUpdateDto productToUpdate)
+        {
+            if (!await _productTypesRepo.EntityExistsAsync(productToUpdate.ProductTypeId)) return BadRequest(new ApiResponse(400, "Product type of given id does not exist"));
+
+            if (!await _productUnitsRepo.EntityExistsAsync(productToUpdate.ProductUnitId)) return BadRequest(new ApiResponse(400, "Product unit of given id does not exist"));
+
+            if (id != productToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with product's id"));
+
+            if (!await _productsRepo.EntityExistsAsync(id)) return BadRequest(new ApiResponse(400, "Product does not exist"));
+
+            var product = _mapper.Map<Product>(productToUpdate);
+
+            await _productsRepo.UpdateAsync(product);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProduct(int id)
+        {
+            if (!await _productsRepo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
+
+            return NoContent();
         }
     }
 }

@@ -14,8 +14,10 @@ namespace API.Helpers
         {
             CreateMap<ProductUnit, ProductUnitToReturnDto>();
             CreateMap<ProductUnitToAddDto, ProductUnit>();
+            CreateMap<ProductUnitToUpdateDto, ProductUnit>();
             CreateMap<ProductType, ProductTypeToReturnDto>();
             CreateMap<ProductTypeToAddDto, ProductType>();
+            CreateMap<ProductTypeToUpdateDto, ProductType>();
             CreateMap<Cocktail, CocktailDetailsToReturnDto>()
                 .ForMember(
                     dest => dest.Picture,
@@ -36,14 +38,22 @@ namespace API.Helpers
                     opt => opt.MapFrom(src => src.Product.Name));
             CreateMap<CocktailToAddDto, Cocktail>();
             CreateMap<IngredientToAddDto, Ingredient>();
+            CreateMap<IngredientToUpdateDto, Ingredient>();
             CreateMap<Product, ProductToReturnDto>()
                 .ForMember(
                     dest => dest.ProductUnit,
                     opt => opt.MapFrom(src => src.ProductUnit.Name))
                 .ForMember(
+                    dest => dest.ProductUnitId,
+                    opt => opt.MapFrom(src => src.ProductUnit.Id))
+                .ForMember(
                     dest => dest.ProductType,
-                    opt => opt.MapFrom(src => src.ProductType.Name));
+                    opt => opt.MapFrom(src => src.ProductType.Name))
+                .ForMember(
+                    dest => dest.ProductTypeId,
+                    opt => opt.MapFrom(src => src.ProductType.Id));
             CreateMap<ProductToAddDto, Product>();
+            CreateMap<ProductToUpdateDto, Product>();
             CreateMap<AppUser, UserDetailsDto>();
             CreateMap<UserRegisterDto, AppUser>()
                 .ForMember(

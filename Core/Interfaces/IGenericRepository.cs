@@ -10,8 +10,15 @@ namespace Core.Interfaces
         Task<T> GetByIdAsync(int id);
         Task<IReadOnlyList<T>> ListAllAsync();
         Task<T> GetEntityWithSpec(ISpecification<T> spec);
+        Task<object> GetSpecifiedEntityFieldsWithSpecAsync(ISpecification<T> spec);
         Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec);
         Task<T> AddAsync(T entity);
         Task<int> CountAsync(ISpecification<T> spec);
+        Task UpdateAsync(T entity);
+        Task UpdateSpecifiedPropertiesAsync(T entity, params string[] properties);
+        Task<bool> DeleteAsync(T entity);
+        Task<bool> DeleteByIdAsync(int id);
+        Task<bool> EntityExistsAsync(int id);
+        Task<bool> EntityExistsWithSpecAsync(ISpecification<T> spec);
     }
 }

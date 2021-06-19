@@ -1,4 +1,6 @@
-﻿namespace API.Dtos.Products
+﻿using System;
+
+namespace API.Dtos.Products
 {
     public class ProductUnitToReturnDto
     {

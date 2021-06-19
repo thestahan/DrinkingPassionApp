@@ -2,8 +2,11 @@
 
 namespace API.Dtos.Products
 {
-    public class ProductToAddDto
+    public class ProductToUpdateDto
     {
+        [Required]
+        public int Id { get; set; }
+
         [Required]
         [StringLength(maximumLength: 60, MinimumLength = 2)]
         public string Name { get; set; }
