@@ -7,6 +7,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -97,7 +98,7 @@ namespace API.Controllers
 
             var createdIngredient = await _ingredientsRepo.AddAsync(ingredientToAdd);
 
-            await UpdateCocktailIngredientsCount(cocktailId);
+            await UpdateCocktailIngredientsInfo(cocktailId);
 
             var ingredientToReturn = _mapper.Map<IngredientToReturnDto>(createdIngredient);
 
@@ -113,11 +114,15 @@ namespace API.Controllers
 
             if (!await _ingredientsRepo.EntityExistsWithSpecAsync(spec)) return BadRequest(new ApiResponse(400, "Ingredient was not found in given cocktail"));
 
-            var ingredientToUpdate = _mapper.Map<Ingredient>(ingredient);
+            var ingredientToUpdate = new Ingredient
+            {
+                Id = id,
+                Amount = ingredient.Amount
+            };
 
-            ingredientToUpdate.CocktailId = cocktailId;
+            await _ingredientsRepo.UpdateSpecifiedPropertiesAsync(ingredientToUpdate, nameof(ingredient.Amount));
 
-            await _ingredientsRepo.UpdateAsync(ingredientToUpdate);
+            await UpdateCocktailBaseProductId(cocktailId);
 
             return NoContent();
         }
@@ -127,7 +132,7 @@ namespace API.Controllers
         {
             if (!await _ingredientsRepo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
 
-            await UpdateCocktailIngredientsCount(cocktailId);
+            await UpdateCocktailIngredientsInfo(cocktailId);
 
             return NoContent();
         }
@@ -146,15 +151,48 @@ namespace API.Controllers
             return NoContent();
         }
 
-        private async Task UpdateCocktailIngredientsCount(int cocktailId)
+        private async Task UpdateCocktailBaseProductId(int cocktailId)
+        {
+            int baseProductId = await GetBaseProductId(cocktailId);
+
+            var cocktailToUpdate = new Cocktail
+            {
+                Id = cocktailId,
+                BaseProductId = baseProductId
+            };
+
+            await _cocktailsRepo.UpdateSpecifiedPropertiesAsync(cocktailToUpdate, nameof(cocktailToUpdate.BaseProductId));
+        }
+
+        private async Task UpdateCocktailIngredientsInfo(int cocktailId)
+        {
+            int ingredientsCount = await GetCocktailIngredientsCount(cocktailId);
+
+            int baseProductId = await GetBaseProductId(cocktailId);
+
+            var cocktailToUpdate = new Cocktail 
+            { 
+                Id = cocktailId, 
+                IngredientsCount = ingredientsCount, 
+                BaseProductId = baseProductId
+            };
+
+            await _cocktailsRepo.UpdateSpecifiedPropertiesAsync(cocktailToUpdate, nameof(cocktailToUpdate.IngredientsCount), nameof(cocktailToUpdate.BaseProductId));
+        }
+
+        private async Task<int> GetBaseProductId(int cocktailId)
+        {
+            var spec = new IngredientProductIdByBiggestAmount(cocktailId);
+
+            return Convert.ToInt32(await _ingredientsRepo.GetSpecifiedEntityFieldsWithSpecAsync(spec));
+        }
+
+        private async Task<int> GetCocktailIngredientsCount(int cocktailId)
         {
             var spec = new IngredientsCountForCocktailSpecification(cocktailId);
 
             var ingredientsCount = await _ingredientsRepo.CountAsync(spec);
-
-            var cocktailToUpdate = new Cocktail { Id = cocktailId, IngredientsCount = ingredientsCount };
-
-            await _cocktailsRepo.UpdateSpecifiedPropertiesAsync(cocktailToUpdate, nameof(cocktailToUpdate.IngredientsCount));
+            return ingredientsCount;
         }
     }
 }

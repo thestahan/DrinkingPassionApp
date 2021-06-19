@@ -2,6 +2,7 @@
 using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -106,6 +107,11 @@ namespace Infrastructure.Data
         public async Task<bool> EntityExistsWithSpecAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).AnyAsync();
+        }
+
+        public async Task<object> GetSpecifiedEntityFieldsWithSpecAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).Select(spec.Select).FirstOrDefaultAsync();
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)

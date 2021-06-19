@@ -1,6 +1,5 @@
 ﻿using API.Dtos.Cocktails;
 using Core.Entities;
-using System.Linq;
 
 namespace API.Helpers
 {
@@ -12,9 +11,6 @@ namespace API.Helpers
             cocktail.Picture = toUpdate.Picture;
             cocktail.Description = toUpdate.Description;
             cocktail.PreparationInstruction = toUpdate.PreparationInstruction;
-            //cocktail.BaseProductId = toUpdate.Ingredients.OrderByDescending(x => x.Amount)
-            //    .Select(x => x.ProductId)
-            //    .FirstOrDefault();
 
             return cocktail;
         }

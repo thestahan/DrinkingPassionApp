@@ -28,6 +28,8 @@ namespace Core
 
         public Expression<Func<T, object>> OrderByDescending { get; private set; }
 
+        public Expression<Func<T, object>> Select { get; private set; }
+
         public int Take { get; private set; }
 
         public int Skip { get; private set; }
@@ -52,6 +54,11 @@ namespace Core
         protected void AddOrderByDescending(Expression<Func<T, object>> orderByDscExpression)
         {
             OrderByDescending = orderByDscExpression;
+        }
+
+        protected void AddSelect(Expression<Func<T, object>> selectExpression)
+        {
+            Select = selectExpression;
         }
 
         protected void ApplyPaging(int skip, int take)
