@@ -6,6 +6,10 @@
   font-family: "Noto Sans JP", sans-serif;
 }
 
+.primary-color {
+  color: var(--primary-color);
+}
+
 /* .router-link-active {
   @apply border-blue-500 bg-indigo-700 !important;
 }
