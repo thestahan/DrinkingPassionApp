@@ -1,43 +1,112 @@
 <template>
-  <header class="p-m-4">
-    <h3 class="p-text-center main-font secondary-heading-font">
-      Informacje o Tobie
-    </h3>
-  </header>
+  <div class="p-d-flex p-jc-center">
+    <div class="p-px-3" style="max-width: 38rem; width: 100%">
+      <header class="p-m-4">
+        <h3 class="p-text-center main-font secondary-heading-font">
+          Informacje o Tobie
+        </h3>
+      </header>
 
-  <section class="p-grid p-flex-column p-m-4" v-if="displayName">
-    <div class="p3-col p-mb-2">
-      <span class="p-text-bold primary-color">Nazwa wyświetlana:</span>
-      <p>{{ displayName }}</p>
+      <section class="p-grid p-flex-column p-m-4" v-if="displayName">
+        <div class="p3-col p-mb-4">
+          <div class="p-d-flex p-jc-between p-ai-center">
+            <div>
+              <h4 class="p-text-bold primary-color user-property-title">
+                Nazwa wyświetlana:
+              </h4>
+              <p>{{ displayName }}</p>
+            </div>
+            <div styl="margin: auto">
+              <!-- prettier-ignore -->
+              <button
+                class="p-button p-component p-button-icon-only p-button-rounded p-button-success p-mr-2"
+              >
+                <span class="pi pi-pencil p-button-icon"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p3-col p-mb-4">
+          <div class="p-d-flex p-jc-between p-ai-center">
+            <div>
+              <h4 class="p-text-bold primary-color user-property-title">
+                Adres email:
+              </h4>
+              <p>{{ email }}</p>
+            </div>
+            <div styl="margin: auto">
+              <!-- prettier-ignore -->
+              <button
+                class="p-button p-component p-button-icon-only p-button-rounded p-button-success p-mr-2"
+              >
+                <span class="pi pi-pencil p-button-icon"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="p3-col p-mb-4">
+          <div class="p-d-flex p-jc-between p-ai-center">
+            <div>
+              <h4 class="p-text-bold primary-color user-property-title">
+                Twoje doświadczenie w bramaństwie:
+              </h4>
+              <p>{{ bartenderTypeName }}</p>
+            </div>
+            <div styl="margin: auto">
+              <!-- prettier-ignore -->
+              <button
+                @click="displayEditDialog = true"
+                class="p-button p-component p-button-icon-only p-button-rounded p-button-success p-mr-2"
+              >
+                <span class="pi pi-pencil p-button-icon"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
+  </div>
+  <Dialog
+    v-model:visible="displayEditDialog"
+    :modal="true"
+    :closeOnEscape="true"
+    :dismissableMask="true"
+  >
+    <template #header>
+      <h3>Twoje doświadczenie w barmaństwie</h3>
+    </template>
 
-    <div class="p3-col p-mb-2">
-      <span class="p-text-bold primary-color">Adres email:</span>
-      <p>{{ email }}</p>
-    </div>
+    Tutaj content do wypełnienia
 
-    <div class="p3-col p-mb-2">
-      <span class="p-text-bold primary-color"
-        >Twoje doświadczenie w bramaństwie:</span
-      >
-      <p>{{ bartenderTypeName }}</p>
-    </div>
-  </section>
-
+    <template #footer>
+      <Button
+        label="Anuluj"
+        icon="pi pi-times"
+        class="p-button-text"
+        @click="displayEditDialog = false"
+      />
+      <Button label="Zapisz" icon="pi pi-check" />
+    </template>
+  </Dialog>
   <spinner v-if="isLoading"></spinner>
 </template>
 
 <script>
 import Spinner from "../../utilities/Spinner.vue";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
 
 export default {
-  components: { Spinner },
+  components: { Spinner, Dialog, Button },
   data() {
     return {
       isLoading: false,
       displayName: null,
       email: null,
       bartenderType: null,
+      displayEditDialog: false,
     };
   },
   computed: {
@@ -90,5 +159,10 @@ export default {
 .secondary-heading-font {
   font-size: 1.5rem;
   font-weight: 300;
+}
+
+.user-property-title {
+  font-size: 1.2rem;
+  font-weight: 400;
 }
 </style>
