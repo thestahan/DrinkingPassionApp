@@ -1,68 +1,62 @@
 <template>
   <div class="p-d-flex p-jc-center">
-    <div class="p-px-3" style="max-width: 38rem; width: 100%">
+    <div class="p-px-3" style="max-width: 44rem; width: 100%">
       <header class="p-m-4">
         <h3 class="p-text-center main-font secondary-heading-font">
           Informacje o Tobie
         </h3>
       </header>
 
-      <section class="p-grid p-flex-column p-m-4" v-if="displayName">
-        <div class="p3-col p-mb-4">
-          <div class="p-d-flex p-jc-between p-ai-center">
-            <div>
-              <h4 class="p-text-bold primary-color user-property-title">
-                Nazwa wyświetlana:
-              </h4>
-              <p>{{ displayName }}</p>
+      <section>
+        <div class="p-grid">
+          <div class="p-col-12 p-md-6">
+            <div class="p-grid p-fluid">
+              <div class="p-col p-field">
+                <label for="firstName" class="p-text-bold primary-color"
+                  >Imię</label
+                >
+                <InputText
+                  type="text"
+                  v-model="firstName"
+                  style="width: 100%"
+                />
+              </div>
+              <div class="p-col p-field">
+                <label for="lastName" class="p-text-bold primary-color"
+                  >Nazwisko</label
+                >
+                <InputText type="text" v-model="lastName" style="width: 100%" />
+              </div>
             </div>
-            <div styl="margin: auto">
-              <!-- prettier-ignore -->
-              <button
-                class="p-button p-component p-button-icon-only p-button-rounded p-button-success p-mr-2"
-              >
-                <span class="pi pi-pencil p-button-icon"></span>
-              </button>
+
+            <div class="p-grid p-fluid">
+              <div class="p-col p-field">
+                <label for="displayName" class="p-text-bold primary-color"
+                  >Nazwa wyświetlana</label
+                >
+                <InputText
+                  type="text"
+                  v-model="displayName"
+                  style="width: 100%"
+                />
+              </div>
+            </div>
+
+            <div class="p-grid p-fliud">
+              <div class="p-col p-field">
+                <label for="email" class="p-text-bold primary-color"
+                  >Adres email</label
+                >
+                <InputText type="text" v-model="email" style="width: 100%" />
+              </div>
             </div>
           </div>
+          <div class="p-col-12 p-md-6">avatar, doświadczenie, zmiana hasła</div>
         </div>
 
-        <div class="p3-col p-mb-4">
-          <div class="p-d-flex p-jc-between p-ai-center">
-            <div>
-              <h4 class="p-text-bold primary-color user-property-title">
-                Adres email:
-              </h4>
-              <p>{{ email }}</p>
-            </div>
-            <div styl="margin: auto">
-              <!-- prettier-ignore -->
-              <button
-                class="p-button p-component p-button-icon-only p-button-rounded p-button-success p-mr-2"
-              >
-                <span class="pi pi-pencil p-button-icon"></span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="p3-col p-mb-4">
-          <div class="p-d-flex p-jc-between p-ai-center">
-            <div>
-              <h4 class="p-text-bold primary-color user-property-title">
-                Twoje doświadczenie w bramaństwie:
-              </h4>
-              <p>{{ bartenderTypeName }}</p>
-            </div>
-            <div styl="margin: auto">
-              <!-- prettier-ignore -->
-              <button
-                @click="displayEditDialog = true"
-                class="p-button p-component p-button-icon-only p-button-rounded p-button-success p-mr-2"
-              >
-                <span class="pi pi-pencil p-button-icon"></span>
-              </button>
-            </div>
+        <div class="p-grid">
+          <div class="p-col">
+            <Button class="save-button" label="Zapisz zmiany"></Button>
           </div>
         </div>
       </section>
@@ -97,12 +91,15 @@
 import Spinner from "../../utilities/Spinner.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
+import InputText from "primevue/inputtext";
 
 export default {
-  components: { Spinner, Dialog, Button },
+  components: { Spinner, Dialog, Button, InputText },
   data() {
     return {
       isLoading: false,
+      firstName: "Adam",
+      lastName: "Nowak",
       displayName: null,
       email: null,
       bartenderType: null,
@@ -156,13 +153,17 @@ export default {
 </script>
 
 <style scoped>
+.save-button {
+  width: 100%;
+}
+
 .secondary-heading-font {
   font-size: 1.5rem;
   font-weight: 300;
 }
 
 .user-property-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 400;
 }
 </style>
