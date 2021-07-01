@@ -51,7 +51,30 @@
               </div>
             </div>
           </div>
-          <div class="p-col-12 p-md-6">avatar, doświadczenie, zmiana hasła</div>
+          <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-jc-between">
+            <div class="p-grid p-fluid">
+              <div class="p-col p-field">
+                <label for="bartenderType" class="p-text-bold primary-color"
+                  >Doświadczenie w barmaństwie</label
+                >
+                <Dropdown
+                  v-model="bartenderType"
+                  :modelValue="bartenderType"
+                  :options="bartenderTypeOptions"
+                  optionLabel="name"
+                />
+              </div>
+            </div>
+            <div class="p-grid">
+              <div class="p-col">
+                <Button
+                  class="p-button-secondary change-password-button"
+                  label="Zmień hasło"
+                  style="margin-bottom: 1rem"
+                ></Button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="p-grid">
@@ -92,9 +115,10 @@ import Spinner from "../../utilities/Spinner.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
+import Dropdown from "primevue/dropdown";
 
 export default {
-  components: { Spinner, Dialog, Button, InputText },
+  components: { Spinner, Dialog, Button, InputText, Dropdown },
   data() {
     return {
       isLoading: false,
@@ -104,6 +128,10 @@ export default {
       email: null,
       bartenderType: null,
       displayEditDialog: false,
+      bartenderTypeOptions: [
+        { name: "Hobbysta", code: 1 },
+        { name: "Zawodowiec", code: 2 },
+      ],
     };
   },
   computed: {
@@ -146,13 +174,21 @@ export default {
 
       this.displayName = responseData.displayName;
       this.email = responseData.email;
-      this.bartenderType = responseData.bartenderType;
+      if (responseData.bartenderType == 1) {
+        this.bartenderType = { name: "Hobbysta", code: 1 };
+      } else if (responseData.bartenderType == 2) {
+        this.bartenderType = { name: "Zawodowiec", code: 2 };
+      }
     },
   },
 };
 </script>
 
 <style scoped>
+.change-password-button {
+  width: 100%;
+}
+
 .save-button {
   width: 100%;
 }
