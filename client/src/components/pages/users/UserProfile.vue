@@ -8,105 +8,161 @@
       </header>
 
       <section>
-        <div class="p-grid">
-          <div class="p-col-12 p-md-6">
-            <div class="p-grid p-fluid">
-              <div class="p-col p-field">
-                <label for="firstName" class="p-text-bold primary-color"
-                  >Imię</label
-                >
-                <InputText
-                  type="text"
-                  v-model="firstName"
-                  style="width: 100%"
-                />
+        <form @submit.prevent="submitSaveProfile()">
+          <div class="p-grid">
+            <div class="p-col-12 p-md-6">
+              <div class="p-grid p-fluid">
+                <div class="p-col p-field">
+                  <label for="firstName" class="p-text-bold primary-color"
+                    >Imię</label
+                  >
+                  <InputText
+                    type="text"
+                    v-model="firstName"
+                    style="width: 100%"
+                  />
+                </div>
+                <div class="p-col p-field">
+                  <label for="lastName" class="p-text-bold primary-color"
+                    >Nazwisko</label
+                  >
+                  <InputText
+                    type="text"
+                    v-model="lastName"
+                    style="width: 100%"
+                  />
+                </div>
               </div>
-              <div class="p-col p-field">
-                <label for="lastName" class="p-text-bold primary-color"
-                  >Nazwisko</label
-                >
-                <InputText type="text" v-model="lastName" style="width: 100%" />
+
+              <div class="p-grid p-fluid">
+                <div class="p-col p-field">
+                  <label for="displayName" class="p-text-bold primary-color"
+                    >Nazwa wyświetlana</label
+                  >
+                  <InputText
+                    type="text"
+                    v-model="displayName"
+                    style="width: 100%"
+                  />
+                </div>
+              </div>
+
+              <div class="p-grid p-fliud">
+                <div class="p-col p-field">
+                  <label for="email" class="p-text-bold primary-color"
+                    >Adres email</label
+                  >
+                  <InputText type="text" v-model="email" style="width: 100%" />
+                </div>
               </div>
             </div>
-
-            <div class="p-grid p-fluid">
-              <div class="p-col p-field">
-                <label for="displayName" class="p-text-bold primary-color"
-                  >Nazwa wyświetlana</label
-                >
-                <InputText
-                  type="text"
-                  v-model="displayName"
-                  style="width: 100%"
-                />
+            <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-jc-between">
+              <div class="p-grid p-fluid">
+                <div class="p-col p-field">
+                  <label for="bartenderType" class="p-text-bold primary-color"
+                    >Doświadczenie w barmaństwie</label
+                  >
+                  <Dropdown
+                    v-model="bartenderType"
+                    :modelValue="bartenderType"
+                    :options="bartenderTypeOptions"
+                    optionLabel="name"
+                  />
+                </div>
               </div>
-            </div>
-
-            <div class="p-grid p-fliud">
-              <div class="p-col p-field">
-                <label for="email" class="p-text-bold primary-color"
-                  >Adres email</label
-                >
-                <InputText type="text" v-model="email" style="width: 100%" />
+              <div class="p-grid">
+                <div class="p-col">
+                  <Button
+                    class="p-button-secondary change-password-button"
+                    label="Zmień hasło"
+                    style="margin-bottom: 1rem"
+                    @click="openChangePasswordDialog"
+                  ></Button>
+                </div>
               </div>
             </div>
           </div>
-          <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-jc-between">
-            <div class="p-grid p-fluid">
-              <div class="p-col p-field">
-                <label for="bartenderType" class="p-text-bold primary-color"
-                  >Doświadczenie w barmaństwie</label
-                >
-                <Dropdown
-                  v-model="bartenderType"
-                  :modelValue="bartenderType"
-                  :options="bartenderTypeOptions"
-                  optionLabel="name"
-                />
-              </div>
-            </div>
-            <div class="p-grid">
-              <div class="p-col">
-                <Button
-                  class="p-button-secondary change-password-button"
-                  label="Zmień hasło"
-                  style="margin-bottom: 1rem"
-                ></Button>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="p-grid">
-          <div class="p-col">
-            <Button class="save-button" label="Zapisz zmiany"></Button>
+          <div class="p-grid">
+            <div class="p-col">
+              <Button
+                type="submit"
+                class="save-button"
+                label="Zapisz zmiany"
+              ></Button>
+            </div>
           </div>
-        </div>
+        </form>
       </section>
     </div>
   </div>
+
   <Dialog
-    v-model:visible="displayEditDialog"
+    v-model:visible="displayChangePasswordDialog"
     :modal="true"
     :closeOnEscape="true"
     :dismissableMask="true"
+    :breakpoints="{ '960px': '95vw' }"
+    :style="{ width: '50vw' }"
+    header="Zmiana hasła"
   >
-    <template #header>
-      <h3>Twoje doświadczenie w barmaństwie</h3>
-    </template>
+    <form @submit.prevent="submitChangePassword()">
+      <div class="p-grid p-fluid">
+        <div class="p-col p-field">
+          <label for="currentPassword" class="p-text-bold primary-color"
+            >Aktualne hasło</label
+          >
+          <Password
+            v-model="currentPassword"
+            :feedback="false"
+            toggleMask
+            style="width: 100%"
+          />
+        </div>
+      </div>
 
-    Tutaj content do wypełnienia
+      <div class="p-grid p-fluid">
+        <div class="p-col p-field">
+          <label for="newPassword" class="p-text-bold primary-color"
+            >Nowe hasło</label
+          >
+          <Password
+            v-model="newPassword"
+            :feedback="false"
+            toggleMask
+            style="width: 100%"
+          />
+        </div>
+      </div>
 
-    <template #footer>
-      <Button
-        label="Anuluj"
-        icon="pi pi-times"
-        class="p-button-text"
-        @click="displayEditDialog = false"
-      />
-      <Button label="Zapisz" icon="pi pi-check" />
-    </template>
+      <div class="p-grid p-fluid">
+        <div class="p-col p-field">
+          <label for="newPasswordRepeated" class="p-text-bold primary-color"
+            >Powtórz nowe hasło</label
+          >
+          <Password
+            v-model="newPasswordRepeated"
+            :feedback="false"
+            toggleMask
+            style="width: 100%"
+          />
+        </div>
+      </div>
+
+      <div class="p-grid p-mt-2">
+        <div class="p-col" style="text-align: right">
+          <Button
+            label="Anuluj"
+            icon="pi pi-times"
+            class="p-button-text"
+            @click="closeChangePasswordDialog"
+          />
+          <Button type="submit" label="Zapisz" icon="pi pi-check" />
+        </div>
+      </div>
+    </form>
   </Dialog>
+
   <spinner v-if="isLoading"></spinner>
 </template>
 
@@ -116,9 +172,10 @@ import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
+import Password from "primevue/password";
 
 export default {
-  components: { Spinner, Dialog, Button, InputText, Dropdown },
+  components: { Spinner, Dialog, Button, InputText, Dropdown, Password },
   data() {
     return {
       isLoading: false,
@@ -127,7 +184,10 @@ export default {
       displayName: null,
       email: null,
       bartenderType: null,
-      displayEditDialog: false,
+      displayChangePasswordDialog: false,
+      currentPassword: null,
+      newPassword: null,
+      newPasswordRepeated: null,
       bartenderTypeOptions: [
         { name: "Hobbysta", code: 1 },
         { name: "Zawodowiec", code: 2 },
@@ -179,6 +239,40 @@ export default {
       } else if (responseData.bartenderType == 2) {
         this.bartenderType = { name: "Zawodowiec", code: 2 };
       }
+    },
+    async submitSaveProfile() {
+      this.isLoading = true;
+
+      const model = {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        displayName: this.displayName,
+        email: this.email,
+        bartenderType: this.bartenderType.code,
+      };
+
+      console.log(model);
+
+      this.isLoading = false;
+    },
+    async submitChangePassword() {
+      this.isLoading = true;
+
+      const model = {
+        currentPassword: this.currentPassword,
+        newPassword: this.newPassword,
+        newPasswordRepeated: this.newPasswordRepeated,
+      };
+
+      console.log(model);
+
+      this.isLoading = false;
+    },
+    openChangePasswordDialog() {
+      this.displayChangePasswordDialog = true;
+    },
+    closeChangePasswordDialog() {
+      this.displayChangePasswordDialog = false;
     },
   },
 };
