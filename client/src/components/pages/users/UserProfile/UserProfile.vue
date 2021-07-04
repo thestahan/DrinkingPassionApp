@@ -7,92 +7,9 @@
         </h3>
       </header>
 
-      <section>
-        <form @submit.prevent="submitSaveProfile()">
-          <div class="p-grid">
-            <div class="p-col-12 p-md-6">
-              <div class="p-grid p-fluid">
-                <div class="p-col p-field">
-                  <label for="firstName" class="p-text-bold primary-color"
-                    >Imię</label
-                  >
-                  <InputText
-                    type="text"
-                    v-model="firstName"
-                    style="width: 100%"
-                  />
-                </div>
-                <div class="p-col p-field">
-                  <label for="lastName" class="p-text-bold primary-color"
-                    >Nazwisko</label
-                  >
-                  <InputText
-                    type="text"
-                    v-model="lastName"
-                    style="width: 100%"
-                  />
-                </div>
-              </div>
-
-              <div class="p-grid p-fluid">
-                <div class="p-col p-field">
-                  <label for="displayName" class="p-text-bold primary-color"
-                    >Nazwa wyświetlana</label
-                  >
-                  <InputText
-                    type="text"
-                    v-model="displayName"
-                    style="width: 100%"
-                  />
-                </div>
-              </div>
-
-              <div class="p-grid p-fliud">
-                <div class="p-col p-field">
-                  <label for="email" class="p-text-bold primary-color"
-                    >Adres email</label
-                  >
-                  <InputText type="text" v-model="email" style="width: 100%" />
-                </div>
-              </div>
-            </div>
-            <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-jc-between">
-              <div class="p-grid p-fluid">
-                <div class="p-col p-field">
-                  <label for="bartenderType" class="p-text-bold primary-color"
-                    >Doświadczenie w barmaństwie</label
-                  >
-                  <Dropdown
-                    v-model="bartenderType"
-                    :modelValue="bartenderType"
-                    :options="bartenderTypeOptions"
-                    optionLabel="name"
-                  />
-                </div>
-              </div>
-              <div class="p-grid">
-                <div class="p-col">
-                  <Button
-                    class="p-button-secondary change-password-button"
-                    label="Zmień hasło"
-                    style="margin-bottom: 1rem"
-                    @click="openChangePasswordDialog"
-                  ></Button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="p-grid">
-            <div class="p-col">
-              <Button
-                type="submit"
-                class="save-button"
-                label="Zapisz zmiany"
-              ></Button>
-            </div>
-          </div>
-        </form>
+      <section v-if="userData">
+        <save-profile-form :userData="userData" v-on:submit="submitSaveProfile">
+        </save-profile-form>
       </section>
     </div>
   </div>
@@ -118,6 +35,9 @@
             toggleMask
             style="width: 100%"
           />
+          <p v-for="error of v$.currentPassword.$errors" :key="error.$uid">
+            <small class="p-error">{{ error.$message }}</small>
+          </p>
         </div>
       </div>
 
@@ -132,6 +52,9 @@
             toggleMask
             style="width: 100%"
           />
+          <p v-for="error of v$.newPassword.$errors" :key="error.$uid">
+            <small class="p-error">{{ error.$message }}</small>
+          </p>
         </div>
       </div>
 
@@ -146,6 +69,9 @@
             toggleMask
             style="width: 100%"
           />
+          <p v-for="error of v$.newPasswordRepeated.$errors" :key="error.$uid">
+            <small class="p-error">{{ error.$message }}</small>
+          </p>
         </div>
       </div>
 
@@ -167,23 +93,31 @@
 </template>
 
 <script>
-import Spinner from "../../utilities/Spinner.vue";
+import SaveProfileForm from "../UserProfile/SaveProfileForm.vue";
+import Spinner from "../../../utilities/Spinner.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import Dropdown from "primevue/dropdown";
 import Password from "primevue/password";
+import useVuelidate from "@vuelidate/core";
+import { required, helpers, sameAs, minLength } from "@vuelidate/validators";
 
 export default {
-  components: { Spinner, Dialog, Button, InputText, Dropdown, Password },
+  components: {
+    SaveProfileForm,
+    Spinner,
+    Dialog,
+    Button,
+    Password,
+  },
+  setup() {
+    return {
+      v$: useVuelidate(),
+    };
+  },
   data() {
     return {
+      userData: {},
       isLoading: false,
-      firstName: "Adam",
-      lastName: "Nowak",
-      displayName: null,
-      email: null,
-      bartenderType: null,
       displayChangePasswordDialog: false,
       currentPassword: null,
       newPassword: null,
@@ -232,30 +166,30 @@ export default {
         throw error;
       }
 
-      this.displayName = responseData.displayName;
-      this.email = responseData.email;
+      this.userData.firstName = "Adam";
+      this.userData.lastName = "Nowak";
+      this.userData.displayName = responseData.displayName;
+      this.userData.email = responseData.email;
       if (responseData.bartenderType == 1) {
-        this.bartenderType = { name: "Hobbysta", code: 1 };
+        this.userData.bartenderType = { name: "Hobbysta", code: 1 };
       } else if (responseData.bartenderType == 2) {
-        this.bartenderType = { name: "Zawodowiec", code: 2 };
+        this.userData.bartenderType = { name: "Zawodowiec", code: 2 };
       }
     },
-    async submitSaveProfile() {
+    async submitSaveProfile(user) {
       this.isLoading = true;
 
-      const model = {
-        firstName: this.firstName,
-        lastName: this.lastName,
-        displayName: this.displayName,
-        email: this.email,
-        bartenderType: this.bartenderType.code,
-      };
-
-      console.log(model);
+      console.log(user);
 
       this.isLoading = false;
     },
     async submitChangePassword() {
+      this.v$.$touch();
+
+      if (this.v$.$error) {
+        return;
+      }
+
       this.isLoading = true;
 
       const model = {
@@ -275,18 +209,34 @@ export default {
       this.displayChangePasswordDialog = false;
     },
   },
+  validations() {
+    return {
+      currentPassword: {
+        required: helpers.withMessage("To pole jest wymagane", required),
+        minLength: helpers.withMessage(
+          "Hasło musi zawierać minimum 8 znaków",
+          minLength(8)
+        ),
+      },
+      newPassword: {
+        required: helpers.withMessage("To pole jest wymagane", required),
+        minLength: helpers.withMessage(
+          "Hasło musi zawierać minimum 8 znaków",
+          minLength(8)
+        ),
+      },
+      newPasswordRepeated: {
+        repeatPassword: helpers.withMessage(
+          "Podane hasła muszą być identyczne",
+          sameAs(this.newPassword)
+        ),
+      },
+    };
+  },
 };
 </script>
 
 <style scoped>
-.change-password-button {
-  width: 100%;
-}
-
-.save-button {
-  width: 100%;
-}
-
 .secondary-heading-font {
   font-size: 1.5rem;
   font-weight: 300;
