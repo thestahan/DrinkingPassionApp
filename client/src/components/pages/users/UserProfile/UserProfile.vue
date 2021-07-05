@@ -8,7 +8,11 @@
       </header>
 
       <section v-if="userData">
-        <save-profile-form :userData="userData" v-on:submit="submitSaveProfile">
+        <save-profile-form
+          :userData="userData"
+          v-on:submit="submitSaveProfile"
+          v-on:open-password-dialog="openChangePasswordDialog"
+        >
         </save-profile-form>
       </section>
     </div>
@@ -23,70 +27,10 @@
     :style="{ width: '50vw' }"
     header="Zmiana hasła"
   >
-    <form @submit.prevent="submitChangePassword()">
-      <div class="p-grid p-fluid">
-        <div class="p-col p-field">
-          <label for="currentPassword" class="p-text-bold primary-color"
-            >Aktualne hasło</label
-          >
-          <Password
-            v-model="currentPassword"
-            :feedback="false"
-            toggleMask
-            style="width: 100%"
-          />
-          <p v-for="error of v$.currentPassword.$errors" :key="error.$uid">
-            <small class="p-error">{{ error.$message }}</small>
-          </p>
-        </div>
-      </div>
-
-      <div class="p-grid p-fluid">
-        <div class="p-col p-field">
-          <label for="newPassword" class="p-text-bold primary-color"
-            >Nowe hasło</label
-          >
-          <Password
-            v-model="newPassword"
-            :feedback="false"
-            toggleMask
-            style="width: 100%"
-          />
-          <p v-for="error of v$.newPassword.$errors" :key="error.$uid">
-            <small class="p-error">{{ error.$message }}</small>
-          </p>
-        </div>
-      </div>
-
-      <div class="p-grid p-fluid">
-        <div class="p-col p-field">
-          <label for="newPasswordRepeated" class="p-text-bold primary-color"
-            >Powtórz nowe hasło</label
-          >
-          <Password
-            v-model="newPasswordRepeated"
-            :feedback="false"
-            toggleMask
-            style="width: 100%"
-          />
-          <p v-for="error of v$.newPasswordRepeated.$errors" :key="error.$uid">
-            <small class="p-error">{{ error.$message }}</small>
-          </p>
-        </div>
-      </div>
-
-      <div class="p-grid p-mt-2">
-        <div class="p-col" style="text-align: right">
-          <Button
-            label="Anuluj"
-            icon="pi pi-times"
-            class="p-button-text"
-            @click="closeChangePasswordDialog"
-          />
-          <Button type="submit" label="Zapisz" icon="pi pi-check" />
-        </div>
-      </div>
-    </form>
+    <change-password-form
+      v-on:close-password-dialog="closeChangePasswordDialog"
+      v-on:submit-change-password="submitChangePassword"
+    ></change-password-form>
   </Dialog>
 
   <spinner v-if="isLoading"></spinner>
@@ -94,34 +38,22 @@
 
 <script>
 import SaveProfileForm from "../UserProfile/SaveProfileForm.vue";
+import ChangePasswordForm from "../UserProfile/ChangePasswordForm.vue";
 import Spinner from "../../../utilities/Spinner.vue";
 import Dialog from "primevue/dialog";
-import Button from "primevue/button";
-import Password from "primevue/password";
-import useVuelidate from "@vuelidate/core";
-import { required, helpers, sameAs, minLength } from "@vuelidate/validators";
 
 export default {
   components: {
     SaveProfileForm,
+    ChangePasswordForm,
     Spinner,
     Dialog,
-    Button,
-    Password,
-  },
-  setup() {
-    return {
-      v$: useVuelidate(),
-    };
   },
   data() {
     return {
       userData: {},
       isLoading: false,
       displayChangePasswordDialog: false,
-      currentPassword: null,
-      newPassword: null,
-      newPasswordRepeated: null,
       bartenderTypeOptions: [
         { name: "Hobbysta", code: 1 },
         { name: "Zawodowiec", code: 2 },
@@ -183,20 +115,8 @@ export default {
 
       this.isLoading = false;
     },
-    async submitChangePassword() {
-      this.v$.$touch();
-
-      if (this.v$.$error) {
-        return;
-      }
-
+    async submitChangePassword(model) {
       this.isLoading = true;
-
-      const model = {
-        currentPassword: this.currentPassword,
-        newPassword: this.newPassword,
-        newPasswordRepeated: this.newPasswordRepeated,
-      };
 
       console.log(model);
 
@@ -208,30 +128,6 @@ export default {
     closeChangePasswordDialog() {
       this.displayChangePasswordDialog = false;
     },
-  },
-  validations() {
-    return {
-      currentPassword: {
-        required: helpers.withMessage("To pole jest wymagane", required),
-        minLength: helpers.withMessage(
-          "Hasło musi zawierać minimum 8 znaków",
-          minLength(8)
-        ),
-      },
-      newPassword: {
-        required: helpers.withMessage("To pole jest wymagane", required),
-        minLength: helpers.withMessage(
-          "Hasło musi zawierać minimum 8 znaków",
-          minLength(8)
-        ),
-      },
-      newPasswordRepeated: {
-        repeatPassword: helpers.withMessage(
-          "Podane hasła muszą być identyczne",
-          sameAs(this.newPassword)
-        ),
-      },
-    };
   },
 };
 </script>

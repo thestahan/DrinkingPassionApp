@@ -76,6 +76,7 @@
               class="p-button-secondary change-password-button"
               label="Zmień hasło"
               style="margin-bottom: 1rem"
+              @click="emitOpenChangePassword"
             ></Button>
           </div>
         </div>
@@ -127,11 +128,19 @@ export default {
       this.v$.$touch();
 
       if (this.v$.$error) {
-        console.log(this.v$);
         return;
       }
 
-      this.$emit("submit", this.user);
+      this.$emit("submit", {
+        firstName: this.user.firstName,
+        lastName: this.user.lastName,
+        displayName: this.user.lastName,
+        email: this.user.email,
+        bartenderType: this.user.bartenderType.code,
+      });
+    },
+    emitOpenChangePassword() {
+      this.$emit("open-password-dialog");
     },
   },
   validations() {
