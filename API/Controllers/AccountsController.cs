@@ -99,5 +99,12 @@ namespace API.Controllers
                 DisplayName = user.DisplayName
             };
         }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult> UpdateUserProfile()
+        {
+            return NoContent();
+        }
     }
 }

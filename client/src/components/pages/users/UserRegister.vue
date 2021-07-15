@@ -22,6 +22,40 @@
         </div>
       </div>
       <form @submit.prevent="submitForm()" class="p-fluid p-mt-5">
+        <div class="p-grid p-fluid">
+          <div class="p-col p-field">
+            <div class="p-float-label">
+              <InputText
+                type="text"
+                v-model="firstName"
+                :class="{ 'p-invalid': v$.firstName.$error }"
+                style="width: 100%"
+              />
+              <label for="firstName" class="p-text-bold primary-color"
+                >Imię</label
+              >
+            </div>
+            <p v-for="error of v$.firstName.$errors" :key="error.$uid">
+              <small class="p-error">{{ error.$message }}</small>
+            </p>
+          </div>
+          <div class="p-col p-field">
+            <div class="p-float-label">
+              <InputText
+                type="text"
+                v-model="lastName"
+                :class="{ 'p-invalid': v$.lastName.$error }"
+                style="width: 100%"
+              />
+              <label for="lastName" class="p-text-bold primary-color"
+                >Nazwisko</label
+              >
+            </div>
+            <p v-for="error of v$.lastName.$errors" :key="error.$uid">
+              <small class="p-error">{{ error.$message }}</small>
+            </p>
+          </div>
+        </div>
         <div class="p-field p-pb-2">
           <div class="p-float-label">
             <InputText
@@ -144,6 +178,7 @@ import {
   helpers,
   sameAs,
   minLength,
+  maxLength,
 } from "@vuelidate/validators";
 
 export default {
@@ -162,6 +197,8 @@ export default {
   },
   data() {
     return {
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       passwordConfirm: "",
@@ -183,9 +220,12 @@ export default {
 
       try {
         await this.$store.dispatch("signUp", {
+          firstName: this.firstName,
+          lastName: this.lastName,
           email: this.email,
           password: this.password,
           displayName: this.displayName,
+          bartenderType: this.bartenderType == "hobbyst" ? 1 : 2,
         });
 
         this.redirectToLogin();
@@ -204,6 +244,26 @@ export default {
   },
   validations() {
     return {
+      firstName: {
+        minLength: helpers.withMessage(
+          "Imię musi być dłuższe niż 2 litery",
+          minLength(2)
+        ),
+        maxLength: helpers.withMessage(
+          "Imię nie może być dłuższe niż 60 liter",
+          maxLength(60)
+        ),
+      },
+      lastName: {
+        minLength: helpers.withMessage(
+          "Nazwisko musi być dłuższe niż 2 litery",
+          minLength(2)
+        ),
+        maxLength: helpers.withMessage(
+          "Nazwisko nie może być dłuższe niż 60 liter",
+          maxLength(60)
+        ),
+      },
       displayName: {
         required: helpers.withMessage("To pole jest wymagane", required),
         minLength: helpers.withMessage(

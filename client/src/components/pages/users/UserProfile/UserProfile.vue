@@ -98,8 +98,8 @@ export default {
         throw error;
       }
 
-      this.userData.firstName = "Adam";
-      this.userData.lastName = "Nowak";
+      this.userData.firstName = responseData.firstName;
+      this.userData.lastName = responseData.lastName;
       this.userData.displayName = responseData.displayName;
       this.userData.email = responseData.email;
       if (responseData.bartenderType == 1) {
