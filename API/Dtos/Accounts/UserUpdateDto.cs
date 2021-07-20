@@ -6,7 +6,7 @@ namespace API.Dtos.Accounts
     public class UserUpdateDto
     {
         [StringLength(60, MinimumLength = 2)]
-        public string FistName { get; set; }
+        public string FirstName { get; set; }
 
         [StringLength(60, MinimumLength = 2)]
         public string LastName { get; set; }

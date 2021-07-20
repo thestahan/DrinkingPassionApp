@@ -102,8 +102,21 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<ActionResult> UpdateUserProfile()
+        public async Task<ActionResult> UpdateUserProfile(UserUpdateDto updateDto)
         {
+            //var userToUpdate = _mapper.Map<AppUser>(updateDto);
+
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            user.FirstName = updateDto.FirstName;
+            user.LastName = updateDto.LastName;
+            user.BartenderType = updateDto.BartenderType;
+            user.DisplayName = updateDto.DisplayName;
+
+            var result = await _userManager.UpdateAsync(user);
+
             return NoContent();
         }
     }

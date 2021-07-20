@@ -31,9 +31,7 @@
                 :class="{ 'p-invalid': v$.firstName.$error }"
                 style="width: 100%"
               />
-              <label for="firstName" class="p-text-bold primary-color"
-                >Imię</label
-              >
+              <label for="firstName">Imię</label>
             </div>
             <p v-for="error of v$.firstName.$errors" :key="error.$uid">
               <small class="p-error">{{ error.$message }}</small>
@@ -47,9 +45,7 @@
                 :class="{ 'p-invalid': v$.lastName.$error }"
                 style="width: 100%"
               />
-              <label for="lastName" class="p-text-bold primary-color"
-                >Nazwisko</label
-              >
+              <label for="lastName">Nazwisko</label>
             </div>
             <p v-for="error of v$.lastName.$errors" :key="error.$uid">
               <small class="p-error">{{ error.$message }}</small>

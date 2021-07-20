@@ -131,10 +131,10 @@ export default {
         return;
       }
 
-      this.$emit("submit", {
+      this.$emit("submit-profile", {
         firstName: this.user.firstName,
         lastName: this.user.lastName,
-        displayName: this.user.lastName,
+        displayName: this.user.displayName,
         email: this.user.email,
         bartenderType: this.user.bartenderType.code,
       });

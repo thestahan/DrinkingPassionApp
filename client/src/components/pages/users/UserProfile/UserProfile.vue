@@ -10,7 +10,7 @@
       <section v-if="userData">
         <save-profile-form
           :userData="userData"
-          v-on:submit="submitSaveProfile"
+          v-on:submit-profile="submitSaveProfile"
           v-on:open-password-dialog="openChangePasswordDialog"
         >
         </save-profile-form>
@@ -34,6 +34,7 @@
   </Dialog>
 
   <spinner v-if="isLoading"></spinner>
+  <Toast position="bottom-right" />
 </template>
 
 <script>
@@ -41,6 +42,7 @@ import SaveProfileForm from "../UserProfile/SaveProfileForm.vue";
 import ChangePasswordForm from "../UserProfile/ChangePasswordForm.vue";
 import Spinner from "../../../utilities/Spinner.vue";
 import Dialog from "primevue/dialog";
+import Toast from "primevue/toast";
 
 export default {
   components: {
@@ -48,6 +50,7 @@ export default {
     ChangePasswordForm,
     Spinner,
     Dialog,
+    Toast,
   },
   data() {
     return {
@@ -67,6 +70,9 @@ export default {
       } else {
         return "Zawodowiec";
       }
+    },
+    token() {
+      return this.$store.getters.token;
     },
   },
   created() {
@@ -111,7 +117,28 @@ export default {
     async submitSaveProfile(user) {
       this.isLoading = true;
 
-      console.log(user);
+      const response = await fetch("https://localhost:5001/api/accounts", {
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer " + this.token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          displayName: user.displayName,
+          bartenderType: user.bartenderType,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = new Error("Wystąpił błąd podczas próby zapisania zmian.");
+
+        throw error;
+      }
+
+      this.showSuccess();
 
       this.isLoading = false;
     },
@@ -127,6 +154,14 @@ export default {
     },
     closeChangePasswordDialog() {
       this.displayChangePasswordDialog = false;
+    },
+    showSuccess() {
+      this.$toast.add({
+        severity: "success",
+        summary: "Sukces",
+        detail: "Ustawienia zostały zapisane",
+        life: 3000,
+      });
     },
   },
 };

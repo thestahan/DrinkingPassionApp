@@ -59,6 +59,10 @@ namespace API.Helpers
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));
+            CreateMap<UserUpdateDto, AppUser>()
+                .ForMember(
+                    dest => dest.UserName,
+                    opt => opt.MapFrom(src => src.Email));
         }
     }
 }
