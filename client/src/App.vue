@@ -43,4 +43,5 @@ export default {
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400&display=swap");
 </style>

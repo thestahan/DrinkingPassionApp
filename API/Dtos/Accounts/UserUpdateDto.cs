@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace API.Dtos.Accounts
 {
-    public class UserRegisterDto
+    public class UserUpdateDto
     {
         [StringLength(60, MinimumLength = 2)]
         public string FirstName { get; set; }
@@ -19,9 +19,6 @@ namespace API.Dtos.Accounts
         [Required]
         [StringLength(40, MinimumLength = 3)]
         public string DisplayName { get; set; }
-
-        [Required]
-        public string Password { get; set; }
 
         [Required]
         public BartenderType BartenderType { get; set; }

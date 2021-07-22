@@ -52,15 +52,16 @@ export default {
         email: payload.email,
         password: payload.password,
         displayName: payload.displayName,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        bartenderType: payload.bartenderType,
       }),
     });
 
     const responseData = await response.json();
 
     if (!response.ok) {
-      const error = new Error(
-        responseData.message || "Nie udało się zarejestrować konta z podanymi danymi."
-      );
+      const error = new Error(responseData.message || "Nie udało się zarejestrować konta z podanymi danymi.");
       throw error;
     }
   },
