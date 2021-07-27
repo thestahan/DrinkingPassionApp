@@ -13,7 +13,9 @@ namespace API.Extensions
     {
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
         {
-            var builder = services.AddIdentityCore<AppUser>().AddRoles<IdentityRole>();
+            var builder = services.AddIdentityCore<AppUser>()
+                .AddRoles<IdentityRole>()
+                .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
             builder = new IdentityBuilder(builder.UserType, builder.RoleType, builder.Services);
             builder.AddEntityFrameworkStores<AppDbContext>();
@@ -27,6 +29,8 @@ namespace API.Extensions
                 options.Password.RequireUppercase = false;
                 options.Password.RequiredLength = 8;
                 options.Password.RequiredUniqueChars = 1;
+
+                options.SignIn.RequireConfirmedEmail = true;
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

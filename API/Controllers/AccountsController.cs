@@ -7,6 +7,7 @@ using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -21,14 +22,18 @@ namespace API.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _config;
 
         public AccountsController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            IMapper mapper, ITokenService tokenService)
+            IMapper mapper, ITokenService tokenService, IEmailService emailService, IConfiguration config)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
             _tokenService = tokenService;
+            _emailService = emailService;
+            _config = config;
         }
 
         [Authorize]
@@ -59,7 +64,14 @@ namespace API.Controllers
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, true);
 
-            if (!result.Succeeded) return Unauthorized(new ApiResponse(401));
+            if (!result.Succeeded)
+            {
+                bool isEmailConfimed = await _userManager.IsEmailConfirmedAsync(user);
+
+                if (!isEmailConfimed) return Unauthorized(new ApiResponse(401, "Adres email nie został potwierdzony"));
+
+                return Unauthorized(new ApiResponse(401));
+            }
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
@@ -93,11 +105,31 @@ namespace API.Controllers
 
             await _userManager.AddToRoleAsync(user, "User");
 
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Accounts", new { token, email = user.Email }, Request.Scheme);
+
+            await _emailService.SendConfirmationEmailForRegisteredUser(_config, user, confirmationLink);
+
             return new UserRegisterReturnDto
             {
                 Email = user.Email,
                 DisplayName = user.DisplayName
             };
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null) return BadRequest(new ApiResponse(401));
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (!result.Succeeded) return BadRequest(new ApiResponse(401));
+
+            return NoContent();
         }
 
         [Authorize]
