@@ -154,7 +154,9 @@
   <spinner v-if="isLoading"></spinner>
   <base-success-modal
     title="Sukces!"
-    content="Rejestracja przebiegła pomyślnie. Możesz zalogować się na swoje konto."
+    content="Rejestracja przebiegła pomyślnie. 
+      Na Twój adres email została wysłana wiadomość z linkiem potwierdzającym. 
+      Bez uprzedniego potwierdzenia adresu, zalogowanie na konto nie będzie możliwe."
     :open="openModal"
     @close-modal="redirectToLogin"
   ></base-success-modal>
@@ -223,8 +225,6 @@ export default {
           displayName: this.displayName,
           bartenderType: this.bartenderType == "hobbyst" ? 1 : 2,
         });
-
-        this.redirectToLogin();
       } catch (err) {
         console.log("Logowanie nie powiodło się");
       }

@@ -7,6 +7,7 @@ import UserProfile from "../components/pages/users/UserProfile/UserProfile.vue";
 import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
 import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";
 import NotFound from "../components/pages/NotFound.vue";
+import UserConfirmEmail from "../components/pages/users/UserConfirmEmail.vue";
 import store from "../store/index.js";
 
 const routes = [
@@ -47,6 +48,12 @@ const routes = [
     path: "/:notFound().*",
     name: "NotFound",
     component: NotFound,
+  },
+  {
+    path: "/confirmEmail",
+    name: "ConfirmEmail",
+    query: { code: "", email: "" },
+    component: UserConfirmEmail,
   },
 ];
 

@@ -168,11 +168,6 @@ export default {
 </script>
 
 <style scoped>
-.secondary-heading-font {
-  font-size: 1.5rem;
-  font-weight: 300;
-}
-
 .user-property-title {
   font-size: 1.1rem;
   font-weight: 400;

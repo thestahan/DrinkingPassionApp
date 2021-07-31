@@ -5,23 +5,23 @@
   >
     <div class="md:w-1/3 sm:w-full rounded-lg shadow-lg bg-white my-3">
       <div
-        class="flex justify-between items-center border-b border-gray-100 px-5 py-4"
+        class="flex justify-between items-center border-b border-gray-100 py-4"
       >
         <div class="flex flex-row items-center">
-          <CheckIcon class="h-6 w-6 text-green-500"></CheckIcon>
-          <span class="font-bold text-gray-700 text-lg px-">{{ title }}</span>
+          <CheckIcon class="h-6 w-6 text-green-500 p-mx-2"></CheckIcon>
+          <span class="font-bold text-gray-700 text-lg">{{ title }}</span>
         </div>
         <div class="flex flex-row items-center">
           <button>
             <XIcon
-              class="h-6 w-6 text-red-500 hover:text-red-600 transition duration-150"
+              class="h-6 w-6 text-red-500 hover:text-red-600 transition duration-150 p-mx-2"
               @click="closeModal"
             ></XIcon>
           </button>
         </div>
       </div>
 
-      <div class="px-10 pt-4 text-gray-600">
+      <div class="px-10 pt-4 text-gray-600 p-text-justify">
         {{ content }}
       </div>
 
