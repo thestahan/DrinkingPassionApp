@@ -34,7 +34,7 @@ namespace Infrastructure.Services
             client.Dispose();
         }
 
-        private string GetUserCredentials(AppUser user)
+        private static string GetUserCredentials(AppUser user)
         {
             if (!string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName))
             {
