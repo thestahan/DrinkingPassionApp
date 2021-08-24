@@ -144,6 +144,21 @@ namespace API.Controllers
         }
 
         [Authorize]
+        [HttpPatch("ChangePassword")]
+        public async Task<ActionResult> ChangePassword(ChangePasswordDto passwordDto)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            var result = await _userManager.ChangePasswordAsync(user, passwordDto.CurrentPassword, passwordDto.NewPassword);
+
+            if (!result.Succeeded) return BadRequest(new ApiResponse(400, "Wprowadzone hasła są niepoprawne"));
+
+            return NoContent();
+        }
+
+        [Authorize]
         [HttpPut]
         public async Task<ActionResult> UpdateUserProfile(UserUpdateDto updateDto)
         {

@@ -51,6 +51,13 @@
       </div>
     </div>
 
+    <Message
+      v-show="displayError"
+      class="change-password-error-message"
+      severity="error"
+      >{{ errorMessage }}</Message
+    >
+
     <div class="p-grid p-mt-2">
       <div class="p-col" style="text-align: right">
         <Button
@@ -68,6 +75,7 @@
 <script>
 import Button from "primevue/button";
 import Password from "primevue/password";
+import Message from "primevue/message";
 import useVuelidate from "@vuelidate/core";
 import { required, helpers, sameAs, minLength } from "@vuelidate/validators";
 
@@ -75,6 +83,17 @@ export default {
   components: {
     Button,
     Password,
+    Message,
+  },
+  props: {
+    displayError: {
+      type: Boolean,
+      required: false,
+    },
+    errorMessage: {
+      type: String,
+      required: false,
+    },
   },
   setup() {
     return {
