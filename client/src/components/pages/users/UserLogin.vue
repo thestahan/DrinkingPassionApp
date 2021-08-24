@@ -21,6 +21,11 @@
           </p>
         </div>
       </div>
+      <Message
+        v-show="displayError"
+        class="error-message"
+        severity="error"
+      ></Message>
       <form @submit.prevent="submitForm()" class="p-fluid p-mt-5">
         <div class="p-field p-pb-2">
           <div class="p-float-label">
@@ -86,6 +91,7 @@ import Spinner from "../../utilities/Spinner.vue";
 import InputText from "primevue/inputtext";
 import Checkbox from "primevue/checkbox";
 import Button from "primevue/button";
+import Message from "primevue/message";
 import useVuelidate from "@vuelidate/core";
 import { required, email, helpers, minLength } from "@vuelidate/validators";
 
@@ -95,6 +101,7 @@ export default {
     InputText,
     Checkbox,
     Button,
+    Message,
   },
   setup() {
     return { v$: useVuelidate() };
@@ -106,6 +113,7 @@ export default {
       isLoading: false,
       reponseError: null,
       rememberMe: false,
+      displayError: false,
     };
   },
   methods: {
@@ -126,7 +134,13 @@ export default {
 
         this.$router.replace("/cocktails");
       } catch (err) {
-        console.error("An error occured");
+        const errorContent = document
+          .querySelector(".error-message")
+          .querySelector(".p-message-text");
+
+        errorContent.innerHTML = err;
+
+        this.displayError = true;
       }
 
       this.isLoading = false;

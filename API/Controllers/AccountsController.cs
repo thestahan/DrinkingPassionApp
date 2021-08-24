@@ -63,7 +63,7 @@ namespace API.Controllers
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-            if (user == null) return Unauthorized(new ApiResponse(401));
+            if (user == null) return Unauthorized(new ApiResponse(401, "Dane logowania są nieprawidłowe."));
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, true);
 
@@ -73,7 +73,7 @@ namespace API.Controllers
 
                 if (!isEmailConfimed) return Unauthorized(new ApiResponse(401, "Adres email nie został potwierdzony"));
 
-                return Unauthorized(new ApiResponse(401));
+                return Unauthorized(new ApiResponse(401, "Dane logowania są nieprawidłowe."));
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -139,6 +139,21 @@ namespace API.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, tokenDecoded);
 
             if (!result.Succeeded) return BadRequest(new ApiResponse(401));
+
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpPatch("ChangePassword")]
+        public async Task<ActionResult> ChangePassword(ChangePasswordDto passwordDto)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            var result = await _userManager.ChangePasswordAsync(user, passwordDto.CurrentPassword, passwordDto.NewPassword);
+
+            if (!result.Succeeded) return BadRequest(new ApiResponse(400, "Wprowadzone hasła są niepoprawne"));
 
             return NoContent();
         }

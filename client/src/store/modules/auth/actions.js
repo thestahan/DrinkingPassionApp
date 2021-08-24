@@ -19,6 +19,12 @@ export default {
     const responseData = await response.json();
 
     if (!response.ok) {
+      if (responseData.message) {
+        const error = new Error(responseData.message);
+
+        throw error;
+      }
+
       const error = new Error(
         'Dane logowania są niepoprawne. Spróbuj ponownie lub kliknij "Zapomniałeś hasła?", by zmienić hasło.'
       );

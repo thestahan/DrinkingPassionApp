@@ -28,6 +28,8 @@
     header="Zmiana hasła"
   >
     <change-password-form
+      :displayError="displayChangePasswordError"
+      :errorMessage="changePasswordErrorMessage"
       v-on:close-password-dialog="closeChangePasswordDialog"
       v-on:submit-change-password="submitChangePassword"
     ></change-password-form>
@@ -57,6 +59,8 @@ export default {
       userData: {},
       isLoading: false,
       displayChangePasswordDialog: false,
+      displayChangePasswordError: false,
+      changePasswordErrorMessage: "",
       bartenderTypeOptions: [
         { name: "Hobbysta", code: 1 },
         { name: "Zawodowiec", code: 2 },
@@ -145,8 +149,37 @@ export default {
     async submitChangePassword(model) {
       this.isLoading = true;
 
-      console.log(model);
+      const response = await fetch(
+        "https://localhost:5001/api/accounts/changepassword",
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: "Bearer " + this.token,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            currentPassword: model.currentPassword,
+            newPassword: model.newPassword,
+          }),
+        }
+      );
 
+      if (!response.ok) {
+        const responseData = await response.json();
+
+        this.displayChangePasswordError = true;
+        this.changePasswordErrorMessage = responseData.message;
+        this.isLoading = false;
+
+        const error = new Error(responseData.message);
+
+        throw error;
+      }
+
+      this.showSuccess();
+
+      this.displayChangePasswordError = false;
+      this.displayChangePasswordDialog = false;
       this.isLoading = false;
     },
     openChangePasswordDialog() {
