@@ -1,6 +1,5 @@
 ﻿using API.Dtos.Accounts;
 using API.Errors;
-using API.Extensions;
 using AutoMapper;
 using Core.Entities.Identity;
 using Core.Interfaces;
@@ -9,13 +8,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace API.Controllers
 {
@@ -40,7 +35,7 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpGet("details")]
+        [HttpGet("Details")]
         public async Task<ActionResult<UserDetailsDto>> GetUserDetails()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
@@ -52,13 +47,33 @@ namespace API.Controllers
             return userToReturn;
         }
 
-        [HttpGet("emailexists")]
+        [HttpGet("EmailExists")]
         public async Task<ActionResult<bool>> CheckEmailExistsAsync([FromQuery] string email)
         {
             return await _userManager.FindByEmailAsync(email) != null;
         }
 
-        [HttpPost("login")]
+        [HttpGet]
+        public async Task<IActionResult> SendForgottenPasswordLink(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null) return Ok();
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
+
+            var tokenEncoded = WebEncoders.Base64UrlEncode(tokenBytes);
+
+            var link = $"http://localhost:8080/ChangeForgottenPassword?token={tokenEncoded}&email={user.Email}";
+
+            await _emailService.SendForgottenPasswordLink(_config, user, link);
+
+            return Ok();
+        }
+
+        [HttpPost("Login")]
         public async Task<ActionResult<UserLoginReturnDto>> Login(UserLoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -90,7 +105,7 @@ namespace API.Controllers
             };
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<ActionResult<UserRegisterReturnDto>> Register(UserRegisterDto registerDto)
         {
             if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
@@ -123,6 +138,12 @@ namespace API.Controllers
                 Email = user.Email,
                 DisplayName = user.DisplayName
             };
+        }
+
+        [HttpPatch("ChangeForgottenPassword")]
+        public async Task<ActionResult<bool>> ChangeForgottenPassword()
+        {
+            return Ok();
         }
 
         [HttpPatch("ConfirmEmail")]
@@ -174,6 +195,8 @@ namespace API.Controllers
             user.DisplayName = updateDto.DisplayName;
 
             var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded) return BadRequest(new ApiResponse(400));
 
             return NoContent();
         }
