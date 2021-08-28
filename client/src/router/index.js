@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../components/pages/Home.vue";
 
 import UserRegister from "../components/pages/users/UserRegister.vue";
-import UserLogin from "../components/pages/users/UserLogin.vue";
+import UserLogin from "../components/pages/users/UserLogin/UserLogin.vue";
 import UserProfile from "../components/pages/users/UserProfile/UserProfile.vue";
 import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
 import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";

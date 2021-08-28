@@ -64,12 +64,14 @@
             <label for="remember-me">Zapamiętaj mnie</label>
           </div>
           <div>
-            <router-link
-              to="/register"
+            <button
+              type="button"
               class="p-text-bold"
               style="color: var(--primary-color)"
-              >Zapomniałeś hasła?</router-link
+              @click="displayPasswordDialog"
             >
+              Zapomniałeś hasła?
+            </button>
           </div>
         </div>
         <div>
@@ -83,25 +85,52 @@
     </div>
   </div>
 
+  <Dialog
+    v-model:visible="displayForgottenPasswordDialog"
+    :modal="true"
+    :closeOnEscape="true"
+    :dismissableMask="true"
+    :breakpoints="{ '960px': '95vw' }"
+    :style="{ width: '50vw' }"
+    header="Przypomnienie hasła"
+  >
+    <reset-password
+      @show-success="displaySentPasswordLinkDialog"
+    ></reset-password>
+  </Dialog>
+
+  <base-success-modal
+    title="Link resetujący hasło"
+    content="Jeśli podany adres email jest poprawny, to link umożliwiający zmianę hasła został wysłany."
+    :open="displaySentLinkDialog"
+    @close-modal="closeSentPasswordLinkDialog"
+  ></base-success-modal>
+
   <spinner v-if="isLoading"></spinner>
 </template>
 
 <script>
-import Spinner from "../../utilities/Spinner.vue";
+import BaseSuccessModal from "../../../utilities/modals/BaseSuccessModal.vue";
+import ResetPassword from "../UserLogin/ResetPassword.vue";
+import Spinner from "../../../utilities/Spinner.vue";
 import InputText from "primevue/inputtext";
 import Checkbox from "primevue/checkbox";
 import Button from "primevue/button";
 import Message from "primevue/message";
+import Dialog from "primevue/dialog";
 import useVuelidate from "@vuelidate/core";
 import { required, email, helpers, minLength } from "@vuelidate/validators";
 
 export default {
   components: {
+    BaseSuccessModal,
+    ResetPassword,
     Spinner,
     InputText,
     Checkbox,
     Button,
     Message,
+    Dialog,
   },
   setup() {
     return { v$: useVuelidate() };
@@ -113,7 +142,9 @@ export default {
       isLoading: false,
       reponseError: null,
       rememberMe: false,
+      displaySentLinkDialog: false,
       displayError: false,
+      displayForgottenPasswordDialog: false,
     };
   },
   methods: {
@@ -144,6 +175,19 @@ export default {
       }
 
       this.isLoading = false;
+    },
+    displaySentPasswordLinkDialog() {
+      this.displaySentLinkDialog = true;
+      this.displayForgottenPasswordDialog = false;
+    },
+    closeSentPasswordLinkDialog() {
+      this.displaySentLinkDialog = false;
+    },
+    displayPasswordDialog() {
+      this.displayForgottenPasswordDialog = true;
+    },
+    hidePasswordDialog() {
+      this.displayForgottenPasswordDialog = false;
     },
   },
   validations() {

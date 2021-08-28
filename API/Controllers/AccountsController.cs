@@ -53,8 +53,8 @@ namespace API.Controllers
             return await _userManager.FindByEmailAsync(email) != null;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SendForgottenPasswordLink(string email)
+        [HttpGet("SendForgottenPasswordLink")]
+        public async Task<ActionResult> SendForgottenPasswordLink([FromQuery]string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -141,8 +141,16 @@ namespace API.Controllers
         }
 
         [HttpPatch("ChangeForgottenPassword")]
-        public async Task<ActionResult<bool>> ChangeForgottenPassword()
+        public async Task<ActionResult<bool>> ChangeForgottenPassword(ChangeForgottenPasswordDto dto)
         {
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+
+            if (user == null) return BadRequest(new ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
+
+            var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
+
+            if (!result.Succeeded) return BadRequest(new ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
+
             return Ok();
         }
 
