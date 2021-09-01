@@ -3,7 +3,7 @@
     <div class="p-grid p-fluid">
       <div class="p-col p-field">
         <label for="currentPassword" class="p-text-bold primary-color"
-          >Aktualne hasło</label
+          >Adres email</label
         >
         <InputText
           id="email"
@@ -17,16 +17,13 @@
     </div>
 
     <div class="p-text-right">
-      <Button type="submit" label="Zresetuj hasło"></Button>
+      <Button type="submit" label="Wyślij link do resetowania hasła"></Button>
     </div>
   </form>
-
-  <spinner v-if="isLoading"></spinner>
 </template>
 
 <script>
 import InputText from "primevue/inputtext";
-import Spinner from "../../../utilities/Spinner.vue";
 import Button from "primevue/button";
 
 import useVuelidate from "@vuelidate/core";
@@ -34,7 +31,6 @@ import { required, email, helpers } from "@vuelidate/validators";
 
 export default {
   components: {
-    Spinner,
     InputText,
     Button,
   },
@@ -43,7 +39,7 @@ export default {
       v$: useVuelidate(),
     };
   },
-  emits: ["show-success"],
+  emits: ["show-success", "is-loading", "stopped-loading"],
   data() {
     return {
       email: null,
@@ -64,7 +60,7 @@ export default {
         return;
       }
 
-      this.isLoading = true;
+      this.emitIsLoading();
 
       console.log("email:  " + this.email);
 
@@ -75,11 +71,16 @@ export default {
           })
       );
 
-      this.isLoading = false;
+      this.emitStoppedLoading();
       this.emitShowSuccess();
     },
+    emitIsLoading() {
+      this.$emit("is-loading");
+    },
+    emitStoppedLoading() {
+      this.$emit("stopped-loading");
+    },
     emitShowSuccess() {
-      console.log("emitting success");
       this.$emit("show-success");
     },
   },

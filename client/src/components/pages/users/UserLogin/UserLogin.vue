@@ -96,6 +96,8 @@
   >
     <reset-password
       @show-success="displaySentPasswordLinkDialog"
+      @is-loading="this.isLoading = true"
+      @stopped-loading="this.isLoading = false"
     ></reset-password>
   </Dialog>
 
