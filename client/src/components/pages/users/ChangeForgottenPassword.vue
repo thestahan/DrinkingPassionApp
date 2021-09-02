@@ -43,6 +43,13 @@
             </div>
           </div>
 
+          <Message
+            v-show="showError"
+            class="error-message"
+            severity="error"
+            @close="closeErrorModal"
+          ></Message>
+
           <div class="p-grid p-mt-2">
             <div class="p-col" style="text-align: right">
               <Button type="submit" label="Zmień hasło" />
@@ -53,20 +60,31 @@
     </div>
   </div>
 
+  <base-success-modal
+    title="Hasło zostało zmienione"
+    content="Możesz zalogować się na swoje konto."
+    :open="showSuccessModal"
+    @close-modal="closeSuccessModal"
+  ></base-success-modal>
+
   <spinner v-if="isLoading"></spinner>
 </template>
 
 <script>
+import BaseSuccessModal from "../../utilities/modals/BaseSuccessModal.vue";
 import Spinner from "../../utilities/Spinner.vue";
 import Button from "primevue/button";
+import Message from "primevue/message";
 import Password from "primevue/password";
 import useVuelidate from "@vuelidate/core";
 import { required, helpers, sameAs, minLength } from "@vuelidate/validators";
 
 export default {
   components: {
+    BaseSuccessModal,
     Spinner,
     Button,
+    Message,
     Password,
   },
   setup() {
@@ -80,8 +98,8 @@ export default {
       email: null,
       newPassword: "",
       newPasswordRepeated: "",
-      confirmationSuccessful: false,
-      confirmationNotSuccessful: false,
+      showSuccessModal: false,
+      showError: false,
       isLoading: false,
     };
   },
@@ -91,6 +109,12 @@ export default {
   },
   methods: {
     async changePassword() {
+      this.v$.$touch();
+
+      if (this.v$.$error) {
+        return;
+      }
+
       this.isLoading = true;
 
       const response = await fetch(
@@ -110,11 +134,39 @@ export default {
 
       this.isLoading = false;
 
-      if (response.ok) {
-        this.confirmationSuccessful = true;
+      if (!response.ok) {
+        const responseData = await response.json();
+
+        if (responseData.message) {
+          const errorContent = document
+            .querySelector(".error-message")
+            .querySelector(".p-message-text");
+
+          errorContent.innerHTML = responseData.message;
+        } else {
+          const errorContent = document
+            .querySelector(".error-message")
+            .querySelector(".p-message-text");
+
+          errorContent.innerHTML =
+            "Token wygasł lub adres email jest niepoprawny";
+        }
+        this.openErrorModal();
       } else {
-        this.confirmationNotSuccessful = true;
+        this.openSuccessModal();
       }
+    },
+    openSuccessModal() {
+      this.showSuccessModal = true;
+    },
+    closeSuccessModal() {
+      this.showSuccessModal = false;
+    },
+    openErrorModal() {
+      this.showError = true;
+    },
+    closeErrorModal() {
+      this.showError = false;
     },
   },
   validations() {

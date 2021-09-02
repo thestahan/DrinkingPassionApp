@@ -147,7 +147,11 @@ namespace API.Controllers
 
             if (user == null) return BadRequest(new ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
 
-            var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
+            var tokenDecodedBytes = WebEncoders.Base64UrlDecode(dto.Token);
+
+            var tokenDecoded = Encoding.UTF8.GetString(tokenDecodedBytes);
+
+            var result = await _userManager.ResetPasswordAsync(user, tokenDecoded, dto.NewPassword);
 
             if (!result.Succeeded) return BadRequest(new ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
 
