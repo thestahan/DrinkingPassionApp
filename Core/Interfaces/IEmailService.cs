@@ -7,5 +7,6 @@ namespace Core.Interfaces
     public interface IEmailService
     {
         Task SendConfirmationEmailForRegisteredUser(IConfiguration config, AppUser user, string confirmationLink);
+        Task SendForgottenPasswordLink(IConfiguration config, AppUser user, string link);
     }
 }

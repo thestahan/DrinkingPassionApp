@@ -2,12 +2,13 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../components/pages/Home.vue";
 
 import UserRegister from "../components/pages/users/UserRegister.vue";
-import UserLogin from "../components/pages/users/UserLogin.vue";
+import UserLogin from "../components/pages/users/UserLogin/UserLogin.vue";
 import UserProfile from "../components/pages/users/UserProfile/UserProfile.vue";
 import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
 import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";
 import NotFound from "../components/pages/NotFound.vue";
 import UserConfirmEmail from "../components/pages/users/UserConfirmEmail.vue";
+import ChangeForgottenPassword from "../components/pages/users/ChangeForgottenPassword.vue";
 import store from "../store/index.js";
 
 const routes = [
@@ -54,6 +55,12 @@ const routes = [
     name: "ConfirmEmail",
     query: { code: "", email: "" },
     component: UserConfirmEmail,
+  },
+  {
+    path: "/changeForgottenPassword",
+    name: "ChangeForgottenPassword",
+    query: { token: "", email: "" },
+    component: ChangeForgottenPassword,
   },
 ];
 
