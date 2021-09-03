@@ -37,6 +37,7 @@ export default {
     localStorage.setItem("token", responseData.token);
     localStorage.setItem("displayName", responseData.displayName);
     localStorage.setItem("tokenExpiration", expirationDate);
+    localStorage.setItem("roles", responseData.roles);
 
     timer = setTimeout(function () {
       context.dispatch("autoLogout");
@@ -45,6 +46,7 @@ export default {
     context.commit("setUser", {
       displayName: responseData.displayName,
       token: responseData.token,
+      roles: responseData.roles,
     });
   },
 
@@ -76,6 +78,7 @@ export default {
     const token = localStorage.getItem("token");
     const displayName = localStorage.getItem("displayName");
     const tokenExpiration = localStorage.getItem("tokenExpiration");
+    const roles = localStorage.getItem("roles");
 
     const expiresIn = +tokenExpiration - new Date().getTime();
 
@@ -87,10 +90,11 @@ export default {
       context.dispatch("autoLogout");
     }, expiresIn);
 
-    if (token && displayName) {
+    if (token && displayName && roles) {
       context.commit("setUser", {
         displayName: displayName,
         token: token,
+        roles: roles,
       });
     }
   },

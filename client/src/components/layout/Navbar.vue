@@ -86,6 +86,16 @@
                   >
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
+                  <router-link
+                    to="/cocktails/manage"
+                    :class="[
+                      active ? 'bg-gray-100' : '',
+                      'block px-4 py-2 text-sm text-gray-700',
+                    ]"
+                    >Zarządzaj koktajlami</router-link
+                  >
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
                   <a
                     href="#"
                     @click="logout"
@@ -171,6 +181,9 @@ export default {
     },
     isAuthenticated: function () {
       return this.$store.getters.isAuthenticated;
+    },
+    isAdmin: function () {
+      return this.$store.getters.roles.includes("admin");
     },
   },
   methods: {
