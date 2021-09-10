@@ -25,6 +25,7 @@ export default {
     return {
       cocktails: null,
       isLoading: false,
+      url: process.env.VUE_APP_API_URL,
     };
   },
   created() {
@@ -34,7 +35,7 @@ export default {
     async getCocktails() {
       this.isLoading = true;
 
-      const response = await fetch("https://localhost:5001/api/cocktails", {
+      const response = await fetch(`${process.env.VUE_APP_API_URL}/cocktails`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

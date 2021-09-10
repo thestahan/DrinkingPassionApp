@@ -118,7 +118,7 @@ export default {
       this.isLoading = true;
 
       const response = await fetch(
-        "https://localhost:5001/api/accounts/ChangeForgottenPassword",
+        `${process.env.VUE_APP_API_URL}/accounts/ChangeForgottenPassword`,
         {
           method: "PATCH",
           headers: {
