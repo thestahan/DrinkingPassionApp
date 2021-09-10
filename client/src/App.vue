@@ -29,6 +29,8 @@ export default {
     },
   },
   created() {
+    document.title = "Drinking Passion";
+
     this.$store.dispatch("tryLogin");
   },
   watch: {

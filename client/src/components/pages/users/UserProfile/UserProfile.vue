@@ -89,7 +89,7 @@ export default {
       const token = this.$store.getters.token;
 
       const response = await fetch(
-        "https://localhost:5001/api/accounts/details",
+        `${process.env.VUE_APP_API_URL}/accounts/details`,
         {
           method: "GET",
           headers: {
@@ -121,7 +121,7 @@ export default {
     async submitSaveProfile(user) {
       this.isLoading = true;
 
-      const response = await fetch("https://localhost:5001/api/accounts", {
+      const response = await fetch(`${process.env.VUE_APP_API_URL}/accounts`, {
         method: "PUT",
         headers: {
           Authorization: "Bearer " + this.token,
@@ -150,7 +150,7 @@ export default {
       this.isLoading = true;
 
       const response = await fetch(
-        "https://localhost:5001/api/accounts/changepassword",
+        `${process.env.VUE_APP_API_URL}/accounts/changepassword`,
         {
           method: "PATCH",
           headers: {

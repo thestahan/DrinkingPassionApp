@@ -5,7 +5,7 @@ export default {
   async signIn(context, payload) {
     this.isLoading = true;
 
-    const response = await fetch("https://localhost:5001/api/accounts/login", {
+    const response = await fetch(`${process.env.VUE_APP_API_URL}/accounts/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default {
   },
 
   async signUp(_, payload) {
-    const response = await fetch("https://localhost:5001/api/accounts/register", {
+    const response = await fetch(`${process.env.VUE_APP_API_URL}/accounts/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
