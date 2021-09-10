@@ -15,7 +15,7 @@ namespace API
     {
         private readonly IConfiguration _config;
 
-        public Startup(IConfiguration config) // access to appsettings.json
+        public Startup(IConfiguration config)
         {
             _config = config;
         }
@@ -25,7 +25,7 @@ namespace API
             services.AddControllers().AddNewtonsoftJson(options => 
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<AppDbContext>(x =>
-                x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+                x.UseNpgsql(_config.GetConnectionString("DefaultConnection")));
             services.AddApplicationServices();
 
             services.AddIdentityServices(_config);
