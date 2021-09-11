@@ -1,15 +1,11 @@
-﻿using API.Dtos;
-using AutoMapper;
+﻿using AutoMapper;
 using Core.Entities;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Helpers
 {
-    public class CocktailUrlResolver : IValueResolver<Cocktail, CocktailToReturnDto, string>
+    public class CocktailUrlResolver : IValueResolver<Cocktail, Object, string>
     {
         private readonly IConfiguration _config;
 
@@ -18,7 +14,7 @@ namespace API.Helpers
             _config = config;
         }
 
-        public string Resolve(Cocktail source, CocktailToReturnDto destination, string destMember, ResolutionContext context)
+        public string Resolve(Cocktail source, Object destination, string destMember, ResolutionContext context)
         {
             if (!string.IsNullOrEmpty(source.Picture))
             {

@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.main-font {
+  font-family: "Noto Sans JP", sans-serif;
+}
+
+.secondary-heading-font {
+  font-size: 1.5rem;
+  font-weight: 300;
+}
+
+.primary-color {
+  color: var(--primary-color);
+}
+
 /* .router-link-active {
   @apply border-blue-500 bg-indigo-700 !important;
 }

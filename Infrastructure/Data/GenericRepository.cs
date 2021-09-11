@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
+    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity, new()
     {
         private readonly AppDbContext _context;
 
@@ -48,6 +48,68 @@ namespace Infrastructure.Data
         public async Task<int> CountAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).CountAsync();
+        }
+
+        public async Task UpdateAsync(T entity)
+        {
+            _context.Entry(entity).State = EntityState.Modified;
+            _context.Entry(entity).Property(x => x.CreatedDate).IsModified = false;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateSpecifiedPropertiesAsync(T entity, params string[] properties)
+        {
+            _context.Entry(entity).State = EntityState.Unchanged;
+
+            foreach (var property in properties)
+            {
+                _context.Entry(entity).Property(property).IsModified = true;
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> DeleteByIdAsync(int id)
+        {
+            try
+            {
+                var entity = new T() { Id = id };
+
+                _context.Attach(entity).State = EntityState.Deleted;
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteAsync(T entity)
+        {
+            _context.Attach(entity).State = EntityState.Deleted;
+
+            var result = await _context.SaveChangesAsync();
+
+            return result > 0;
+        }
+
+        public async Task<bool> EntityExistsAsync(int id)
+        {
+            return await _context.Set<T>().AnyAsync(x => x.Id == id);
+        }
+
+        public async Task<bool> EntityExistsWithSpecAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).AnyAsync();
+        }
+
+        public async Task<object> GetSpecifiedEntityFieldsWithSpecAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).Select(spec.Select).FirstOrDefaultAsync();
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)

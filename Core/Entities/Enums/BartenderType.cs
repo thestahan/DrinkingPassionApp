@@ -2,8 +2,7 @@
 {
     public enum BartenderType
     {
-        NotSpecified,
-        Amateur,
+        Amateur = 1,
         Professional
     }
 }

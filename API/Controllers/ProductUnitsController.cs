@@ -1,4 +1,4 @@
-﻿using API.Dtos;
+﻿using API.Dtos.Products;
 using API.Errors;
 using AutoMapper;
 using Core.Entities;
@@ -21,11 +21,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductUnitToReturnDto>>> GetProductUnits()
+        public async Task<ActionResult<IReadOnlyList<ProductUnitToReturnDto>>> GetProductUnits()
         {
             var units = await _repo.ListAllAsync();
 
-            var unitsToReturn = _mapper.Map<IReadOnlyList<ProductUnit>>(units);
+            var unitsToReturn = _mapper.Map<IReadOnlyList<ProductUnitToReturnDto>>(units);
 
             return Ok(unitsToReturn);
         }
@@ -43,7 +43,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductUnitToAddDto>> AddProductUnit(ProductUnitToAddDto unitToAddDto)
+        public async Task<ActionResult<ProductUnitToReturnDto>> AddProductUnit(ProductUnitToAddDto unitToAddDto)
         {
             var unit = _mapper.Map<ProductUnit>(unitToAddDto);
 
@@ -52,6 +52,28 @@ namespace API.Controllers
             var unitToReturn = _mapper.Map<ProductUnitToReturnDto>(createdUnit);
 
             return CreatedAtAction(nameof(GetProductUnitById), new { id = unitToReturn.Id }, unitToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateProductUnit(int id, ProductUnitToUpdateDto unitToUpdate)
+        {
+            if (id != unitToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
+
+            if (!await _repo.EntityExistsAsync(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
+
+            var unit = _mapper.Map<ProductUnit>(unitToUpdate);
+
+            await _repo.UpdateAsync(unit);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProductUnit(int id)
+        {
+            if (! await _repo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
+
+            return NoContent();
         }
     }
 }

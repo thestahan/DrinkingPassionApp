@@ -2,11 +2,15 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../components/pages/Home.vue";
 
 import UserRegister from "../components/pages/users/UserRegister.vue";
-import UserLogin from "../components/pages/users/UserLogin.vue";
-import UserProfile from "../components/pages/users/UserProfile.vue";
+import UserLogin from "../components/pages/users/UserLogin/UserLogin.vue";
+import UserProfile from "../components/pages/users/UserProfile/UserProfile.vue";
 import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
 import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";
+import ManageCocktails from "../components/pages/cocktails/ManageCocktails.vue";
 import NotFound from "../components/pages/NotFound.vue";
+import UserConfirmEmail from "../components/pages/users/UserConfirmEmail.vue";
+import ChangeForgottenPassword from "../components/pages/users/ChangeForgottenPassword.vue";
+import store from "../store/index.js";
 
 const routes = [
   {
@@ -18,16 +22,19 @@ const routes = [
     path: "/register",
     name: "Register",
     component: UserRegister,
+    meta: { requiresUnauth: true },
   },
   {
     path: "/login",
     name: "Login",
     component: UserLogin,
+    meta: { requiresUnauth: true },
   },
   {
     path: "/profile",
     name: "Profile",
     component: UserProfile,
+    meta: { requiresAuth: true },
   },
   {
     path: "/cocktails",
@@ -44,11 +51,46 @@ const routes = [
     name: "NotFound",
     component: NotFound,
   },
+  {
+    path: "/confirmEmail",
+    name: "ConfirmEmail",
+    query: { code: "", email: "" },
+    component: UserConfirmEmail,
+  },
+  {
+    path: "/changeForgottenPassword",
+    name: "ChangeForgottenPassword",
+    query: { token: "", email: "" },
+    component: ChangeForgottenPassword,
+  },
+  {
+    path: "/cocktails/manage",
+    name: "ManageCocktails",
+    component: ManageCocktails,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach(function (to, _, next) {
+  if (
+    to.meta.requiresAdmin &&
+    !store.getters.roles.includes("admin") &&
+    to.meta.requiresAuth &&
+    !store.getters.isAuthenticated
+  ) {
+    next("/notFound");
+  } else if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
+    next("/login");
+  } else if (to.meta.requiresUnauth && store.getters.isAuthenticated) {
+    next("/profile");
+  } else {
+    next();
+  }
 });
 
 export default router;

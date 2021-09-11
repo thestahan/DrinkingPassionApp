@@ -1,4 +1,4 @@
-﻿using API.Dtos;
+﻿using API.Dtos.Products;
 using API.Errors;
 using AutoMapper;
 using Core.Entities;
@@ -21,11 +21,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ProductTypeToReturnDto>>> GetProductTypes()
+        public async Task<ActionResult<IReadOnlyList<ProductTypeToReturnDto>>> GetProductTypes()
         {
             var types = await _repo.ListAllAsync();
 
-            var typesToReturn = _mapper.Map<IReadOnlyList<ProductType>>(types);
+            var typesToReturn = _mapper.Map<IReadOnlyList<ProductTypeToReturnDto>>(types);
 
             return Ok(typesToReturn);
         }
@@ -52,6 +52,28 @@ namespace API.Controllers
             var typeToReturn = _mapper.Map<ProductTypeToReturnDto>(createdType);
 
             return CreatedAtAction(nameof(GetProductTypeById), new { id = typeToReturn.Id }, typeToReturn);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateProductType(int id, ProductTypeToUpdateDto typeToUpdate)
+        {
+            if (id != typeToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
+
+            if (!await _repo.EntityExistsAsync(id)) return BadRequest(new ApiResponse(400, "Entity does not exist"));
+
+            var type = _mapper.Map<ProductType>(typeToUpdate);
+
+            await _repo.UpdateAsync(type);
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProductType(int id)
+        {
+            if (! await _repo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
+
+            return NoContent();
         }
     }
 }

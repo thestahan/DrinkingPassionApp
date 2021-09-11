@@ -16,10 +16,12 @@ namespace Infrastructure.Data.Migrations
                     DisplayName = "Adam",
                     Email = "adam@gmail.com",
                     UserName = "adam@gmail.com",
-                    BartenderType = Core.Entities.Enums.BartenderType.Amateur
+                    BartenderType = Core.Entities.Enums.BartenderType.Professional
                 };
 
                 await userManager.CreateAsync(user, "Pa$$w0rd");
+
+                await userManager.AddToRoleAsync(user, "Admin");
             }
         }
     }
