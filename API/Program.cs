@@ -1,11 +1,15 @@
 using System;
 using System.Threading.Tasks;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Core.Entities.Identity;
 using Infrastructure.Data;
 using Infrastructure.Data.Migrations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -45,6 +49,21 @@ namespace API
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    if (context.HostingEnvironment.IsDevelopment())
+                    {
+                        return;
+                    }
+
+                    var builtConfig = config.Build();
+
+                    var clientSecretCred = new ClientSecretCredential(builtConfig["AzureKeyVault:TenantId"], builtConfig["AzureKeyVault:ClientId"], builtConfig["AzureKeyVault:ClientSecret"]);
+
+                    var client = new SecretClient(new Uri($"https://{builtConfig["AzureKeyVault:Name"]}.vault.azure.net/"), clientSecretCred);
+
+                    config.AddAzureKeyVault(client, new AzureKeyVaultConfigurationOptions());
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
