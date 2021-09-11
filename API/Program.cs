@@ -56,11 +56,11 @@ namespace API
                         return;
                     }
 
-                    var builtConfig = config.Build();
+                    var clientSecretCred = new ClientSecretCredential(Environment.GetEnvironmentVariable("KEY_VAULT_TENANT_ID"),
+                                                                      Environment.GetEnvironmentVariable("KEY_VAULT_CLIENT_ID"),
+                                                                      Environment.GetEnvironmentVariable("KEY_VAULT_CLIENT_SECRET"));
 
-                    var clientSecretCred = new ClientSecretCredential(builtConfig["AzureKeyVault:TenantId"], builtConfig["AzureKeyVault:ClientId"], builtConfig["AzureKeyVault:ClientSecret"]);
-
-                    var client = new SecretClient(new Uri($"https://{builtConfig["AzureKeyVault:Name"]}.vault.azure.net/"), clientSecretCred);
+                    var client = new SecretClient(new Uri($"https://{Environment.GetEnvironmentVariable("KEY_VAULT_NAME")}.vault.azure.net/"), clientSecretCred);
 
                     config.AddAzureKeyVault(client, new AzureKeyVaultConfigurationOptions());
                 })
