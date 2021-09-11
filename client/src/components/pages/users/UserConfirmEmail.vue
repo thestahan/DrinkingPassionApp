@@ -57,7 +57,7 @@ export default {
       this.isLoading = true;
 
       const response = await fetch(
-        `${process.env.VUE_APP_API_URL}/api/accounts/ConfirmEmail`,
+        `${process.env.VUE_APP_API_URL}/accounts/ConfirmEmail`,
         {
           method: "PATCH",
           headers: {

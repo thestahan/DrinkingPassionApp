@@ -1,4 +1,5 @@
 using API.Extensions;
+using API.Helpers;
 using API.Middleware;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
@@ -13,10 +14,12 @@ namespace API
 {
     public class Startup
     {
+        private readonly IWebHostEnvironment _env;
         private readonly IConfiguration _config;
 
-        public Startup(IConfiguration config)
+        public Startup(IWebHostEnvironment env, IConfiguration config)
         {
+            _env = env;
             _config = config;
         }
 
@@ -24,8 +27,16 @@ namespace API
         {
             services.AddControllers().AddNewtonsoftJson(options => 
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddDbContext<AppDbContext>(x =>
-                x.UseNpgsql(_config.GetConnectionString("DefaultConnection")));
+
+            if (_env.IsProduction())
+            {
+                services.AddDbContext<AppDbContext>(x => x.UseNpgsql(ConnectionStringsHelpers.GetEnvironmentNpgConnectionString()));
+            }
+            else
+            {
+                services.AddDbContext<AppDbContext>(x => x.UseNpgsql(_config.GetConnectionString("DefaultConnection")));
+            }
+
             services.AddApplicationServices();
 
             services.AddIdentityServices(_config);

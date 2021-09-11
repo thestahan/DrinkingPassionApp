@@ -13,7 +13,7 @@ namespace Infrastructure.Services
         public async Task SendConfirmationEmailForRegisteredUser(IConfiguration config, AppUser user, string confirmationLink)
         {
             var client = new SmtpClient();
-            await client.ConnectAsync(config["MailSenderSettings:Server"], Convert.ToInt32(config["MailSenderSettings:Port"]), true);
+            await client.ConnectAsync(config["MailSenderSettings:Server"], Convert.ToInt32(config["MailSenderSettings:Port"]), MailKit.Security.SecureSocketOptions.Auto);
             await client.AuthenticateAsync(config["MailSenderSettings:User"], config["MailSenderSettings:Password"]);
 
             var from = new MailboxAddress("DrinkingPassion Administrator", config["MailSenderSettings:User"]);
