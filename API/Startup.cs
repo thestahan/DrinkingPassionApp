@@ -47,7 +47,7 @@ namespace API
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:8080");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:8080", "https://drinking-passion.netlify.app");
                 });
             });
         }
