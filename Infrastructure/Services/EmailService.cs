@@ -1,5 +1,6 @@
 ﻿using Core.Entities.Identity;
 using Core.Interfaces;
+using Infrastructure.Helpers;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
@@ -25,7 +26,7 @@ namespace Infrastructure.Services
             message.Subject = "Rejestracja w DrinkingPassion";
             message.Body = new BodyBuilder
             {
-                TextBody = "Kliknij w link, aby potwierdzić adres email: " + confirmationLink
+                HtmlBody = EmailTemplates.EmailConfirmationTemplate(user.FirstName, confirmationLink)
             }.ToMessageBody();
 
 
@@ -37,7 +38,7 @@ namespace Infrastructure.Services
         public async Task SendForgottenPasswordLink(IConfiguration config, AppUser user, string link)
         {
             var client = new SmtpClient();
-            await client.ConnectAsync(config["MailSenderSettings:Server"], Convert.ToInt32(config["MailSenderSettings:Port"]), true);
+            await client.ConnectAsync(config["MailSenderSettings:Server"], Convert.ToInt32(config["MailSenderSettings:Port"]), MailKit.Security.SecureSocketOptions.Auto);
             await client.AuthenticateAsync(config["MailSenderSettings:User"], config["MailSenderSettings:Password"]);
 
             var from = new MailboxAddress("DrinkingPassion Administrator", config["MailSenderSettings:User"]);
@@ -49,9 +50,8 @@ namespace Infrastructure.Services
             message.Subject = "Zmiana hasła w serwisie DrinkingPassion";
             message.Body = new BodyBuilder
             {
-                TextBody = "Kliknij w link, aby zmienić hasło: " + link
+                HtmlBody = EmailTemplates.ForgottedPassowordTemplate(user.Email, link)
             }.ToMessageBody();
-
 
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
