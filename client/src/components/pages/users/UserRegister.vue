@@ -226,7 +226,7 @@ export default {
           bartenderType: this.bartenderType == "hobbyst" ? 1 : 2,
         });
       } catch (err) {
-        console.log("Logowanie nie powiodło się");
+        console.error("Wystąpił błąd podczas rejestracji");
       }
 
       this.isLoading = false;

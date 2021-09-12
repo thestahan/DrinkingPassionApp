@@ -119,7 +119,7 @@ export default {
       this.isLoading = true;
 
       const response = await fetch(
-        "https://localhost:5001/api/cocktails/" + this.cocktailId,
+        `${process.env.VUE_APP_API_URL}/cocktails/` + this.cocktailId,
         {
           method: "GET",
           headers: {
@@ -142,8 +142,6 @@ export default {
         label: this.cocktailName,
         url: "/cocktails/" + this.cocktailId,
       });
-
-      console.log(this.cocktail);
     },
   },
 };
