@@ -2,7 +2,9 @@
   <div class="layout-footer">
     <div class="layout-footer-left">
       <span>DrinkingPassion © 2021, </span>
-      <span class="author">Kacper Korman</span>
+      <a href="mailto:adm.drinking-passion@outlook.com" class="author"
+        >Kacper Korman</a
+      >
     </div>
 
     <div class="layout-footer-right">
@@ -14,10 +16,6 @@
 </template>
 
 <style scoped>
-.author {
-  color: var(--green-600);
-}
-
 .layout-footer {
   font-size: 1rem;
   padding: 2rem;
@@ -27,8 +25,13 @@
   justify-content: space-between;
 }
 
-.layout-footer a {
+.layout-footer-right a {
   color: var(--text-color);
+  font-weight: 600;
+}
+
+.layout-footer-left a {
+  color: var(--green-600);
   font-weight: 600;
 }
 

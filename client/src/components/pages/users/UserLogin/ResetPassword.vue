@@ -63,7 +63,7 @@ export default {
       this.emitIsLoading();
 
       await fetch(
-        `${process.env.VUE_APP_API_URL}/SendForgottenPasswordLink?` +
+        `${process.env.VUE_APP_API_URL}/accounts/SendForgottenPasswordLink?` +
           new URLSearchParams({
             email: this.email,
           })
