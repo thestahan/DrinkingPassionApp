@@ -3,6 +3,8 @@ module.exports = {
     "./src/App.vue",
     "./src/components/pages/*.{vue,js,ts,jsx,tsx}",
     "./src/components/pages/**/*.{vue,js,ts,jsx,tsx}",
+    "./src/components/utilities/**/*.{vue,js,ts,jsx,tsx}",
+    "./src/components/layout/*.{vue,js,ts,jsx,tsx}",
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
