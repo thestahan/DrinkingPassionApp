@@ -66,7 +66,7 @@ namespace API.Controllers
 
             var tokenEncoded = WebEncoders.Base64UrlEncode(tokenBytes);
 
-            var link = $"http://localhost:8080/ChangeForgottenPassword?token={tokenEncoded}&email={user.Email}";
+            var link = $"{_config["ClientUrl"]}ChangeForgottenPassword?token={tokenEncoded}&email={user.Email}";
 
             await _emailService.SendForgottenPasswordLink(_config, user, link);
 
