@@ -129,7 +129,7 @@ namespace API.Controllers
 
             var tokenEncoded = WebEncoders.Base64UrlEncode(tokenBytes);
 
-            var confirmationLink = $"http://localhost:8080/confirmemail?token={tokenEncoded}&email={user.Email}";
+            var confirmationLink = $"{_config["ClientUrl"]}confirmemail?token={tokenEncoded}&email={user.Email}";
 
             await _emailService.SendConfirmationEmailForRegisteredUser(_config, user, confirmationLink);
 
