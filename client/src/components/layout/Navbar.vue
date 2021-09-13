@@ -85,7 +85,7 @@
                     >Twój profil</router-link
                   >
                 </MenuItem>
-                <MenuItem v-slot="{ active }">
+                <MenuItem v-slot="{ active }" v-if="isAdmin">
                   <router-link
                     to="/cocktails/manage"
                     :class="[
@@ -183,6 +183,7 @@ export default {
       return this.$store.getters.isAuthenticated;
     },
     isAdmin: function () {
+      // if (!this.$store.getters.roles) return false;
       return this.$store.getters.roles.includes("admin");
     },
   },

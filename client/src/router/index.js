@@ -47,7 +47,7 @@ const routes = [
     component: CocktailDetails,
   },
   {
-    path: "/:notFound().*",
+    path: "/:notFound(.*)*",
     name: "NotFound",
     component: NotFound,
   },
@@ -77,17 +77,12 @@ const router = createRouter({
 });
 
 router.beforeEach(function (to, _, next) {
-  if (
-    to.meta.requiresAdmin &&
-    !store.getters.roles.includes("admin") &&
-    to.meta.requiresAuth &&
-    !store.getters.isAuthenticated
-  ) {
-    next("/notFound");
-  } else if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
+  if (to.meta.requiresAuth && !store.getters.isAuthenticated) {
     next("/login");
   } else if (to.meta.requiresUnauth && store.getters.isAuthenticated) {
     next("/profile");
+  } else if (to.meta.requiresAdmin && !store.getters.roles?.includes("admin")) {
+    next("/notFound");
   } else {
     next();
   }

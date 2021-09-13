@@ -15,11 +15,11 @@ namespace Infrastructure.Data.Migrations
                 {
                     new IdentityRole
                     {
-                        Name = "Admin"
+                        Name = "admin"
                     },
                     new IdentityRole
                     {
-                        Name = "User"
+                        Name = "user"
                     }
                 };
 
