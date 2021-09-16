@@ -62,8 +62,6 @@ export default {
 
       this.emitIsLoading();
 
-      console.log("email:  " + this.email);
-
       await fetch(
         `${process.env.VUE_APP_API_URL}/SendForgottenPasswordLink?` +
           new URLSearchParams({
