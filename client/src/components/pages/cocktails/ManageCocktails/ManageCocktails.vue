@@ -8,6 +8,7 @@
       label="Dodaj koktajl"
       icon="pi pi-plus"
       class="p-button-success p-mr-2"
+      @click="openCocktailDetailsDialog"
     />
   </section>
 
@@ -51,19 +52,27 @@
       </Column>
     </DataTable>
   </section>
+
+  <cocktail-details-dialog
+    :cocktail="cocktail"
+    @close-modal="closeCocktailDetailsDialog"
+    v-model:visible="newCocktailDialog"
+  ></cocktail-details-dialog>
 </template>
 
 <script>
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
-import CocktailService from "../../../services/CocktailService";
+import CocktailService from "../../../../services/CocktailService";
+import CocktailDetailsDialog from "../ManageCocktails/CocktailDetailsDialog.vue";
 
 export default {
   components: {
     DataTable,
     Column,
     Button,
+    CocktailDetailsDialog,
   },
   data() {
     return {
@@ -73,7 +82,9 @@ export default {
       pageSize: 12,
       isLoading: false,
       deleteCocktailDialog: false,
+      newCocktailDialog: false,
       cocktail: {},
+      submitted: false,
     };
   },
   cocktailService: null,
@@ -99,6 +110,14 @@ export default {
       }
 
       this.isLoading = false;
+    },
+    openCocktailDetailsDialog() {
+      this.cocktail = {};
+      this.submitted = false;
+      this.newCocktailDialog = true;
+    },
+    closeCocktailDetailsDialog() {
+      this.newCocktailDialog = false;
     },
   },
 };

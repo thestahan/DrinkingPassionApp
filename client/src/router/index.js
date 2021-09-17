@@ -6,7 +6,7 @@ import UserLogin from "../components/pages/users/UserLogin/UserLogin.vue";
 import UserProfile from "../components/pages/users/UserProfile/UserProfile.vue";
 import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
 import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";
-import ManageCocktails from "../components/pages/cocktails/ManageCocktails.vue";
+import ManageCocktails from "../components/pages/cocktails/ManageCocktails/ManageCocktails.vue";
 import NotFound from "../components/pages/NotFound.vue";
 import UserConfirmEmail from "../components/pages/users/UserConfirmEmail.vue";
 import ChangeForgottenPassword from "../components/pages/users/ChangeForgottenPassword.vue";
