@@ -55,6 +55,7 @@
 
   <cocktail-details-dialog
     :cocktail="cocktail"
+    :products="products"
     @close-modal="closeCocktailDetailsDialog"
     v-model:visible="newCocktailDialog"
   ></cocktail-details-dialog>
@@ -65,6 +66,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import CocktailService from "../../../../services/CocktailService";
+import ProductSerivce from "../../../../services/ProductSerivce";
 import CocktailDetailsDialog from "../ManageCocktails/CocktailDetailsDialog.vue";
 
 export default {
@@ -77,6 +79,7 @@ export default {
   data() {
     return {
       cocktails: [],
+      products: [],
       cocktailsTotal: null,
       pageIndex: 1,
       pageSize: 12,
@@ -88,11 +91,14 @@ export default {
     };
   },
   cocktailService: null,
+  productService: null,
   created() {
     this.cocktailService = new CocktailService();
+    this.productService = new ProductSerivce();
   },
   mounted() {
     this.getCocktails();
+    this.getProducts();
   },
   methods: {
     async getCocktails() {
@@ -106,10 +112,17 @@ export default {
         this.pageIndex = data.pageIndex;
         this.pageSize = data.pageSize;
       } catch (err) {
-        console.log(err.toJSON());
+        console.error(err.toJSON());
       }
 
       this.isLoading = false;
+    },
+    async getProducts() {
+      try {
+        this.products = await this.productService.getProducts();
+      } catch (err) {
+        console.warning(err.toJSON());
+      }
     },
     openCocktailDetailsDialog() {
       this.cocktail = {};
