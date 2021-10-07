@@ -4,6 +4,7 @@
     header="Szczegóły koktajlu"
     :modal="true"
     class="p-fluid"
+    @hide="closeDialog"
   >
     <form id="cocktail-details-form" @submit.prevent="submitForm()">
       <div class="p-field" v-if="pictureUrl">
@@ -201,7 +202,7 @@ export default {
   setup() {
     return { v$: useVuelidate() };
   },
-  emits: ["close-modal"],
+  emits: ["close-modal", "manage-cocktail"],
   props: {
     cocktail: {
       type: Object,
@@ -214,12 +215,12 @@ export default {
   },
   data() {
     return {
-      name: null,
+      name: this.cocktail.name,
       picture: null,
-      pictureUrl: null,
-      description: null,
-      preparationInstruction: null,
-      ingredients: [],
+      pictureUrl: this.cocktail.picture,
+      description: this.cocktail.description,
+      preparationInstruction: this.cocktail.preparationInstruction,
+      ingredients: this.cocktail.ingredients ? this.cocktail.ingredients : [],
       minIngredientsError: null,
       newIngredient: {},
     };
@@ -235,15 +236,6 @@ export default {
 
       return this.products.filter((x) => !ingredientsNames.includes(x.name));
     },
-  },
-  created() {
-    this.name = this.cocktail.name;
-    this.pictureUrl = this.cocktail.picture;
-    this.description = this.cocktail.description;
-    this.preparationInstruction = this.cocktail.preparationInstruction;
-    if (this.cocktail.ingredients) {
-      this.ingredients = this.cocktail.ingredients;
-    }
   },
   methods: {
     closeDialog() {
@@ -264,13 +256,11 @@ export default {
     addIngredient() {
       if (!this.newIngredient.name || !this.newIngredient.amount) return;
 
-      console.log(this.newIngredient);
-
       this.ingredients.push(this.newIngredient);
 
       this.newIngredient = {};
     },
-    async submitForm() {
+    submitForm() {
       this.v$.$touch();
 
       if (this.ingredients.length < 2) {
@@ -280,6 +270,26 @@ export default {
       if (this.v$.$error || this.minIngredientsError) {
         return;
       }
+
+      const cocktail = {
+        name: this.name,
+        picture: "",
+        description: this.description,
+        preparationInstruction: this.preparationInstruction,
+        ingredients: this.getTransformedIngredients(),
+      };
+
+      this.$emit("manage-cocktail", cocktail);
+    },
+    getTransformedIngredients() {
+      return this.ingredients.reduce((accum, obj) => {
+        const ingredientToUpload = {
+          amount: obj.amount,
+          productId: obj.id,
+        };
+        accum.push(ingredientToUpload);
+        return accum;
+      }, []);
     },
   },
   validations() {

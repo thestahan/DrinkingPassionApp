@@ -37,7 +37,7 @@
           <Button
             icon="pi pi-pencil"
             class="p-button-rounded p-button-warning"
-            @click="console.log(slotProps)"
+            @click="openEditCocktailDetailsDialog(slotProps.data.id)"
           />
         </template>
       </Column>
@@ -54,9 +54,11 @@
   </section>
 
   <cocktail-details-dialog
+    v-if="renderCocktailDetailsDialog"
     :cocktail="cocktail"
     :products="products"
     @close-modal="closeCocktailDetailsDialog"
+    @manage-cocktail="manageCocktail"
     v-model:visible="newCocktailDialog"
   ></cocktail-details-dialog>
 </template>
@@ -88,7 +90,21 @@ export default {
       newCocktailDialog: false,
       cocktail: {},
       submitted: false,
+      mode: null,
     };
+  },
+  computed: {
+    renderCocktailDetailsDialog() {
+      if (this.mode == "add") {
+        return this.newCocktailDialog;
+      }
+
+      if (this.mode == "edit") {
+        return this.cocktail.id;
+      }
+
+      return false;
+    },
   },
   cocktailService: null,
   productService: null,
@@ -117,6 +133,17 @@ export default {
 
       this.isLoading = false;
     },
+    async getCocktail(id) {
+      this.isLoading = true;
+
+      try {
+        this.cocktail = await this.cocktailService.getCocktail(id);
+      } catch (err) {
+        console.error(err.toJSON());
+      }
+
+      this.isLoading = false;
+    },
     async getProducts() {
       try {
         this.products = await this.productService.getProducts();
@@ -124,12 +151,29 @@ export default {
         console.warning(err.toJSON());
       }
     },
+    async manageCocktail(cocktail) {
+      try {
+        const response = await this.cocktailService.addCocktail(cocktail);
+        console.log(response);
+      } catch (err) {
+        console.warning(err.toJSON());
+      }
+    },
+    openEditCocktailDetailsDialog(cocktailId) {
+      this.mode = "edit";
+      this.cocktail = this.getCocktail(cocktailId);
+      this.submitted = false;
+      this.newCocktailDialog = true;
+    },
     openCocktailDetailsDialog() {
+      this.mode = "add";
       this.cocktail = {};
       this.submitted = false;
       this.newCocktailDialog = true;
     },
     closeCocktailDetailsDialog() {
+      this.mode = null;
+      this.cocktail = null;
       this.newCocktailDialog = false;
     },
   },

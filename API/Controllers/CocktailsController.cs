@@ -9,6 +9,7 @@ using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -61,6 +62,10 @@ namespace API.Controllers
         public async Task<ActionResult<CocktailDetailsToReturnDto>> AddCocktail(CocktailToAddDto cocktailToAddDto)
         {
             var cocktail = _mapper.Map<Cocktail>(cocktailToAddDto);
+
+            cocktail.BaseProductId = cocktail.Ingredients.OrderByDescending(x => x.Amount)
+                .Select(x => x.ProductId)
+                .FirstOrDefault();
 
             var createdCocktail =  await _cocktailsRepo.AddAsync(cocktail);
 
