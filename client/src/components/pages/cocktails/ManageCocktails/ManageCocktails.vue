@@ -46,7 +46,7 @@
           <Button
             icon="pi pi-trash"
             class="p-button-rounded p-button-danger"
-            @click="console.log(slotProps)"
+            @click="deleteCocktail(slotProps.data.id)"
           />
         </template>
       </Column>
@@ -189,6 +189,21 @@ export default {
         console.warning(err.toJSON());
       }
     },
+    async deleteCocktail(id) {
+      this.isLoading = true;
+
+      try {
+        await this.cocktailService.deleteCocktail(id, this.token);
+
+        this.cocktails = this.cocktails.filter((x) => x.id != id);
+
+        this.showDeleteSuccess();
+      } catch (err) {
+        console.warning(err.toJSON());
+      }
+
+      this.isLoading = false;
+    },
     openEditCocktailDetailsDialog(cocktailId) {
       this.mode = "edit";
       this.cocktail = this.getCocktail(cocktailId);
@@ -219,6 +234,14 @@ export default {
         severity: "success",
         summary: "Sukces",
         detail: "Koktajl został pomyślnie dodany",
+        life: 3000,
+      });
+    },
+    showDeleteSuccess() {
+      this.$toast.add({
+        severity: "success",
+        summary: "Sukces",
+        detail: "Koktajl został usunięty",
         life: 3000,
       });
     },

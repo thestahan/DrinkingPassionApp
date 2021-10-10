@@ -162,9 +162,8 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCocktail(int id)
         {
-            var spec = new CocktailWithIngredientsOnlySpecification(id);
 
-            var cocktail = await _cocktailsRepo.GetEntityWithSpec(spec);
+            var cocktail = await _cocktailsRepo.GetByIdAsync(id);
 
             if (cocktail == null) return NotFound(new ApiResponse(404));
 
