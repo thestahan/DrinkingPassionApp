@@ -61,6 +61,8 @@
     @manage-cocktail="manageCocktail"
     v-model:visible="newCocktailDialog"
   ></cocktail-details-dialog>
+
+  <Toast position="bottom-right" />
 </template>
 
 <script>
@@ -70,6 +72,7 @@ import Button from "primevue/button";
 import CocktailService from "../../../../services/CocktailService";
 import ProductSerivce from "../../../../services/ProductSerivce";
 import CocktailDetailsDialog from "../ManageCocktails/CocktailDetailsDialog.vue";
+import Toast from "primevue/toast";
 
 export default {
   components: {
@@ -77,6 +80,7 @@ export default {
     Column,
     Button,
     CocktailDetailsDialog,
+    Toast,
   },
   data() {
     return {
@@ -104,6 +108,9 @@ export default {
       }
 
       return false;
+    },
+    token() {
+      return this.$store.getters.token;
     },
   },
   cocktailService: null,
@@ -153,8 +160,28 @@ export default {
     },
     async manageCocktail(cocktail) {
       try {
-        const response = await this.cocktailService.addCocktail(cocktail);
-        console.log(response);
+        const response = await this.cocktailService.manageCocktail(
+          cocktail,
+          this.token
+        );
+
+        if (response.status == "201") {
+          const newCocktail = response.data;
+          this.cocktails.push(newCocktail);
+        } else if (response.status == "200") {
+          const editedCocktail = this.cocktails.find(
+            (x) => x.id == cocktail.id
+          );
+
+          const index = this.cocktails.indexOf(editedCocktail);
+
+          if (index === -1) return;
+
+          this.cocktails[index] = response.data;
+
+          this.closeCocktailDetailsDialog();
+          this.showEditSuccess();
+        }
       } catch (err) {
         console.warning(err.toJSON());
       }
@@ -175,6 +202,14 @@ export default {
       this.mode = null;
       this.cocktail = null;
       this.newCocktailDialog = false;
+    },
+    showEditSuccess() {
+      this.$toast.add({
+        severity: "success",
+        summary: "Sukces",
+        detail: "Dane koktajlu zostały zapisane",
+        life: 3000,
+      });
     },
   },
 };

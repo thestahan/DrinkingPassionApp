@@ -11,11 +11,16 @@ export default class CocktailService {
     );
     return res.data;
   }
-  async addCocktail(cocktail) {
+  async manageCocktail(cocktail, token) {
     const res = await axios.post(
       `${process.env.VUE_APP_API_URL}/cocktails`,
-      cocktail
+      cocktail,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    return res.data;
+    return res;
   }
 }

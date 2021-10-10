@@ -6,6 +6,7 @@ using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -58,22 +59,37 @@ namespace API.Controllers
             return Ok(cocktailToReturn);
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> AddCocktail(CocktailToAddDto cocktailToAddDto)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail(CocktailToManageDto dto)
         {
-            var cocktail = _mapper.Map<Cocktail>(cocktailToAddDto);
+            var cocktail = _mapper.Map<Cocktail>(dto);
 
-            cocktail.BaseProductId = cocktail.Ingredients.OrderByDescending(x => x.Amount)
-                .Select(x => x.ProductId)
-                .FirstOrDefault();
+            bool editing = cocktail.Id != 0;
 
-            var createdCocktail =  await _cocktailsRepo.AddAsync(cocktail);
+            if (!editing)
+            {
+                cocktail.BaseProductId = GetCocktailBaseProductId(cocktail);
 
-            var spec = new CocktailWithIngredientsSpecification(createdCocktail.Id);
+                await _cocktailsRepo.AddAsync(cocktail);
+            }
 
-            var createdCocktailWithIngredients = await _cocktailsRepo.GetEntityWithSpec(spec);
+            var spec = new CocktailWithIngredientsSpecification(cocktail.Id);
 
-            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(createdCocktailWithIngredients);
+            var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
+
+            if (editing)
+            {
+                MapEditedCocktailToDbCocktail(cocktail, cocktailFromDb);
+
+                await _cocktailsRepo.UpdateAsync(cocktailFromDb);
+
+                var editedCocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
+
+                return Ok(editedCocktailToReturn);
+            }
+
+            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
 
             return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
         }
@@ -142,8 +158,9 @@ namespace API.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteProduct(int id)
+        public async Task<ActionResult> DeleteCocktail(int id)
         {
             var spec = new CocktailWithIngredientsOnlySpecification(id);
 
@@ -199,5 +216,20 @@ namespace API.Controllers
             var ingredientsCount = await _ingredientsRepo.CountAsync(spec);
             return ingredientsCount;
         }
+
+        private static void MapEditedCocktailToDbCocktail(Cocktail cocktail, Cocktail cocktailFromDb)
+        {
+            cocktailFromDb.BaseProductId = GetCocktailBaseProductId(cocktail);
+            cocktailFromDb.Description = cocktail.Description;
+            cocktailFromDb.Name = cocktail.Name;
+            cocktailFromDb.PreparationInstruction = cocktail.PreparationInstruction;
+            cocktailFromDb.Ingredients = cocktail.Ingredients;
+            cocktailFromDb.IngredientsCount = cocktail.Ingredients.Count;
+        }
+
+        private static int GetCocktailBaseProductId(Cocktail cocktail) =>
+            cocktail.Ingredients.OrderByDescending(x => x.Amount)
+                .Select(x => x.ProductId)
+                .FirstOrDefault();
     }
 }

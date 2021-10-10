@@ -256,7 +256,12 @@ export default {
     addIngredient() {
       if (!this.newIngredient.name || !this.newIngredient.amount) return;
 
-      this.ingredients.push(this.newIngredient);
+      this.ingredients.push({
+        id: 0,
+        amount: this.newIngredient.amount,
+        name: this.newIngredient.name,
+        productId: this.newIngredient.id,
+      });
 
       this.newIngredient = {};
     },
@@ -272,6 +277,7 @@ export default {
       }
 
       const cocktail = {
+        id: this.cocktail.id,
         name: this.name,
         picture: "",
         description: this.description,
@@ -285,7 +291,7 @@ export default {
       return this.ingredients.reduce((accum, obj) => {
         const ingredientToUpload = {
           amount: obj.amount,
-          productId: obj.id,
+          productId: obj.productId,
         };
         accum.push(ingredientToUpload);
         return accum;
