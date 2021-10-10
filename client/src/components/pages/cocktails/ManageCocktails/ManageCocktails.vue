@@ -168,6 +168,9 @@ export default {
         if (response.status == "201") {
           const newCocktail = response.data;
           this.cocktails.push(newCocktail);
+
+          this.closeCocktailDetailsDialog();
+          this.showAddSuccess();
         } else if (response.status == "200") {
           const editedCocktail = this.cocktails.find(
             (x) => x.id == cocktail.id
@@ -208,6 +211,14 @@ export default {
         severity: "success",
         summary: "Sukces",
         detail: "Dane koktajlu zostały zapisane",
+        life: 3000,
+      });
+    },
+    showAddSuccess() {
+      this.$toast.add({
+        severity: "success",
+        summary: "Sukces",
+        detail: "Koktajl został pomyślnie dodany",
         life: 3000,
       });
     },
