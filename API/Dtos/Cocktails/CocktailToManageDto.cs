@@ -4,8 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace API.Dtos.Cocktails
 {
-    public class CocktailToAddDto
+    public class CocktailToManageDto
     {
+        public int Id { get; set; }
+
         [Required]
         [StringLength(maximumLength: 60, MinimumLength = 2)]
         public string Name { get; set; }
@@ -16,7 +18,6 @@ namespace API.Dtos.Cocktails
 
         public string PreparationInstruction { get; set; }
 
-        [Required]
         public int BaseProductId { get; set; }
 
         [Required]

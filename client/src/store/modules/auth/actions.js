@@ -103,6 +103,7 @@ export default {
     localStorage.removeItem("token");
     localStorage.removeItem("displayName");
     localStorage.removeItem("tokenExpiration");
+    localStorage.removeItem("roles");
 
     clearTimeout(timer);
 

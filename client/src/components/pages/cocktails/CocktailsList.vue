@@ -56,10 +56,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.heading-font {
-  font-size: 2rem;
-  font-weight: 300;
-}
-</style>
