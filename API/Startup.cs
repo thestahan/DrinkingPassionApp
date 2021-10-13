@@ -37,7 +37,7 @@ namespace API
                 services.AddDbContext<AppDbContext>(x => x.UseNpgsql(_config.GetConnectionString("DefaultConnection")));
             }
 
-            services.AddApplicationServices();
+            services.AddApplicationServices(_config);
 
             services.AddIdentityServices(_config);
 

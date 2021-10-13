@@ -279,11 +279,13 @@ export default {
       const cocktail = {
         id: this.cocktail.id,
         name: this.name,
-        picture: "",
+        picture: this.picture,
         description: this.description,
         preparationInstruction: this.preparationInstruction,
         ingredients: this.getTransformedIngredients(),
       };
+
+      console.log(cocktail);
 
       this.$emit("manage-cocktail", cocktail);
     },

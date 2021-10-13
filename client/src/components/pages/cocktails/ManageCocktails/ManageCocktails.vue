@@ -160,8 +160,22 @@ export default {
     },
     async manageCocktail(cocktail) {
       try {
+        const formData = new FormData();
+
+        for (var key in cocktail) {
+          if (cocktail[key]) {
+            formData.append(key, cocktail[key]);
+          }
+        }
+
+        formData.set("ingredients", JSON.stringify(cocktail.ingredients));
+
+        for (var pair of formData.entries()) {
+          console.log(pair[0] + ", " + pair[1]);
+        }
+
         const response = await this.cocktailService.manageCocktail(
-          cocktail,
+          formData,
           this.token
         );
 
@@ -186,7 +200,7 @@ export default {
           this.showEditSuccess();
         }
       } catch (err) {
-        console.warning(err.toJSON());
+        console.warn(err.toJSON());
       }
     },
     async deleteCocktail(id) {
@@ -199,7 +213,7 @@ export default {
 
         this.showDeleteSuccess();
       } catch (err) {
-        console.warning(err.toJSON());
+        console.warn(err.toJSON());
       }
 
       this.isLoading = false;

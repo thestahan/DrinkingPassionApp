@@ -1,5 +1,4 @@
-﻿using API.Dtos.Ingredients;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.Dtos.Cocktails
@@ -12,7 +11,7 @@ namespace API.Dtos.Cocktails
         [StringLength(maximumLength: 60, MinimumLength = 2)]
         public string Name { get; set; }
 
-        public string Picture { get; set; }
+        public IFormFile Picture { get; set; }
 
         public string Description { get; set; }
 
@@ -21,6 +20,6 @@ namespace API.Dtos.Cocktails
         public int BaseProductId { get; set; }
 
         [Required]
-        public ICollection<IngredientToAddDto> Ingredients { get; set; }
+        public string Ingredients { get; set; }
     }
 }

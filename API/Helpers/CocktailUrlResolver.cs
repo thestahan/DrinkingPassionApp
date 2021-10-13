@@ -18,7 +18,7 @@ namespace API.Helpers
         {
             if (!string.IsNullOrEmpty(source.Picture))
             {
-                return _config["ApiUrl"] + source.Picture;
+                return _config["AzureBlobStorage:Url"] + source.Picture;
             }
 
             return null;

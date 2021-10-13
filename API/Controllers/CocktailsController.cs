@@ -6,8 +6,11 @@ using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +23,16 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Cocktail> _cocktailsRepo;
         private readonly IGenericRepository<Ingredient> _ingredientsRepo;
+        private readonly IConfiguration _config;
+        private readonly IBlobService _blobService;
 
-        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo)
+        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo, IConfiguration config, IBlobService blobService)
         {
             _mapper = mapper;
             _cocktailsRepo = cocktailsRepo;
             _ingredientsRepo = ingredientsRepo;
+            _config = config;
+            _blobService = blobService;
         }
 
         [HttpGet]
@@ -61,9 +68,15 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail(CocktailToManageDto dto)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail([FromForm]CocktailToManageDto dto)
         {
             var cocktail = _mapper.Map<Cocktail>(dto);
+
+            var ingredients = JsonConvert.DeserializeObject<ICollection<IngredientToAddDto>>(dto.Ingredients);
+
+            cocktail.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
+
+            cocktail.IngredientsCount = cocktail.Ingredients.Count;
 
             bool editing = cocktail.Id != 0;
 
@@ -78,6 +91,20 @@ namespace API.Controllers
 
             var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
 
+            bool newPicture = dto.Picture != null && dto.Picture.Length != 0;
+
+            if (newPicture)
+            {
+                string container = _config["AzureBlobStorage:PublicCocktailPicturesContainer"];
+
+                string newFileName = editing ? cocktail.Picture.Split("/")[1] 
+                    : $"cocktail-picture-{cocktail.Id}-{dto.Picture.FileName}";
+
+                cocktail.Picture = $"{container}/{newFileName}";
+
+                await _blobService.UploadFileStreamBlobAsync(container, dto.Picture.OpenReadStream(), newFileName);
+            }
+
             if (editing)
             {
                 MapEditedCocktailToDbCocktail(cocktail, cocktailFromDb);
@@ -88,6 +115,8 @@ namespace API.Controllers
 
                 return Ok(editedCocktailToReturn);
             }
+
+            if (newPicture) await _cocktailsRepo.UpdateAsync(cocktail);
 
             var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
 
