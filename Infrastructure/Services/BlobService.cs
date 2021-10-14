@@ -3,10 +3,7 @@ using Azure.Storage.Blobs.Models;
 using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Extensions;
-using Microsoft.AspNetCore.Http;
-using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Services
@@ -20,11 +17,13 @@ namespace Infrastructure.Services
             _blobServiceClient = blobServiceClient;
         }
 
-        public Task DeleteBlobAsync(string containerName, string blobName)
+        public async Task DeleteBlobAsync(string containerName, string blobName)
         {
             var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
-            throw new NotImplementedException();
+            var blobClient = containerClient.GetBlobClient(blobName);
+
+            await blobClient.DeleteIfExistsAsync();
         }
 
         public async Task<BlobBasicInfo> GetBlobAsync(string containerName, string blobName)

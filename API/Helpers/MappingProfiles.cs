@@ -40,7 +40,8 @@ namespace API.Helpers
                     dest => dest.Name,
                     opt => opt.MapFrom(src => src.Product.Name));
             CreateMap<CocktailToManageDto, Cocktail>()
-                .ForMember(dest => dest.Ingredients, opt => opt.Ignore());
+                .ForMember(dest => dest.Ingredients, opt => opt.Ignore())
+                .ForMember(dest => dest.Picture, opt => opt.Ignore());
             CreateMap<IngredientToAddDto, Ingredient>();
             CreateMap<IngredientToUpdateDto, Ingredient>();
             CreateMap<Product, ProductToReturnDto>()

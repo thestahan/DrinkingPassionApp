@@ -70,24 +70,24 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail([FromForm]CocktailToManageDto dto)
         {
-            var cocktail = _mapper.Map<Cocktail>(dto);
+            var cocktailFromDto = _mapper.Map<Cocktail>(dto);
 
             var ingredients = JsonConvert.DeserializeObject<ICollection<IngredientToAddDto>>(dto.Ingredients);
 
-            cocktail.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
+            cocktailFromDto.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
 
-            cocktail.IngredientsCount = cocktail.Ingredients.Count;
+            cocktailFromDto.IngredientsCount = cocktailFromDto.Ingredients.Count;
 
-            bool editing = cocktail.Id != 0;
+            bool editing = cocktailFromDto.Id != 0;
 
             if (!editing)
             {
-                cocktail.BaseProductId = GetCocktailBaseProductId(cocktail);
+                cocktailFromDto.BaseProductId = GetCocktailBaseProductId(cocktailFromDto);
 
-                await _cocktailsRepo.AddAsync(cocktail);
+                await _cocktailsRepo.AddAsync(cocktailFromDto);
             }
 
-            var spec = new CocktailWithIngredientsSpecification(cocktail.Id);
+            var spec = new CocktailWithIngredientsSpecification(cocktailFromDto.Id);
 
             var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
 
@@ -97,17 +97,37 @@ namespace API.Controllers
             {
                 string container = _config["AzureBlobStorage:PublicCocktailPicturesContainer"];
 
-                string newFileName = editing ? cocktail.Picture.Split("/")[1] 
-                    : $"cocktail-picture-{cocktail.Id}-{dto.Picture.FileName}";
+                // delete previous
 
-                cocktail.Picture = $"{container}/{newFileName}";
+                bool pictureExists = !string.IsNullOrEmpty(cocktailFromDb.Picture);
 
-                await _blobService.UploadFileStreamBlobAsync(container, dto.Picture.OpenReadStream(), newFileName);
+                if (pictureExists)
+                {
+                    string blobName = cocktailFromDb.Picture.Split("/")[1];
+
+                    await _blobService.DeleteBlobAsync(container, blobName);
+                }
+
+                // upload new
+
+                // generate name
+
+                string sufix = Guid.NewGuid().ToString().Substring(0, 4);
+
+                string newBlobName = $"cocktail-picture-{cocktailFromDb.Id}-{sufix}";
+
+                // assign new name
+
+                cocktailFromDto.Picture = $"{container}/{newBlobName}";
+
+                // upload file
+
+                await _blobService.UploadFileStreamBlobAsync(container, dto.Picture.OpenReadStream(), newBlobName);
             }
 
             if (editing)
             {
-                MapEditedCocktailToDbCocktail(cocktail, cocktailFromDb);
+                MapEditedCocktailToDbCocktail(cocktailFromDto, cocktailFromDb);
 
                 await _cocktailsRepo.UpdateAsync(cocktailFromDb);
 
@@ -116,7 +136,7 @@ namespace API.Controllers
                 return Ok(editedCocktailToReturn);
             }
 
-            if (newPicture) await _cocktailsRepo.UpdateAsync(cocktail);
+            if (newPicture) await _cocktailsRepo.UpdateAsync(cocktailFromDto);
 
             var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
 
@@ -183,6 +203,7 @@ namespace API.Controllers
 
         private static void MapEditedCocktailToDbCocktail(Cocktail cocktail, Cocktail cocktailFromDb)
         {
+            cocktailFromDb.Picture = cocktail.Picture;
             cocktailFromDb.BaseProductId = GetCocktailBaseProductId(cocktail);
             cocktailFromDb.Description = cocktail.Description;
             cocktailFromDb.Name = cocktail.Name;

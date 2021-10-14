@@ -26,7 +26,11 @@
     >
       <Column header="Zdjęcie">
         <template #body="{ data }">
-          <img :src="data.picture" class="cocktail-image" />
+          <img
+            :src="data.picture"
+            :id="'cocktail-picture-' + data.id"
+            class="cocktail-image"
+          />
         </template>
       </Column>
       <Column field="name" header="Nazwa"></Column>
