@@ -269,7 +269,7 @@ export default {
 
 <style scoped>
 .cocktail-image {
-  width: 60px;
+  width: 100px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 </style>

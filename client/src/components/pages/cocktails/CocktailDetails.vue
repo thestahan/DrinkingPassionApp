@@ -87,7 +87,7 @@
         <h3 class="main-font p-mb-2" style="color: var(--primary-color)">
           Przygotowanie
         </h3>
-        <span>{{ cocktail.description }}</span>
+        <span>{{ cocktail.preparationInstruction }}</span>
       </div>
     </div>
   </div>

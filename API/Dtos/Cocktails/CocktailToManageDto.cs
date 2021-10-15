@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using API.ValidationAttributes;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.Dtos.Cocktails
@@ -11,6 +12,8 @@ namespace API.Dtos.Cocktails
         [StringLength(maximumLength: 60, MinimumLength = 2)]
         public string Name { get; set; }
 
+        [MaxFileSize(5 * 1024 * 1014)]
+        [AllowedFileExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
         public IFormFile Picture { get; set; }
 
         public string Description { get; set; }
