@@ -26,7 +26,11 @@
     >
       <Column header="Zdjęcie">
         <template #body="{ data }">
-          <img :src="data.picture" class="cocktail-image" />
+          <img
+            :src="data.picture"
+            :id="'cocktail-picture-' + data.id"
+            class="cocktail-image"
+          />
         </template>
       </Column>
       <Column field="name" header="Nazwa"></Column>
@@ -160,8 +164,22 @@ export default {
     },
     async manageCocktail(cocktail) {
       try {
+        const formData = new FormData();
+
+        for (var key in cocktail) {
+          if (cocktail[key]) {
+            formData.append(key, cocktail[key]);
+          }
+        }
+
+        formData.set("ingredients", JSON.stringify(cocktail.ingredients));
+
+        for (var pair of formData.entries()) {
+          console.log(pair[0] + ", " + pair[1]);
+        }
+
         const response = await this.cocktailService.manageCocktail(
-          cocktail,
+          formData,
           this.token
         );
 
@@ -186,7 +204,7 @@ export default {
           this.showEditSuccess();
         }
       } catch (err) {
-        console.warning(err.toJSON());
+        console.warn(err.toJSON());
       }
     },
     async deleteCocktail(id) {
@@ -199,7 +217,7 @@ export default {
 
         this.showDeleteSuccess();
       } catch (err) {
-        console.warning(err.toJSON());
+        console.warn(err.toJSON());
       }
 
       this.isLoading = false;
@@ -251,7 +269,7 @@ export default {
 
 <style scoped>
 .cocktail-image {
-  width: 60px;
+  width: 100px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 }
 </style>

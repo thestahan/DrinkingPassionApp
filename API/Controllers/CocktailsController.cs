@@ -6,8 +6,11 @@ using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
+using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,12 +23,16 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Cocktail> _cocktailsRepo;
         private readonly IGenericRepository<Ingredient> _ingredientsRepo;
+        private readonly IConfiguration _config;
+        private readonly IBlobService _blobService;
 
-        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo)
+        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo, IConfiguration config, IBlobService blobService)
         {
             _mapper = mapper;
             _cocktailsRepo = cocktailsRepo;
             _ingredientsRepo = ingredientsRepo;
+            _config = config;
+            _blobService = blobService;
         }
 
         [HttpGet]
@@ -61,26 +68,66 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail(CocktailToManageDto dto)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail([FromForm]CocktailToManageDto dto)
         {
-            var cocktail = _mapper.Map<Cocktail>(dto);
+            var cocktailFromDto = _mapper.Map<Cocktail>(dto);
 
-            bool editing = cocktail.Id != 0;
+            var ingredients = JsonConvert.DeserializeObject<ICollection<IngredientToAddDto>>(dto.Ingredients);
+
+            cocktailFromDto.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
+
+            cocktailFromDto.IngredientsCount = cocktailFromDto.Ingredients.Count;
+
+            bool editing = cocktailFromDto.Id != 0;
 
             if (!editing)
             {
-                cocktail.BaseProductId = GetCocktailBaseProductId(cocktail);
+                cocktailFromDto.BaseProductId = GetCocktailBaseProductId(cocktailFromDto);
 
-                await _cocktailsRepo.AddAsync(cocktail);
+                await _cocktailsRepo.AddAsync(cocktailFromDto);
             }
 
-            var spec = new CocktailWithIngredientsSpecification(cocktail.Id);
+            var spec = new CocktailWithIngredientsSpecification(cocktailFromDto.Id);
 
             var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
 
+            bool newPicture = dto.Picture != null && dto.Picture.Length != 0;
+
+            if (newPicture)
+            {
+                string container = _config["AzureBlobStorage:PublicCocktailPicturesContainer"];
+
+                // delete previous
+
+                bool pictureExists = !string.IsNullOrEmpty(cocktailFromDb.Picture);
+
+                if (pictureExists)
+                {
+                    string blobName = cocktailFromDb.Picture.Split("/")[1];
+
+                    await _blobService.DeleteBlobAsync(container, blobName);
+                }
+
+                // upload new
+
+                // generate name
+
+                string sufix = Guid.NewGuid().ToString().Substring(0, 4);
+
+                string newBlobName = $"cocktail-picture-{cocktailFromDb.Id}-{sufix}";
+
+                // assign new name
+
+                cocktailFromDto.Picture = $"{container}/{newBlobName}";
+
+                // upload file
+
+                await _blobService.UploadFileStreamBlobAsync(container, dto.Picture.OpenReadStream(), newBlobName);
+            }
+
             if (editing)
             {
-                MapEditedCocktailToDbCocktail(cocktail, cocktailFromDb);
+                MapEditedCocktailToDbCocktail(cocktailFromDto, cocktailFromDb);
 
                 await _cocktailsRepo.UpdateAsync(cocktailFromDb);
 
@@ -88,6 +135,8 @@ namespace API.Controllers
 
                 return Ok(editedCocktailToReturn);
             }
+
+            if (newPicture) await _cocktailsRepo.UpdateAsync(cocktailFromDto);
 
             var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
 
@@ -154,6 +203,7 @@ namespace API.Controllers
 
         private static void MapEditedCocktailToDbCocktail(Cocktail cocktail, Cocktail cocktailFromDb)
         {
+            cocktailFromDb.Picture = cocktail.Picture;
             cocktailFromDb.BaseProductId = GetCocktailBaseProductId(cocktail);
             cocktailFromDb.Description = cocktail.Description;
             cocktailFromDb.Name = cocktail.Name;

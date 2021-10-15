@@ -8,12 +8,18 @@
   >
     <form id="cocktail-details-form" @submit.prevent="submitForm()">
       <div class="p-field" v-if="pictureUrl">
-        <label for="name" class="p-mb-2">Aktualne zdjęcie</label>
-        <img :src="pictureUrl" alt="Zdjęcie koktajlu" class="cocktail-image" />
+        <label for="name" class="green-caption p-text-bold p-mb-2"
+          >Aktualne zdjęcie</label
+        >
+        <img
+          :src="pictureUrl"
+          alt="Zdjęcie koktajlu"
+          class="cocktail-details-image"
+        />
       </div>
 
       <div class="p-field">
-        <label for="name" class="p-mb-2">Nazwa</label>
+        <label for="name" class="green-caption p-text-bold p-mb-2">Nazwa</label>
         <InputText
           id="name"
           v-model.trim="name"
@@ -25,7 +31,9 @@
       </div>
 
       <div class="p-field" id="file-upload-field">
-        <label for="picture" class="p-mb-2">Zdjęcie</label>
+        <label for="picture" class="green-caption p-text-bold p-mb-2"
+          >Zdjęcie</label
+        >
         <FileUpload
           name="picture"
           :customUpload="true"
@@ -40,7 +48,9 @@
       </div>
 
       <div class="p-field">
-        <label for="description" class="p-mb-2">Opis</label>
+        <label for="description" class="green-caption p-text-bold p-mb-2"
+          >Opis</label
+        >
         <Textarea
           id="description"
           v-model.trim="description"
@@ -54,7 +64,9 @@
       </div>
 
       <div class="p-field">
-        <label for="preparationInstruction" class="p-mb-2"
+        <label
+          for="preparationInstruction"
+          class="green-caption p-text-bold p-mb-2"
           >Instrukcja przygotowania</label
         >
         <Textarea
@@ -66,7 +78,9 @@
       </div>
 
       <div class="p-field">
-        <label for="description" class="p-mb-2">Składniki</label>
+        <label for="description" class="green-caption p-text-bold p-mb-2"
+          >Składniki</label
+        >
         <div v-if="showMinIngredientsError" class="p-mb-2">
           <p>
             <small class="p-error"
@@ -279,11 +293,13 @@ export default {
       const cocktail = {
         id: this.cocktail.id,
         name: this.name,
-        picture: "",
+        picture: this.picture,
         description: this.description,
         preparationInstruction: this.preparationInstruction,
         ingredients: this.getTransformedIngredients(),
       };
+
+      console.log(cocktail);
 
       this.$emit("manage-cocktail", cocktail);
     },
@@ -314,3 +330,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.cocktail-details-image {
+  width: 100%;
+  max-height: 500px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+</style>

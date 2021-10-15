@@ -24,6 +24,11 @@ body {
   color: var(--primary-color);
 }
 
+.green-caption {
+  font-family: "Open Sans", sans-serif;
+  color: var(--primary-color);
+}
+
 /* .router-link-active {
   @apply border-blue-500 bg-indigo-700 !important;
 }
