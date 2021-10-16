@@ -4,16 +4,19 @@ using API.Errors;
 using API.Helpers;
 using AutoMapper;
 using Core.Entities;
+using Core.Entities.Identity;
 using Core.Interfaces;
 using Core.Specifications;
 using Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -25,22 +28,46 @@ namespace API.Controllers
         private readonly IGenericRepository<Ingredient> _ingredientsRepo;
         private readonly IConfiguration _config;
         private readonly IBlobService _blobService;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo, IConfiguration config, IBlobService blobService)
+        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo, IConfiguration config, IBlobService blobService, UserManager<AppUser> userManager)
         {
             _mapper = mapper;
             _cocktailsRepo = cocktailsRepo;
             _ingredientsRepo = ingredientsRepo;
             _config = config;
             _blobService = blobService;
+            _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet("Public")]
         public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery]CocktailSpecParams cocktailParams)
         {
-            var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams);
+            var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams, false);
 
-            var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams);
+            var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams, false);
+
+            var totalItems = await _cocktailsRepo.CountAsync(countSpec);
+
+            var cocktailsFromDb = await _cocktailsRepo.ListAsync(spec);
+
+            var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
+
+            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
+                cocktailParams.PageSize, totalItems, data));
+        }
+
+        [Authorize]
+        [HttpGet("Private")]
+        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams, true, user.Id);
+
+            var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams, true, user.Id);
 
             var totalItems = await _cocktailsRepo.CountAsync(countSpec);
 
