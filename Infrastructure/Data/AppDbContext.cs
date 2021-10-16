@@ -30,7 +30,7 @@ namespace Infrastructure.Data
 
             builder.Entity<AppUser>()
                 .Property(x => x.CreatedDate)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP"); //TODO, use getutcdate() in sqlserver
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             builder.Entity<Cocktail>()
                 .HasOne(x => x.BaseProduct)
