@@ -1,7 +1,12 @@
 <template>
-  <header class="p-mb-6">
-    <h2 class="p-text-center main-font heading-font">Zarządzanie koktajlami</h2>
-  </header>
+  <div class="card p-mb-6">
+    <header class="p-mb-6">
+      <h2 class="p-text-center main-font heading-font">
+        Zarządzanie koktajlami
+      </h2>
+    </header>
+    <TabMenu :model="cocktailsTypes" v-model:activeIndex="activeIndex" />
+  </div>
 
   <section class="cocktails-toolbar p-ml-4">
     <Button
@@ -70,6 +75,7 @@
 </template>
 
 <script>
+import TabMenu from "primevue/tabmenu";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
@@ -85,6 +91,7 @@ export default {
     Button,
     CocktailDetailsDialog,
     Toast,
+    TabMenu,
   },
   data() {
     return {
@@ -99,6 +106,11 @@ export default {
       cocktail: {},
       submitted: false,
       mode: null,
+      activeIndex: 0,
+      cocktailsTypes: [
+        { label: "Publiczne", icon: "pi pi-fw pi-lock-open" },
+        { label: "Prywatne", icon: "pi pi-fw pi-lock" },
+      ],
     };
   },
   computed: {
