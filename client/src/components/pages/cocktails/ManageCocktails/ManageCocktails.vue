@@ -6,6 +6,8 @@
       </h2>
     </header>
     <TabMenu :model="cocktailsTypes" v-model:activeIndex="activeIndex" />
+
+    <router-view></router-view>
   </div>
 
   <section class="cocktails-toolbar p-ml-4">
@@ -108,8 +110,16 @@ export default {
       mode: null,
       activeIndex: 0,
       cocktailsTypes: [
-        { label: "Publiczne", icon: "pi pi-fw pi-lock-open" },
-        { label: "Prywatne", icon: "pi pi-fw pi-lock" },
+        {
+          label: "Publiczne",
+          icon: "pi pi-fw pi-lock-open",
+          to: "/cocktails/manage/public",
+        },
+        {
+          label: "Prywatne",
+          icon: "pi pi-fw pi-lock",
+          to: "/cocktails/manage/private",
+        },
       ],
     };
   },

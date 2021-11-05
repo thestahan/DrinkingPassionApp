@@ -10,6 +10,8 @@ import ManageCocktails from "../components/pages/cocktails/ManageCocktails/Manag
 import NotFound from "../components/pages/NotFound.vue";
 import UserConfirmEmail from "../components/pages/users/UserConfirmEmail.vue";
 import ChangeForgottenPassword from "../components/pages/users/ChangeForgottenPassword.vue";
+import PublicCocktails from "../components/pages/cocktails/ManageCocktails/PublicCocktails.vue";
+import PrivateCocktails from "../components/pages/cocktails/ManageCocktails/PrivateCocktails.vue";
 import store from "../store/index.js";
 
 const routes = [
@@ -68,6 +70,16 @@ const routes = [
     name: "ManageCocktails",
     component: ManageCocktails,
     meta: { requiresAuth: true, requiresAdmin: true },
+    children: [
+      {
+        path: "public",
+        component: PublicCocktails,
+      },
+      {
+        path: "private",
+        component: PrivateCocktails,
+      },
+    ],
   },
 ];
 
