@@ -69,11 +69,12 @@ const routes = [
     path: "/cocktails/manage",
     name: "ManageCocktails",
     component: ManageCocktailsMenu,
-    meta: { requiresAuth: true, requiresAdmin: true },
+    meta: { requiresAuth: true },
     children: [
       {
         path: "public",
         component: PublicCocktails,
+        meta: { requiresAdmin: true },
       },
       {
         path: "private",
