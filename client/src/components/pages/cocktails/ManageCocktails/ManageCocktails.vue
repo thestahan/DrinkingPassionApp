@@ -1,15 +1,4 @@
 <template>
-  <div class="card p-mb-6">
-    <header class="p-mb-6">
-      <h2 class="p-text-center main-font heading-font">
-        Zarządzanie koktajlami
-      </h2>
-    </header>
-    <TabMenu :model="cocktailsTypes" v-model:activeIndex="activeIndex" />
-
-    <router-view></router-view>
-  </div>
-
   <section class="cocktails-toolbar p-ml-4">
     <Button
       label="Dodaj koktajl"
@@ -77,7 +66,6 @@
 </template>
 
 <script>
-import TabMenu from "primevue/tabmenu";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
@@ -93,11 +81,16 @@ export default {
     Button,
     CocktailDetailsDialog,
     Toast,
-    TabMenu,
+  },
+  props: {
+    cocktailsType: {
+      type: String,
+      required: true,
+    },
+    cocktailsData: [Object, null],
   },
   data() {
     return {
-      cocktails: [],
       products: [],
       cocktailsTotal: null,
       pageIndex: 1,
@@ -108,19 +101,6 @@ export default {
       cocktail: {},
       submitted: false,
       mode: null,
-      activeIndex: 0,
-      cocktailsTypes: [
-        {
-          label: "Publiczne",
-          icon: "pi pi-fw pi-lock-open",
-          to: "/cocktails/manage/public",
-        },
-        {
-          label: "Prywatne",
-          icon: "pi pi-fw pi-lock",
-          to: "/cocktails/manage/private",
-        },
-      ],
     };
   },
   computed: {
@@ -138,6 +118,13 @@ export default {
     token() {
       return this.$store.getters.token;
     },
+    cocktails() {
+      console.log(this.cocktailsData);
+
+      if (!this.cocktailsData) return;
+
+      return this.cocktailsData.data;
+    },
   },
   cocktailService: null,
   productService: null,
@@ -146,26 +133,9 @@ export default {
     this.productService = new ProductSerivce();
   },
   mounted() {
-    this.getCocktails();
     this.getProducts();
   },
   methods: {
-    async getCocktails() {
-      this.isLoading = true;
-
-      try {
-        const data = await this.cocktailService.getCocktails();
-
-        this.cocktails = data.data;
-        this.cocktailsTotal = data.count;
-        this.pageIndex = data.pageIndex;
-        this.pageSize = data.pageSize;
-      } catch (err) {
-        console.error(err.toJSON());
-      }
-
-      this.isLoading = false;
-    },
     async getCocktail(id) {
       this.isLoading = true;
 
