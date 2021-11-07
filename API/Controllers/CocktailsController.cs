@@ -7,7 +7,7 @@ using Core.Entities;
 using Core.Entities.Identity;
 using Core.Interfaces;
 using Core.Specifications;
-using Infrastructure.Extensions;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,15 +28,23 @@ namespace API.Controllers
         private readonly IGenericRepository<Ingredient> _ingredientsRepo;
         private readonly IConfiguration _config;
         private readonly IBlobService _blobService;
+        private readonly CocktailPicturesService _cocktailPicturesService;
         private readonly UserManager<AppUser> _userManager;
 
-        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo, IConfiguration config, IBlobService blobService, UserManager<AppUser> userManager)
+        public CocktailsController(
+            IMapper mapper,
+            IGenericRepository<Cocktail> cocktailsRepo,
+            IGenericRepository<Ingredient> ingredientsRepo,
+            IConfiguration config,
+            IBlobService blobService,
+            UserManager<AppUser> userManager)
         {
             _mapper = mapper;
             _cocktailsRepo = cocktailsRepo;
             _ingredientsRepo = ingredientsRepo;
             _config = config;
             _blobService = blobService;
+            _cocktailPicturesService = new CocktailPicturesService(blobService);
             _userManager = userManager;
         }
 
@@ -86,6 +94,13 @@ namespace API.Controllers
 
             var cocktail = await _cocktailsRepo.GetEntityWithSpec(spec);
 
+            if (cocktail.IsPrivate)
+            {
+                var user = await GetAuthorizedUser();
+
+                if (user == null || cocktail.AuthorId != user.Id) return NotFound(new ApiResponse(404));
+            }
+
             if (cocktail == null) return NotFound(new ApiResponse(404));
 
             var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktail);
@@ -97,6 +112,8 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail([FromForm]CocktailToManageDto dto)
         {
+            var user = await GetAuthorizedUser();
+
             var cocktailFromDto = _mapper.Map<Cocktail>(dto);
 
             var ingredients = JsonConvert.DeserializeObject<ICollection<IngredientToAddDto>>(dto.Ingredients);
@@ -104,6 +121,12 @@ namespace API.Controllers
             cocktailFromDto.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
 
             cocktailFromDto.IngredientsCount = cocktailFromDto.Ingredients.Count;
+
+            cocktailFromDto.AuthorId = user.Id;
+
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "admin");
+
+            if (!isAdmin) cocktailFromDto.IsPrivate = true;
 
             bool editing = cocktailFromDto.Id != 0;
 
@@ -114,9 +137,11 @@ namespace API.Controllers
                 await _cocktailsRepo.AddAsync(cocktailFromDto);
             }
 
-            var spec = new CocktailWithIngredientsSpecification(cocktailFromDto.Id);
+            var spec = new CocktailByPrivacyWithIngredientsSpecification(cocktailFromDto.Id, dto.IsPrivate);
 
             var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
+
+            if (cocktailFromDb == null) return NotFound(new ApiResponse(404));
 
             bool newPicture = dto.Picture != null && dto.Picture.Length != 0;
 
@@ -124,37 +149,18 @@ namespace API.Controllers
             {
                 string container = _config["AzureBlobStorage:PublicCocktailPicturesContainer"];
 
-                // delete previous
+                await _cocktailPicturesService.DeletePreviousPictureIfExists(cocktailFromDb, container);
 
-                bool pictureExists = !string.IsNullOrEmpty(cocktailFromDb.Picture);
-
-                if (pictureExists)
-                {
-                    string blobName = cocktailFromDb.Picture.Split("/")[1];
-
-                    await _blobService.DeleteBlobAsync(container, blobName);
-                }
-
-                // upload new
-
-                // generate name
-
-                string sufix = Guid.NewGuid().ToString().Substring(0, 4);
-
-                string newBlobName = $"cocktail-picture-{cocktailFromDb.Id}-{sufix}";
-
-                // assign new name
+                var newBlobName = _cocktailPicturesService.GenerateNewBlobName(cocktailFromDb.Id);
 
                 cocktailFromDto.Picture = $"{container}/{newBlobName}";
-
-                // upload file
 
                 await _blobService.UploadFileStreamBlobAsync(container, dto.Picture.OpenReadStream(), newBlobName);
             }
 
             if (editing)
             {
-                MapEditedCocktailToDbCocktail(cocktailFromDto, cocktailFromDb);
+                MapEditedCocktailToDbCocktail(cocktailFromDto, cocktailFromDb, !newPicture);
 
                 await _cocktailsRepo.UpdateAsync(cocktailFromDb);
 
@@ -174,10 +180,15 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCocktail(int id)
         {
+            var user = await GetAuthorizedUser();
+
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "admin");
 
             var cocktail = await _cocktailsRepo.GetByIdAsync(id);
 
             if (cocktail == null) return NotFound(new ApiResponse(404));
+
+            if (!cocktail.IsPrivate && !isAdmin) return Unauthorized(new ApiResponse(401));
 
             await _cocktailsRepo.DeleteAsync(cocktail);
 
@@ -228,9 +239,9 @@ namespace API.Controllers
             return ingredientsCount;
         }
 
-        private static void MapEditedCocktailToDbCocktail(Cocktail cocktail, Cocktail cocktailFromDb)
+        private static void MapEditedCocktailToDbCocktail(Cocktail cocktail, Cocktail cocktailFromDb, bool skipPicture)
         {
-            cocktailFromDb.Picture = cocktail.Picture;
+            if (!skipPicture) cocktailFromDb.Picture = cocktail.Picture;
             cocktailFromDb.BaseProductId = GetCocktailBaseProductId(cocktail);
             cocktailFromDb.Description = cocktail.Description;
             cocktailFromDb.Name = cocktail.Name;
@@ -243,5 +254,30 @@ namespace API.Controllers
             cocktail.Ingredients.OrderByDescending(x => x.Amount)
                 .Select(x => x.ProductId)
                 .FirstOrDefault();
+
+        private async Task<Cocktail> GetCocktailFromDbByPrivacy(CocktailToManageDto dto, int cocktailId)
+        {
+            if (dto.IsPrivate)
+            {
+                var spec = new CocktailByPrivacyWithIngredientsSpecification(cocktailId, dto.IsPrivate);
+
+                return await _cocktailsRepo.GetEntityWithSpec(spec);
+            }
+            else
+            {
+                var spec = new CocktailWithIngredientsSpecification(cocktailId);
+
+                return await _cocktailsRepo.GetEntityWithSpec(spec);
+            }
+        }
+
+        private async Task<AppUser> GetAuthorizedUser()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(email)) return null;
+
+            return await _userManager.FindByEmailAsync(email);
+        }
     }
 }

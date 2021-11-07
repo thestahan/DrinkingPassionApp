@@ -18,9 +18,14 @@ export default class CocktailService {
     );
     return res.data;
   }
-  async getCocktail(id) {
+  async getCocktail(id, token) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_URL}/cocktails/${id}`
+      `${process.env.VUE_APP_API_URL}/cocktails/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return res.data;
   }

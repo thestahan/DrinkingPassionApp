@@ -24,5 +24,7 @@ namespace API.Dtos.Cocktails
 
         [Required]
         public string Ingredients { get; set; }
+
+        public bool IsPrivate { get; set; }
     }
 }

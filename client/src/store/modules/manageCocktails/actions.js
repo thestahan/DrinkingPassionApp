@@ -29,4 +29,21 @@ export default {
       console.error(err.toJSON());
     }
   },
+  async deleteCocktail(context, payload) {
+    try {
+      await cocktailService.deleteCocktail(payload.id, payload.token);
+
+      if (payload.isPrivate) {
+        context.commit("deletePrivateCocktail", { id: payload.id });
+      } else {
+        context.commit("deletePublicCocktail", { id: payload.id });
+      }
+
+      return true;
+    } catch (err) {
+      console.warn(err.toJSON());
+
+      return false;
+    }
+  },
 };

@@ -101,6 +101,7 @@ export default {
       cocktail: {},
       submitted: false,
       mode: null,
+      privateCocktailsView: this.cocktailsType == "private",
     };
   },
   computed: {
@@ -119,8 +120,6 @@ export default {
       return this.$store.getters.token;
     },
     cocktails() {
-      console.log(this.cocktailsData);
-
       if (!this.cocktailsData) return;
 
       return this.cocktailsData.data;
@@ -140,7 +139,9 @@ export default {
       this.isLoading = true;
 
       try {
-        this.cocktail = await this.cocktailService.getCocktail(id);
+        this.cocktail = this.privateCocktailsView
+          ? await this.cocktailService.getCocktail(id, this.token)
+          : await this.cocktailService.getCocktail(id);
       } catch (err) {
         console.error(err.toJSON());
       }
@@ -166,8 +167,8 @@ export default {
 
         formData.set("ingredients", JSON.stringify(cocktail.ingredients));
 
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
+        if (this.privateCocktailsView) {
+          formData.set("isPrivate", true);
         }
 
         const response = await this.cocktailService.manageCocktail(
@@ -202,14 +203,14 @@ export default {
     async deleteCocktail(id) {
       this.isLoading = true;
 
-      try {
-        await this.cocktailService.deleteCocktail(id, this.token);
+      const deletedCocktail = this.$store.dispatch("deleteCocktail", {
+        id: id,
+        token: this.token,
+        isPrivate: this.privateCocktailsView,
+      });
 
-        this.cocktails = this.cocktails.filter((x) => x.id != id);
-
+      if (deletedCocktail) {
         this.showDeleteSuccess();
-      } catch (err) {
-        console.warn(err.toJSON());
       }
 
       this.isLoading = false;

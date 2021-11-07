@@ -14,4 +14,14 @@ export default {
   addPrivateCocktail(state, payload) {
     state.privateCocktailsData.data.push(payload.cocktail);
   },
+  deletePublicCocktail(state, payload) {
+    state.publicCocktailsData.data = state.publicCocktailsData.data.filter(
+      (cocktail) => cocktail.id != payload.id
+    );
+  },
+  deletePrivateCocktail(state, payload) {
+    state.privateCocktailsData.data = state.privateCocktailsData.data.filter(
+      (cocktail) => cocktail.id != payload.id
+    );
+  },
 };
