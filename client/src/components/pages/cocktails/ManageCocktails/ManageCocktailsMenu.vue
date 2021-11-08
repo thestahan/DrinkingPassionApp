@@ -13,7 +13,6 @@
 
 <script>
 import TabMenu from "primevue/tabmenu";
-import ProductSerivce from "../../../../services/ProductSerivce";
 
 export default {
   components: {
@@ -39,13 +38,9 @@ export default {
       return this.$store.getters.token;
     },
   },
-  productService: null,
-  created() {
-    this.productService = new ProductSerivce();
-  },
   mounted() {
     this.getPrivateCocktails();
-    // this.getProducts();
+    this.getProducts();
 
     if (this.isAdmin) {
       this.getPublicCocktails();
@@ -71,6 +66,9 @@ export default {
       this.$store.dispatch("fetchPrivateCocktails", { token: this.token });
 
       this.isLoading = false;
+    },
+    async getProducts() {
+      this.$store.dispatch("fetchProducts");
     },
   },
 };

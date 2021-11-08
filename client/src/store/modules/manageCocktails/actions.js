@@ -1,8 +1,8 @@
 import CocktailService from "../../../services/CocktailService";
-// import ProductService from "../../../services/ProductService";
+import ProductService from "../../../services/ProductSerivce";
 
 const cocktailService = new CocktailService();
-// const productService = new ProductService();
+const productService = new ProductService();
 
 export default {
   async fetchPublicCocktails(context) {
@@ -44,6 +44,17 @@ export default {
       console.warn(err.toJSON());
 
       return false;
+    }
+  },
+  async fetchProducts(context) {
+    try {
+      const products = await productService.getProducts();
+
+      context.commit("setProducts", {
+        products: products,
+      });
+    } catch (err) {
+      console.error(err.toJSON());
     }
   },
 };

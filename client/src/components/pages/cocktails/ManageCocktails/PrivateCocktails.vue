@@ -6,8 +6,10 @@
   </div>
 
   <manage-cocktails
+    v-if="privateCocktailsData && products"
     cocktailsType="private"
     :cocktailsData="privateCocktailsData"
+    :products="products"
   ></manage-cocktails>
 </template>
 
@@ -21,6 +23,9 @@ export default {
   computed: {
     privateCocktailsData() {
       return this.$store.getters.privateCocktailsData;
+    },
+    products() {
+      return this.$store.getters.products;
     },
   },
 };

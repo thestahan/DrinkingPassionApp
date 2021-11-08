@@ -70,7 +70,6 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import CocktailService from "../../../../services/CocktailService";
-import ProductSerivce from "../../../../services/ProductSerivce";
 import CocktailDetailsDialog from "../ManageCocktails/CocktailDetailsDialog.vue";
 import Toast from "primevue/toast";
 
@@ -88,10 +87,13 @@ export default {
       required: true,
     },
     cocktailsData: [Object, null],
+    products: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
-      products: [],
       cocktailsTotal: null,
       pageIndex: 1,
       pageSize: 12,
@@ -129,10 +131,6 @@ export default {
   productService: null,
   created() {
     this.cocktailService = new CocktailService();
-    this.productService = new ProductSerivce();
-  },
-  mounted() {
-    this.getProducts();
   },
   methods: {
     async getCocktail(id) {
@@ -147,13 +145,6 @@ export default {
       }
 
       this.isLoading = false;
-    },
-    async getProducts() {
-      try {
-        this.products = await this.productService.getProducts();
-      } catch (err) {
-        console.warning(err.toJSON());
-      }
     },
     async manageCocktail(cocktail) {
       try {
