@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import CocktailService from "../../../services/CocktailService";
 import Spinner from "../../utilities/Spinner.vue";
 import CocktailCard from "./CocktailCard.vue";
 
@@ -28,30 +29,29 @@ export default {
       url: process.env.VUE_APP_API_URL,
     };
   },
+  cocktailService: null,
   created() {
+    this.cocktailService = new CocktailService();
+  },
+  mounted() {
     this.getCocktails();
   },
   methods: {
     async getCocktails() {
       this.isLoading = true;
 
-      const response = await fetch(`${process.env.VUE_APP_API_URL}/cocktails`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      try {
+        const data = await this.cocktailService.getCocktails();
 
-      this.isLoading = false;
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        const error = new Error(responseData.message || "Wystąpił błąd.");
-        throw error;
+        this.cocktails = data.data;
+        // this.cocktailsTotal = data.count;
+        // this.pageIndex = data.pageIndex;
+        // this.pageSize = data.pageSize;
+      } catch (err) {
+        console.error(err.toJSON());
       }
 
-      this.cocktails = responseData.data;
+      this.isLoading = false;
     },
   },
 };

@@ -6,10 +6,12 @@ import UserLogin from "../components/pages/users/UserLogin/UserLogin.vue";
 import UserProfile from "../components/pages/users/UserProfile/UserProfile.vue";
 import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
 import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";
-import ManageCocktails from "../components/pages/cocktails/ManageCocktails/ManageCocktails.vue";
+import ManageCocktailsMenu from "../components/pages/cocktails/ManageCocktails/ManageCocktailsMenu.vue";
 import NotFound from "../components/pages/NotFound.vue";
 import UserConfirmEmail from "../components/pages/users/UserConfirmEmail.vue";
 import ChangeForgottenPassword from "../components/pages/users/ChangeForgottenPassword.vue";
+import PublicCocktails from "../components/pages/cocktails/ManageCocktails/PublicCocktails.vue";
+import PrivateCocktails from "../components/pages/cocktails/ManageCocktails/PrivateCocktails.vue";
 import store from "../store/index.js";
 
 const routes = [
@@ -66,8 +68,19 @@ const routes = [
   {
     path: "/cocktails/manage",
     name: "ManageCocktails",
-    component: ManageCocktails,
-    meta: { requiresAuth: true, requiresAdmin: true },
+    component: ManageCocktailsMenu,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: "public",
+        component: PublicCocktails,
+        meta: { requiresAdmin: true },
+      },
+      {
+        path: "private",
+        component: PrivateCocktails,
+      },
+    ],
   },
 ];
 

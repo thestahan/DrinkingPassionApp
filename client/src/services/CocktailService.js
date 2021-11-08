@@ -2,12 +2,30 @@ import axios from "axios";
 
 export default class CocktailService {
   async getCocktails() {
-    const res = await axios.get(`${process.env.VUE_APP_API_URL}/cocktails`);
+    const res = await axios.get(
+      `${process.env.VUE_APP_API_URL}/cocktails/public`
+    );
     return res.data;
   }
-  async getCocktail(id) {
+  async getPrivateCocktails(token) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_URL}/cocktails/${id}`
+      `${process.env.VUE_APP_API_URL}/cocktails/private`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  }
+  async getCocktail(id, token) {
+    const res = await axios.get(
+      `${process.env.VUE_APP_API_URL}/cocktails/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return res.data;
   }

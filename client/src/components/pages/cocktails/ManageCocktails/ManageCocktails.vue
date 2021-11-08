@@ -1,8 +1,4 @@
 <template>
-  <header class="p-mb-6">
-    <h2 class="p-text-center main-font heading-font">Zarządzanie koktajlami</h2>
-  </header>
-
   <section class="cocktails-toolbar p-ml-4">
     <Button
       label="Dodaj koktajl"
@@ -74,7 +70,6 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import CocktailService from "../../../../services/CocktailService";
-import ProductSerivce from "../../../../services/ProductSerivce";
 import CocktailDetailsDialog from "../ManageCocktails/CocktailDetailsDialog.vue";
 import Toast from "primevue/toast";
 
@@ -86,10 +81,19 @@ export default {
     CocktailDetailsDialog,
     Toast,
   },
+  props: {
+    cocktailsType: {
+      type: String,
+      required: true,
+    },
+    cocktailsData: [Object, null],
+    products: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
-      cocktails: [],
-      products: [],
       cocktailsTotal: null,
       pageIndex: 1,
       pageSize: 12,
@@ -99,6 +103,7 @@ export default {
       cocktail: {},
       submitted: false,
       mode: null,
+      privateCocktailsView: this.cocktailsType == "private",
     };
   },
   computed: {
@@ -116,51 +121,30 @@ export default {
     token() {
       return this.$store.getters.token;
     },
+    cocktails() {
+      if (!this.cocktailsData) return;
+
+      return this.cocktailsData.data;
+    },
   },
   cocktailService: null,
   productService: null,
   created() {
     this.cocktailService = new CocktailService();
-    this.productService = new ProductSerivce();
-  },
-  mounted() {
-    this.getCocktails();
-    this.getProducts();
   },
   methods: {
-    async getCocktails() {
-      this.isLoading = true;
-
-      try {
-        const data = await this.cocktailService.getCocktails();
-
-        this.cocktails = data.data;
-        this.cocktailsTotal = data.count;
-        this.pageIndex = data.pageIndex;
-        this.pageSize = data.pageSize;
-      } catch (err) {
-        console.error(err.toJSON());
-      }
-
-      this.isLoading = false;
-    },
     async getCocktail(id) {
       this.isLoading = true;
 
       try {
-        this.cocktail = await this.cocktailService.getCocktail(id);
+        this.cocktail = this.privateCocktailsView
+          ? await this.cocktailService.getCocktail(id, this.token)
+          : await this.cocktailService.getCocktail(id);
       } catch (err) {
         console.error(err.toJSON());
       }
 
       this.isLoading = false;
-    },
-    async getProducts() {
-      try {
-        this.products = await this.productService.getProducts();
-      } catch (err) {
-        console.warning(err.toJSON());
-      }
     },
     async manageCocktail(cocktail) {
       try {
@@ -174,8 +158,8 @@ export default {
 
         formData.set("ingredients", JSON.stringify(cocktail.ingredients));
 
-        for (var pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
+        if (this.privateCocktailsView) {
+          formData.set("isPrivate", true);
         }
 
         const response = await this.cocktailService.manageCocktail(
@@ -210,14 +194,14 @@ export default {
     async deleteCocktail(id) {
       this.isLoading = true;
 
-      try {
-        await this.cocktailService.deleteCocktail(id, this.token);
+      const deletedCocktail = this.$store.dispatch("deleteCocktail", {
+        id: id,
+        token: this.token,
+        isPrivate: this.privateCocktailsView,
+      });
 
-        this.cocktails = this.cocktails.filter((x) => x.id != id);
-
+      if (deletedCocktail) {
         this.showDeleteSuccess();
-      } catch (err) {
-        console.warn(err.toJSON());
       }
 
       this.isLoading = false;

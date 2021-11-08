@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Core.Entities.Identity;
+using System.Collections.Generic;
 
 namespace Core.Entities
 {
@@ -8,6 +9,9 @@ namespace Core.Entities
         public string Picture { get; set; }
         public string Description { get; set; }
         public string PreparationInstruction { get; set; }
+        public bool IsPrivate { get; set; }
+        public string AuthorId { get; set; }
+        public AppUser Author { get; set; }
         public int? BaseProductId { get; set; }
         public Product BaseProduct { get; set; }
         public int IngredientsCount { get; set; }
