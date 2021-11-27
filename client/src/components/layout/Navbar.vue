@@ -10,20 +10,19 @@
       </router-link>
     </template>
     <template #end>
-      <div v-if="isAuthenticated">
-        <!-- <span>Cześć, {{ displayName }}</span> -->
-        <button @click="logout">Wyloguj się</button>
-      </div>
+      <user-nav v-if="isAuthenticated"></user-nav>
     </template>
   </Menubar>
 </template>
 
 <script>
 import Menubar from "primevue/menubar";
+import UserNav from "../layout/UserNav.vue";
 
 export default {
   components: {
     Menubar,
+    UserNav,
   },
   data() {
     return {
@@ -41,10 +40,14 @@ export default {
           key: "cocktails",
         },
         {
+          separator: true,
+        },
+        {
           label: "Zaloguj się",
           to: "login",
-          icon: "pi pi-fw pi-arrow-right",
+          icon: "pi pi-fw pi-sign-in",
           key: "login",
+          visible: () => !this.isAuthenticated,
         },
       ],
     };
@@ -65,20 +68,14 @@ export default {
   watch: {
     isAuthenticated: function () {
       this.updateCocktailsNavItem();
-      this.updateLoginNavItem();
     },
   },
   mounted() {
     if (this.isAuthenticated) {
       this.updateCocktailsNavItem();
-      this.updateLoginNavItem();
     }
   },
   methods: {
-    logout() {
-      this.$store.dispatch("logout");
-      this.$router.replace("/");
-    },
     updateCocktailsNavItem() {
       const cocktailsNavItem = this.navigation.find(
         (i) => i.key == "cocktails"
@@ -101,22 +98,6 @@ export default {
       } else {
         cocktailsNavItem.to = "/cocktails";
         cocktailsNavItem.items = [];
-      }
-    },
-    updateLoginNavItem() {
-      if (this.isAuthenticated) {
-        this.navigation = this.navigation.filter((i) => i.key != "login");
-      } else {
-        const navItem = this.navigation.find((i) => i.key == "login");
-
-        if (!navItem) {
-          this.navigation.push({
-            label: "Zaloguj się",
-            to: "login",
-            icon: "pi pi-fw pi-arrow-right",
-            key: "login",
-          });
-        }
       }
     },
   },
