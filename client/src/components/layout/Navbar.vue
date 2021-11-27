@@ -11,7 +11,8 @@
     </template>
     <template #end>
       <div v-if="isAuthenticated">
-        <span>Cześć, {{ displayName }}</span>
+        <!-- <span>Cześć, {{ displayName }}</span> -->
+        <button @click="logout">Wyloguj się</button>
       </div>
     </template>
   </Menubar>
@@ -31,11 +32,19 @@ export default {
           label: "Strona główna",
           to: "/",
           icon: "pi pi-fw pi-home",
+          key: "home",
         },
         {
           label: "Koktajle",
-          to: "cocktails",
+          to: "/cocktails",
           icon: "pi pi-fw glass-icon",
+          key: "cocktails",
+        },
+        {
+          label: "Zaloguj się",
+          to: "login",
+          icon: "pi pi-fw pi-arrow-right",
+          key: "login",
         },
       ],
     };
@@ -48,24 +57,21 @@ export default {
       return this.$store.getters.isAuthenticated;
     },
     isAdmin: function () {
+      if (!this.$store.getters.roles) return false;
+
       return this.$store.getters.roles.includes("admin");
+    },
+  },
+  watch: {
+    isAuthenticated: function () {
+      this.updateCocktailsNavItem();
+      this.updateLoginNavItem();
     },
   },
   mounted() {
     if (this.isAuthenticated) {
-      const cocktailsNavItem = this.navigation.find(
-        (i) => i.label == "Koktajle"
-      );
-
-      if (cocktailsNavItem) {
-        cocktailsNavItem.items = this.getCocktailMenuItems();
-      }
-    } else {
-      this.navigation.push({
-        label: "Zaloguj się",
-        to: "login",
-        icon: "pi pi-fw pi-arrow-right primary-color",
-      });
+      this.updateCocktailsNavItem();
+      this.updateLoginNavItem();
     }
   },
   methods: {
@@ -73,19 +79,45 @@ export default {
       this.$store.dispatch("logout");
       this.$router.replace("/");
     },
-    getCocktailMenuItems() {
-      if (!this.isAuthenticated) return [];
+    updateCocktailsNavItem() {
+      const cocktailsNavItem = this.navigation.find(
+        (i) => i.key == "cocktails"
+      );
 
-      return [
-        {
-          label: "Publiczne",
-          to: "/cocktails",
-        },
-        {
-          label: "Prywatne",
-          to: "/cocktails/private",
-        },
-      ];
+      if (this.isAuthenticated) {
+        cocktailsNavItem.to = "";
+        cocktailsNavItem.items = [
+          {
+            label: "Publiczne",
+            to: "/cocktails",
+            icon: "pi pi-fw pi-lock-open",
+          },
+          {
+            label: "Prywatne",
+            to: "/cocktails/private",
+            icon: "pi pi-fw pi-lock",
+          },
+        ];
+      } else {
+        cocktailsNavItem.to = "/cocktails";
+        cocktailsNavItem.items = [];
+      }
+    },
+    updateLoginNavItem() {
+      if (this.isAuthenticated) {
+        this.navigation = this.navigation.filter((i) => i.key != "login");
+      } else {
+        const navItem = this.navigation.find((i) => i.key == "login");
+
+        if (!navItem) {
+          this.navigation.push({
+            label: "Zaloguj się",
+            to: "login",
+            icon: "pi pi-fw pi-arrow-right",
+            key: "login",
+          });
+        }
+      }
     },
   },
 };
@@ -101,10 +133,6 @@ export default {
   margin-top: 1rem;
   border: none;
   background: white;
-}
-
-.primary-color {
-  color: var(--primary-color) !important;
 }
 </style>
 
