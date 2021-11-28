@@ -142,6 +142,8 @@ export default {
         throw error;
       }
 
+      this.updateStoredDisplayName(user.displayName);
+
       this.showSuccess();
 
       this.isLoading = false;
@@ -194,6 +196,11 @@ export default {
         summary: "Sukces",
         detail: "Ustawienia zostały zapisane",
         life: 3000,
+      });
+    },
+    updateStoredDisplayName(displayName) {
+      this.$store.dispatch("updateDisplayName", {
+        displayName: displayName,
       });
     },
   },
