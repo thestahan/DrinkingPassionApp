@@ -108,6 +108,7 @@ export default {
 }
 
 .p-menubar {
+  z-index: 20;
   margin-top: 1rem;
   border: none;
   background: white;
@@ -115,6 +116,16 @@ export default {
 </style>
 
 <style>
+.p-menuitem-text {
+  font-weight: 500;
+  color: rgb(107, 114, 128);
+  font-family: "Lato", sans-serif;
+}
+
+.p-submenu-list {
+  z-index: 20 !important;
+}
+
 .glass-icon {
   background-image: url("~@/assets/custom-icons/glass-svgrepo.svg");
   height: 20px;
