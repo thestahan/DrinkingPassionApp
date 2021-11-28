@@ -117,4 +117,10 @@ export default {
     context.dispatch("logout");
     context.commit("setAutoLogout");
   },
+
+  updateDisplayName(context, payload) {
+    context.commit("setDisplayName", {
+      displayName: payload.displayName,
+    });
+  }
 };

@@ -3,7 +3,7 @@
     <div>
       <MenuButton class="p-mr-2 p-pl-2 p-pr-2">
         <Avatar icon="pi pi-user" class="p-mr-2" shape="circle" />
-        <span>Kacper</span>
+        <span>{{ displayName }}</span>
       </MenuButton>
     </div>
     <transition
@@ -81,6 +81,11 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    displayName: function () {
+      return this.$store.getters.displayName;
+    },
   },
   methods: {
     logout() {

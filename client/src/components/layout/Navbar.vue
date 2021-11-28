@@ -53,9 +53,6 @@ export default {
     };
   },
   computed: {
-    displayName: function () {
-      return this.$store.getters.displayName;
-    },
     isAuthenticated: function () {
       return this.$store.getters.isAuthenticated;
     },
