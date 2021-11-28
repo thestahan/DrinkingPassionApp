@@ -36,7 +36,7 @@ export default {
         {
           label: "Koktajle",
           to: "/cocktails",
-          icon: "pi pi-fw glass-icon",
+          icon: "pi glass-icon",
           key: "cocktails",
         },
         {
@@ -127,7 +127,8 @@ export default {
 }
 
 .glass-icon {
-  background-image: url("~@/assets/custom-icons/glass-svgrepo.svg");
-  height: 20px;
+  background-image: url("~@/assets/custom-icons/whisky.png");
+  height: 16px;
+  width: 16px;
 }
 </style>
