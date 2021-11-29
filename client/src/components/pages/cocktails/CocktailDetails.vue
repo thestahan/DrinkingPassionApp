@@ -29,9 +29,7 @@
               <span>{{ ingredient.name }}</span>
             </div>
             <div class="p-col-2 p-text-left">
-              <span style="color: var(--primary-color)">{{
-                ingredient.amount
-              }}</span>
+              <span class="primary-color">{{ ingredient.amount }}</span>
             </div>
           </div>
         </section>
@@ -60,9 +58,7 @@
               <span>{{ ingredient.name }}</span>
             </div>
             <div class="p-col-2 p-text-left">
-              <span style="color: var(--primary-color)">{{
-                ingredient.amount
-              }}</span>
+              <span class="primary-color">{{ ingredient.amount }}</span>
             </div>
           </div>
         </section>
@@ -78,16 +74,21 @@
     </div>
     <div class="p-grid p-ml-2 p-mr-2 p-text-justify">
       <div class="p-col-12 p-sm-6">
-        <h3 class="main-font p-mb-2" style="color: var(--primary-color)">
+        <h3 class="main-font p-mb-2 primary-color p-text-bold">
           Opis koktajlu
         </h3>
         <span>{{ cocktail.description }}</span>
       </div>
       <div class="p-col-12 p-sm-6">
-        <h3 class="main-font p-mb-2" style="color: var(--primary-color)">
+        <h3 class="main-font p-mb-2 primary-color p-text-bold">
           Przygotowanie
         </h3>
-        <span>{{ cocktail.preparationInstruction }}</span>
+        <span v-if="cocktail.preparationInstruction">{{
+          cocktail.preparationInstruction
+        }}</span>
+        <span v-else class="not-found-color"
+          >Nie podano instrukcji przygotowania.</span
+        >
       </div>
     </div>
   </div>
@@ -147,5 +148,9 @@ export default {
   object-fit: cover;
   width: 24rem;
   height: 13.5rem;
+}
+
+.not-found-color {
+  color: grey;
 }
 </style>
