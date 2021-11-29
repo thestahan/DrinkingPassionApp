@@ -94,15 +94,16 @@
 </template>
 
 <script>
+import CocktailService from "../../../services/CocktailService";
+
 export default {
   data() {
     return {
-      breadcrumbHome: { icon: "pi pi-home", to: "/" },
-      breadcrumbItems: [{ label: "Koktajle", url: "/cocktails" }],
       cocktail: null,
       isLoading: false,
     };
   },
+  cocktailService: null,
   computed: {
     cocktailId() {
       return this.$route.params.id;
@@ -110,40 +111,26 @@ export default {
     cocktailName() {
       return this.cocktail.name;
     },
+    token() {
+      return this.$store.getters.token;
+    },
   },
   created() {
+    this.cocktailService = new CocktailService();
     this.getCocktailDetails();
   },
   methods: {
     async getCocktailDetails() {
       this.isLoading = true;
 
-      const response = await fetch(
-        "https://localhost:5001/api/cocktails/" + this.cocktailId,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const responseData = await this.cocktailService.getCocktail(
+        this.cocktailId,
+        this.token
       );
 
       this.isLoading = false;
 
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        const error = new Error(responseData.message || "Wystąpił błąd.");
-        throw error;
-      }
-
       this.cocktail = responseData;
-      this.breadcrumbItems.push({
-        label: this.cocktailName,
-        url: "/cocktails/" + this.cocktailId,
-      });
-
-      console.log(this.cocktail);
     },
   },
 };

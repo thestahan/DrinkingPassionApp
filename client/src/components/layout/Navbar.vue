@@ -83,7 +83,7 @@ export default {
         cocktailsNavItem.items = [
           {
             label: "Publiczne",
-            to: "/cocktails",
+            to: "/cocktails/public",
             icon: "pi pi-fw pi-lock-open",
           },
           {
