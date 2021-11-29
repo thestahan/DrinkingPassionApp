@@ -3,12 +3,14 @@ using API.Errors;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class ProductUnitsController : BaseApiController
     {
         private readonly IGenericRepository<ProductUnit> _repo;
@@ -20,6 +22,7 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<ProductUnitToReturnDto>>> GetProductUnits()
         {
@@ -30,6 +33,7 @@ namespace API.Controllers
             return Ok(unitsToReturn);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductUnitToReturnDto>> GetProductUnitById(int id)
         {

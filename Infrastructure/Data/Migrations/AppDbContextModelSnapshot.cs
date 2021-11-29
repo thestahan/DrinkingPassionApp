@@ -26,6 +26,9 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("text");
+
                     b.Property<int?>("BaseProductId")
                         .HasColumnType("integer");
 
@@ -39,6 +42,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<int>("IngredientsCount")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("ModifiedDate")
                         .ValueGeneratedOnAdd()
@@ -55,6 +61,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("BaseProductId");
 
@@ -400,9 +408,15 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Core.Entities.Cocktail", b =>
                 {
+                    b.HasOne("Core.Entities.Identity.AppUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
                     b.HasOne("Core.Entities.Product", "BaseProduct")
                         .WithMany()
                         .HasForeignKey("BaseProductId");
+
+                    b.Navigation("Author");
 
                     b.Navigation("BaseProduct");
                 });

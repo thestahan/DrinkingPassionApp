@@ -1,6 +1,6 @@
 <template>
   <router-link
-    :to="'/cocktails/' + cocktail.id"
+    :to="pathToCocktailDetails"
     tag="div"
     class="p-col-12 p-md-6 p-xl-4"
   >
@@ -38,6 +38,16 @@ export default {
       type: Object,
       required: true,
     },
+    cocktailType: {
+      type: String,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      pathToCocktailDetails:
+        "/cocktails/" + this.cocktailType + "/" + this.cocktail.id,
+    };
   },
 };
 </script>

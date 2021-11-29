@@ -3,7 +3,7 @@ using Core.Entities;
 
 namespace API.Helpers
 {
-    public class CocktailUpdateHelpers
+    public class CocktailHelpers
     {
         public static Cocktail ApplyCocktailInfoChangesToCocktail(CocktailInfoToUpdateDto toUpdate, Cocktail cocktail)
         {

@@ -116,5 +116,12 @@ namespace Infrastructure.Data
         {
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), spec);
         }
+
+        public async Task UpdateWithRelatedEntities(T entity)
+        {
+            _context.Set<T>().Update(entity);
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

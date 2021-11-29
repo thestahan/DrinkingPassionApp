@@ -37,7 +37,7 @@ namespace API
                 services.AddDbContext<AppDbContext>(x => x.UseNpgsql(_config.GetConnectionString("DefaultConnection")));
             }
 
-            services.AddApplicationServices();
+            services.AddApplicationServices(_config);
 
             services.AddIdentityServices(_config);
 
@@ -47,7 +47,7 @@ namespace API
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:8080", "https://drinking-passion.netlify.app");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(_config["ClientUrl"]);
                 });
             });
         }

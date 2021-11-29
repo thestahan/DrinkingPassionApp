@@ -4,11 +4,19 @@ using API.Errors;
 using API.Helpers;
 using AutoMapper;
 using Core.Entities;
+using Core.Entities.Identity;
 using Core.Interfaces;
 using Core.Specifications;
+using Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -18,20 +26,56 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Cocktail> _cocktailsRepo;
         private readonly IGenericRepository<Ingredient> _ingredientsRepo;
+        private readonly IConfiguration _config;
+        private readonly IBlobService _blobService;
+        private readonly CocktailPicturesService _cocktailPicturesService;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CocktailsController(IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo, IGenericRepository<Ingredient> ingredientsRepo)
+        public CocktailsController(
+            IMapper mapper,
+            IGenericRepository<Cocktail> cocktailsRepo,
+            IGenericRepository<Ingredient> ingredientsRepo,
+            IConfiguration config,
+            IBlobService blobService,
+            UserManager<AppUser> userManager)
         {
             _mapper = mapper;
             _cocktailsRepo = cocktailsRepo;
             _ingredientsRepo = ingredientsRepo;
+            _config = config;
+            _blobService = blobService;
+            _cocktailPicturesService = new CocktailPicturesService(blobService);
+            _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet("Public")]
         public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery]CocktailSpecParams cocktailParams)
         {
-            var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams);
+            var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams, false);
 
-            var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams);
+            var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams, false);
+
+            var totalItems = await _cocktailsRepo.CountAsync(countSpec);
+
+            var cocktailsFromDb = await _cocktailsRepo.ListAsync(spec);
+
+            var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
+
+            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
+                cocktailParams.PageSize, totalItems, data));
+        }
+
+        [Authorize]
+        [HttpGet("Private")]
+        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams, true, user.Id);
+
+            var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams, true, user.Id);
 
             var totalItems = await _cocktailsRepo.CountAsync(countSpec);
 
@@ -50,6 +94,13 @@ namespace API.Controllers
 
             var cocktail = await _cocktailsRepo.GetEntityWithSpec(spec);
 
+            if (cocktail.IsPrivate)
+            {
+                var user = await GetAuthorizedUser();
+
+                if (user == null || cocktail.AuthorId != user.Id) return NotFound(new ApiResponse(404));
+            }
+
             if (cocktail == null) return NotFound(new ApiResponse(404));
 
             var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktail);
@@ -57,94 +108,87 @@ namespace API.Controllers
             return Ok(cocktailToReturn);
         }
 
+        [Authorize]
         [HttpPost]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> AddCocktail(CocktailToAddDto cocktailToAddDto)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail([FromForm]CocktailToManageDto dto)
         {
-            var cocktail = _mapper.Map<Cocktail>(cocktailToAddDto);
+            var user = await GetAuthorizedUser();
 
-            var createdCocktail =  await _cocktailsRepo.AddAsync(cocktail);
+            var cocktailFromDto = _mapper.Map<Cocktail>(dto);
 
-            var spec = new CocktailWithIngredientsSpecification(createdCocktail.Id);
+            var ingredients = JsonConvert.DeserializeObject<ICollection<IngredientToAddDto>>(dto.Ingredients);
 
-            var createdCocktailWithIngredients = await _cocktailsRepo.GetEntityWithSpec(spec);
+            cocktailFromDto.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
 
-            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(createdCocktailWithIngredients);
+            cocktailFromDto.IngredientsCount = cocktailFromDto.Ingredients.Count;
+
+            cocktailFromDto.AuthorId = user.Id;
+
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "admin");
+
+            if (!isAdmin) cocktailFromDto.IsPrivate = true;
+
+            bool editing = cocktailFromDto.Id != 0;
+
+            if (!editing)
+            {
+                cocktailFromDto.BaseProductId = GetCocktailBaseProductId(cocktailFromDto);
+
+                await _cocktailsRepo.AddAsync(cocktailFromDto);
+            }
+
+            var spec = new CocktailByPrivacyWithIngredientsSpecification(cocktailFromDto.Id, dto.IsPrivate);
+
+            var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
+
+            if (cocktailFromDb == null) return NotFound(new ApiResponse(404));
+
+            bool newPicture = dto.Picture != null && dto.Picture.Length != 0;
+
+            if (newPicture)
+            {
+                string container = _config["AzureBlobStorage:PublicCocktailPicturesContainer"];
+
+                await _cocktailPicturesService.DeletePreviousPictureIfExists(cocktailFromDb, container);
+
+                var newBlobName = _cocktailPicturesService.GenerateNewBlobName(cocktailFromDb.Id);
+
+                cocktailFromDto.Picture = $"{container}/{newBlobName}";
+
+                await _blobService.UploadFileStreamBlobAsync(container, dto.Picture.OpenReadStream(), newBlobName);
+            }
+
+            if (editing)
+            {
+                MapEditedCocktailToDbCocktail(cocktailFromDto, cocktailFromDb, !newPicture);
+
+                await _cocktailsRepo.UpdateAsync(cocktailFromDb);
+
+                var editedCocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
+
+                return Ok(editedCocktailToReturn);
+            }
+
+            if (newPicture) await _cocktailsRepo.UpdateAsync(cocktailFromDto);
+
+            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
 
             return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCocktailInfo(int id, CocktailInfoToUpdateDto cocktailToUpdate)
-        {
-            if (!await _cocktailsRepo.EntityExistsAsync(id)) return BadRequest(new ApiResponse(404, "Cocktail does not exist"));
-
-            if (id != cocktailToUpdate.Id) return BadRequest(new ApiResponse(400, "Id does not match with entity's id"));
-
-            var cocktailFromDb = await _cocktailsRepo.GetByIdAsync(id);
-
-            var cocktail = CocktailUpdateHelpers.ApplyCocktailInfoChangesToCocktail(cocktailToUpdate, cocktailFromDb);
-
-            await _cocktailsRepo.UpdateAsync(cocktail);
-
-            return NoContent();
-        }
-
-        [HttpPost("{cocktailId}/ingredients")]
-        public async Task<ActionResult<IngredientToReturnDto>> AddIngredientToCocktail(int cocktailId, IngredientToAddDto ingredient)
-        {
-            var ingredientToAdd = _mapper.Map<Ingredient>(ingredient);
-
-            ingredientToAdd.CocktailId = cocktailId;
-
-            var createdIngredient = await _ingredientsRepo.AddAsync(ingredientToAdd);
-
-            await UpdateCocktailIngredientsInfo(cocktailId);
-
-            var ingredientToReturn = _mapper.Map<IngredientToReturnDto>(createdIngredient);
-
-            return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailId }, ingredientToReturn);
-        }
-
-        [HttpPut("{cocktailId}/ingredients/{id}")]
-        public async Task<ActionResult> UpdateCocktailIngredient(int cocktailId, int id, IngredientToUpdateDto ingredient)
-        {
-            if (!await _cocktailsRepo.EntityExistsAsync(cocktailId)) return BadRequest(new ApiResponse(404, "Cocktail does not exist"));
-
-            var spec = new CocktailIngredientExistsSpecification(cocktailId, id);
-
-            if (!await _ingredientsRepo.EntityExistsWithSpecAsync(spec)) return BadRequest(new ApiResponse(400, "Ingredient was not found in given cocktail"));
-
-            var ingredientToUpdate = new Ingredient
-            {
-                Id = id,
-                Amount = ingredient.Amount
-            };
-
-            await _ingredientsRepo.UpdateSpecifiedPropertiesAsync(ingredientToUpdate, nameof(ingredient.Amount));
-
-            await UpdateCocktailBaseProductId(cocktailId);
-
-            return NoContent();
-        }
-
-        [HttpDelete("{cocktailId}/ingredients/{id}")]
-        public async Task<ActionResult> DeleteCocktailIngredient(int cocktailId, int id)
-        {
-            if (!await _ingredientsRepo.DeleteByIdAsync(id)) return NotFound(new ApiResponse(404));
-
-            await UpdateCocktailIngredientsInfo(cocktailId);
-
-            return NoContent();
-        }
-
+        [Authorize]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteProduct(int id)
+        public async Task<ActionResult> DeleteCocktail(int id)
         {
-            var spec = new CocktailWithIngredientsOnlySpecification(id);
+            var user = await GetAuthorizedUser();
 
-            var cocktail = await _cocktailsRepo.GetEntityWithSpec(spec);
+            bool isAdmin = await _userManager.IsInRoleAsync(user, "admin");
+
+            var cocktail = await _cocktailsRepo.GetByIdAsync(id);
 
             if (cocktail == null) return NotFound(new ApiResponse(404));
+
+            if (!cocktail.IsPrivate && !isAdmin) return Unauthorized(new ApiResponse(401));
 
             await _cocktailsRepo.DeleteAsync(cocktail);
 
@@ -193,6 +237,47 @@ namespace API.Controllers
 
             var ingredientsCount = await _ingredientsRepo.CountAsync(spec);
             return ingredientsCount;
+        }
+
+        private static void MapEditedCocktailToDbCocktail(Cocktail cocktail, Cocktail cocktailFromDb, bool skipPicture)
+        {
+            if (!skipPicture) cocktailFromDb.Picture = cocktail.Picture;
+            cocktailFromDb.BaseProductId = GetCocktailBaseProductId(cocktail);
+            cocktailFromDb.Description = cocktail.Description;
+            cocktailFromDb.Name = cocktail.Name;
+            cocktailFromDb.PreparationInstruction = cocktail.PreparationInstruction;
+            cocktailFromDb.Ingredients = cocktail.Ingredients;
+            cocktailFromDb.IngredientsCount = cocktail.Ingredients.Count;
+        }
+
+        private static int GetCocktailBaseProductId(Cocktail cocktail) =>
+            cocktail.Ingredients.OrderByDescending(x => x.Amount)
+                .Select(x => x.ProductId)
+                .FirstOrDefault();
+
+        private async Task<Cocktail> GetCocktailFromDbByPrivacy(CocktailToManageDto dto, int cocktailId)
+        {
+            if (dto.IsPrivate)
+            {
+                var spec = new CocktailByPrivacyWithIngredientsSpecification(cocktailId, dto.IsPrivate);
+
+                return await _cocktailsRepo.GetEntityWithSpec(spec);
+            }
+            else
+            {
+                var spec = new CocktailWithIngredientsSpecification(cocktailId);
+
+                return await _cocktailsRepo.GetEntityWithSpec(spec);
+            }
+        }
+
+        private async Task<AppUser> GetAuthorizedUser()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(email)) return null;
+
+            return await _userManager.FindByEmailAsync(email);
         }
     }
 }

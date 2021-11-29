@@ -103,6 +103,7 @@ export default {
     localStorage.removeItem("token");
     localStorage.removeItem("displayName");
     localStorage.removeItem("tokenExpiration");
+    localStorage.removeItem("roles");
 
     clearTimeout(timer);
 
@@ -116,4 +117,10 @@ export default {
     context.dispatch("logout");
     context.commit("setAutoLogout");
   },
+
+  updateDisplayName(context, payload) {
+    context.commit("setDisplayName", {
+      displayName: payload.displayName,
+    });
+  }
 };

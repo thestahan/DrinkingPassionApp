@@ -6,7 +6,7 @@ export default {
     return state.displayName;
   },
   token: (state) => {
-    return state.token;
+    return state?.token;
   },
   didAutoLogout: (state) => {
     return state.didAutoLogout;

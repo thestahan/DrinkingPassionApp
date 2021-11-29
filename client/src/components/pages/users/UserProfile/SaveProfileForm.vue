@@ -118,6 +118,7 @@ export default {
     return {
       user: this.userData,
       bartenderTypeOptions: [
+        { name: "Początkujący", code: 3 },
         { name: "Hobbysta", code: 1 },
         { name: "Zawodowiec", code: 2 },
       ],
