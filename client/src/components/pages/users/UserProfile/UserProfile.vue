@@ -62,6 +62,7 @@ export default {
       displayChangePasswordError: false,
       changePasswordErrorMessage: "",
       bartenderTypeOptions: [
+        { name: "Początkujący", code: 3 },
         { name: "Hobbysta", code: 1 },
         { name: "Zawodowiec", code: 2 },
       ],
@@ -69,10 +70,15 @@ export default {
   },
   computed: {
     bartenderTypeName() {
-      if (this.bartenderType === 2) {
-        return "Profesjonalista";
-      } else {
-        return "Zawodowiec";
+      switch (this.bartenderType) {
+        case 1:
+          return "Hobbysta";
+        case 2:
+          return "Zawodowiec";
+        case 3:
+          return "Początkujący";
+        default:
+          return "Początkujący";
       }
     },
     token() {
@@ -116,6 +122,8 @@ export default {
         this.userData.bartenderType = { name: "Hobbysta", code: 1 };
       } else if (responseData.bartenderType == 2) {
         this.userData.bartenderType = { name: "Zawodowiec", code: 2 };
+      } else if (responseData.bartenderType == 3) {
+        this.userData.bartenderType = { name: "Początkujący", code: 3 };
       }
     },
     async submitSaveProfile(user) {
