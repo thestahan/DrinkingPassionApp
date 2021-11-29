@@ -32,9 +32,8 @@
           <p
             class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0"
           >
-            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
-            lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat
-            fugiat aliqua.
+            Przeglądaj publiczne koktajle lub dołącz do serwisu i rozpocznij
+            komponowanie własnych pozycji! Miej wszystko na wyciągnięcie dłoni.
           </p>
           <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
             <div class="rounded-md shadow">
@@ -48,7 +47,7 @@
             </div>
             <div class="mt-3 sm:mt-0 sm:ml-3">
               <router-link
-                to="/cocktails"
+                to="/cocktails/public"
                 class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md md:py-4 md:text-lg md:px-10"
                 style="
                   color: var(--green-700);
