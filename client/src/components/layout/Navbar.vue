@@ -35,7 +35,7 @@ export default {
         },
         {
           label: "Koktajle",
-          to: "/cocktails",
+          to: "/cocktails/public",
           icon: "pi glass-icon",
           key: "cocktails",
         },
@@ -44,7 +44,7 @@ export default {
         },
         {
           label: "Zaloguj się",
-          to: "login",
+          to: "/login",
           icon: "pi pi-fw pi-sign-in",
           key: "login",
           visible: () => !this.isAuthenticated,
@@ -83,7 +83,7 @@ export default {
         cocktailsNavItem.items = [
           {
             label: "Publiczne",
-            to: "/cocktails",
+            to: "/cocktails/public",
             icon: "pi pi-fw pi-lock-open",
           },
           {

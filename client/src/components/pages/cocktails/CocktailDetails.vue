@@ -29,9 +29,7 @@
               <span>{{ ingredient.name }}</span>
             </div>
             <div class="p-col-2 p-text-left">
-              <span style="color: var(--primary-color)">{{
-                ingredient.amount
-              }}</span>
+              <span class="primary-color">{{ ingredient.amount }}</span>
             </div>
           </div>
         </section>
@@ -60,9 +58,7 @@
               <span>{{ ingredient.name }}</span>
             </div>
             <div class="p-col-2 p-text-left">
-              <span style="color: var(--primary-color)">{{
-                ingredient.amount
-              }}</span>
+              <span class="primary-color">{{ ingredient.amount }}</span>
             </div>
           </div>
         </section>
@@ -78,31 +74,37 @@
     </div>
     <div class="p-grid p-ml-2 p-mr-2 p-text-justify">
       <div class="p-col-12 p-sm-6">
-        <h3 class="main-font p-mb-2" style="color: var(--primary-color)">
+        <h3 class="main-font p-mb-2 primary-color p-text-bold">
           Opis koktajlu
         </h3>
         <span>{{ cocktail.description }}</span>
       </div>
       <div class="p-col-12 p-sm-6">
-        <h3 class="main-font p-mb-2" style="color: var(--primary-color)">
+        <h3 class="main-font p-mb-2 primary-color p-text-bold">
           Przygotowanie
         </h3>
-        <span>{{ cocktail.preparationInstruction }}</span>
+        <span v-if="cocktail.preparationInstruction">{{
+          cocktail.preparationInstruction
+        }}</span>
+        <span v-else class="not-found-color"
+          >Nie podano instrukcji przygotowania.</span
+        >
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import CocktailService from "../../../services/CocktailService";
+
 export default {
   data() {
     return {
-      breadcrumbHome: { icon: "pi pi-home", to: "/" },
-      breadcrumbItems: [{ label: "Koktajle", url: "/cocktails" }],
       cocktail: null,
       isLoading: false,
     };
   },
+  cocktailService: null,
   computed: {
     cocktailId() {
       return this.$route.params.id;
@@ -110,40 +112,26 @@ export default {
     cocktailName() {
       return this.cocktail.name;
     },
+    token() {
+      return this.$store.getters.token;
+    },
   },
   created() {
+    this.cocktailService = new CocktailService();
     this.getCocktailDetails();
   },
   methods: {
     async getCocktailDetails() {
       this.isLoading = true;
 
-      const response = await fetch(
-        "https://localhost:5001/api/cocktails/" + this.cocktailId,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const responseData = await this.cocktailService.getCocktail(
+        this.cocktailId,
+        this.token
       );
 
       this.isLoading = false;
 
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        const error = new Error(responseData.message || "Wystąpił błąd.");
-        throw error;
-      }
-
       this.cocktail = responseData;
-      this.breadcrumbItems.push({
-        label: this.cocktailName,
-        url: "/cocktails/" + this.cocktailId,
-      });
-
-      console.log(this.cocktail);
     },
   },
 };
@@ -160,5 +148,9 @@ export default {
   object-fit: cover;
   width: 24rem;
   height: 13.5rem;
+}
+
+.not-found-color {
+  color: grey;
 }
 </style>

@@ -4,7 +4,8 @@ import Home from "../components/pages/Home.vue";
 import UserRegister from "../components/pages/users/UserRegister.vue";
 import UserLogin from "../components/pages/users/UserLogin/UserLogin.vue";
 import UserProfile from "../components/pages/users/UserProfile/UserProfile.vue";
-import CocktailsList from "../components/pages/cocktails/CocktailsList.vue";
+import PublicCocktailsList from "../components/pages/cocktails/PublicCocktailsList.vue";
+import PrivateCocktailsList from "../components/pages/cocktails/PrivateCocktailsList.vue";
 import CocktailDetails from "../components/pages/cocktails/CocktailDetails.vue";
 import ManageCocktailsMenu from "../components/pages/cocktails/ManageCocktails/ManageCocktailsMenu.vue";
 import NotFound from "../components/pages/NotFound.vue";
@@ -39,13 +40,23 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/cocktails",
-    name: "Cocktails",
-    component: CocktailsList,
+    path: "/cocktails/public",
+    name: "PublicCocktailsList",
+    component: PublicCocktailsList,
   },
   {
-    path: "/cocktails/:id",
-    name: "Cocktail",
+    path: "/cocktails/private",
+    name: "PrivateCocktailsList",
+    component: PrivateCocktailsList,
+  },
+  {
+    path: "/cocktails/public/:id",
+    name: "PublicCocktailDetails",
+    component: CocktailDetails,
+  },
+  {
+    path: "/cocktails/private/:id",
+    name: "PrivateCocktailDetails",
     component: CocktailDetails,
   },
   {

@@ -165,7 +165,7 @@ export default {
           password: this.password,
         });
 
-        this.$router.replace("/cocktails");
+        this.$router.replace("/cocktails/public");
       } catch (err) {
         const errorContent = document
           .querySelector(".error-message")
