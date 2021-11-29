@@ -7,9 +7,11 @@ using AutoMapper;
 using API.Errors;
 using Core.Specifications;
 using API.Dtos.Products;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<Product> _productsRepo;
@@ -25,6 +27,7 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
         {
@@ -37,6 +40,7 @@ namespace API.Controllers
             return Ok(productsToReturn);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {
