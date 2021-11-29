@@ -119,6 +119,19 @@
           <p class="p-mb-2">Które zdanie najlepiej Cię określa?</p>
           <div class="p-field-radiobutton">
             <RadioButton
+              id="beginner"
+              name="bartenderType"
+              value="beginner"
+              v-model="bartenderType"
+              :class="{ 'p-invalid': v$.bartenderType.$error }"
+            />
+            <label for="beginner"
+              ><span class="p-text-bold primary-color">Początkujący</span> - nie
+              tworzę jeszcze koktajli</label
+            >
+          </div>
+          <div class="p-field-radiobutton">
+            <RadioButton
               id="hobbyst"
               name="bartenderType"
               value="hobbyst"
@@ -126,10 +139,8 @@
               :class="{ 'p-invalid': v$.bartenderType.$error }"
             />
             <label for="hobbyst"
-              ><span class="p-text-bold" style="color: var(--primary-color)"
-                >Hobbysta</span
-              >
-              - tworzę koktajle głównie w domu</label
+              ><span class="p-text-bold primary-color">Hobbysta</span> - tworzę
+              koktajle głównie w domu</label
             >
           </div>
           <div class="p-field-radiobutton">
@@ -141,10 +152,8 @@
               :class="{ 'p-invalid': v$.bartenderType.$error }"
             />
             <label for="professionalist"
-              ><span class="p-text-bold" style="color: var(--primary-color)"
-                >Zawodowiec</span
-              >
-              - tworzę koktajle głównie w barach</label
+              ><span class="p-text-bold primary-color">Zawodowiec</span> -
+              tworzę koktajle głównie w barach</label
             >
           </div>
           <Divider></Divider>
@@ -242,7 +251,12 @@ export default {
           email: this.email,
           password: this.password,
           displayName: this.displayName,
-          bartenderType: this.bartenderType == "hobbyst" ? 1 : 2,
+          bartenderType:
+            this.bartenderType == "hobbyst"
+              ? 1
+              : this.bartenderType == "professionalist"
+              ? 2
+              : 3,
         });
 
         this.openModal = true;
