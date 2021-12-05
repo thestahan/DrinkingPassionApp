@@ -255,14 +255,11 @@ export default {
     closeDialog() {
       this.$emit("close-modal");
     },
-    handleDelete(e) {
-      console.log("deleting");
-      console.log(e);
+    handleDelete() {
       this.picture = null;
     },
     handleSelect(e) {
       this.picture = e.files[0];
-      console.log(this.picture);
     },
     deleteIngredient(ingredient) {
       this.ingredients = this.ingredients.filter((x) => x != ingredient);
@@ -284,6 +281,8 @@ export default {
 
       if (this.ingredients.length < 2) {
         this.minIngredientsError = true;
+      } else {
+        this.minIngredientsError = false;
       }
 
       if (this.v$.$error || this.minIngredientsError) {
@@ -298,8 +297,6 @@ export default {
         preparationInstruction: this.preparationInstruction,
         ingredients: this.getTransformedIngredients(),
       };
-
-      console.log(cocktail);
 
       this.$emit("manage-cocktail", cocktail);
     },
