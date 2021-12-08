@@ -6,7 +6,7 @@ namespace Core.Specifications
     {
         public CocktailWithIngredientsSpecification(int id) : base(x => x.Id == id)
         {
-            AddInclude("Ingredients.Product");
+            AddInclude("Ingredients.Product.ProductUnit");
             AddInclude(x => x.BaseProduct);
         }
     }

@@ -5,9 +5,6 @@ using API.Dtos.Products;
 using AutoMapper;
 using Core.Entities;
 using Core.Entities.Identity;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 
 namespace API.Helpers
 {
@@ -38,7 +35,12 @@ namespace API.Helpers
             CreateMap<Ingredient, IngredientToReturnDto>()
                 .ForMember(
                     dest => dest.Name,
-                    opt => opt.MapFrom(src => src.Product.Name));
+                    opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(
+                    dest => dest.Unit,
+                    opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Product.ProductUnit.Abbreviation) ? 
+                        src.Product.ProductUnit.Name : 
+                        src.Product.ProductUnit.Abbreviation));
             CreateMap<CocktailToManageDto, Cocktail>()
                 .ForMember(dest => dest.Ingredients, opt => opt.Ignore())
                 .ForMember(dest => dest.Picture, opt => opt.Ignore());
@@ -47,7 +49,9 @@ namespace API.Helpers
             CreateMap<Product, ProductToReturnDto>()
                 .ForMember(
                     dest => dest.ProductUnit,
-                    opt => opt.MapFrom(src => src.ProductUnit.Name))
+                    opt => opt.MapFrom(src => string.IsNullOrEmpty(src.ProductUnit.Abbreviation) ?
+                        src.ProductUnit.Name :
+                        src.ProductUnit.Abbreviation))
                 .ForMember(
                     dest => dest.ProductUnitId,
                     opt => opt.MapFrom(src => src.ProductUnit.Id))

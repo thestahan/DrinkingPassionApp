@@ -43,7 +43,6 @@ export default class CocktailService {
     return res;
   }
   async deleteCocktail(id, token) {
-    console.log("got into service " + id);
     const res = await axios.delete(
       `${process.env.VUE_APP_API_URL}/cocktails/${id}`,
       {

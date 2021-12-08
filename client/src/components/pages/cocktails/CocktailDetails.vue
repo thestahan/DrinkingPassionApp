@@ -58,7 +58,9 @@
               <span>{{ ingredient.name }}</span>
             </div>
             <div class="p-col-2 p-text-left">
-              <span class="primary-color">{{ ingredient.amount }}</span>
+              <span class="primary-color"
+                >{{ ingredient.amount }} {{ ingredient.unit }}</span
+              >
             </div>
           </div>
         </section>
