@@ -195,50 +195,6 @@ namespace API.Controllers
             return NoContent();
         }
 
-        private async Task UpdateCocktailBaseProductId(int cocktailId)
-        {
-            int baseProductId = await GetBaseProductId(cocktailId);
-
-            var cocktailToUpdate = new Cocktail
-            {
-                Id = cocktailId,
-                BaseProductId = baseProductId
-            };
-
-            await _cocktailsRepo.UpdateSpecifiedPropertiesAsync(cocktailToUpdate, nameof(cocktailToUpdate.BaseProductId));
-        }
-
-        private async Task UpdateCocktailIngredientsInfo(int cocktailId)
-        {
-            int ingredientsCount = await GetCocktailIngredientsCount(cocktailId);
-
-            int baseProductId = await GetBaseProductId(cocktailId);
-
-            var cocktailToUpdate = new Cocktail 
-            { 
-                Id = cocktailId, 
-                IngredientsCount = ingredientsCount, 
-                BaseProductId = baseProductId
-            };
-
-            await _cocktailsRepo.UpdateSpecifiedPropertiesAsync(cocktailToUpdate, nameof(cocktailToUpdate.IngredientsCount), nameof(cocktailToUpdate.BaseProductId));
-        }
-
-        private async Task<int> GetBaseProductId(int cocktailId)
-        {
-            var spec = new IngredientProductIdByBiggestAmount(cocktailId);
-
-            return Convert.ToInt32(await _ingredientsRepo.GetSpecifiedEntityFieldsWithSpecAsync(spec));
-        }
-
-        private async Task<int> GetCocktailIngredientsCount(int cocktailId)
-        {
-            var spec = new IngredientsCountForCocktailSpecification(cocktailId);
-
-            var ingredientsCount = await _ingredientsRepo.CountAsync(spec);
-            return ingredientsCount;
-        }
-
         private static void MapEditedCocktailToDbCocktail(Cocktail cocktail, Cocktail cocktailFromDb, bool skipPicture)
         {
             if (!skipPicture) cocktailFromDb.Picture = cocktail.Picture;
@@ -254,22 +210,6 @@ namespace API.Controllers
             cocktail.Ingredients.OrderByDescending(x => x.Amount)
                 .Select(x => x.ProductId)
                 .FirstOrDefault();
-
-        private async Task<Cocktail> GetCocktailFromDbByPrivacy(CocktailToManageDto dto, int cocktailId)
-        {
-            if (dto.IsPrivate)
-            {
-                var spec = new CocktailByPrivacyWithIngredientsSpecification(cocktailId, dto.IsPrivate);
-
-                return await _cocktailsRepo.GetEntityWithSpec(spec);
-            }
-            else
-            {
-                var spec = new CocktailWithIngredientsSpecification(cocktailId);
-
-                return await _cocktailsRepo.GetEntityWithSpec(spec);
-            }
-        }
 
         private async Task<AppUser> GetAuthorizedUser()
         {
