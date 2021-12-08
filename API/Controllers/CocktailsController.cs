@@ -25,7 +25,7 @@ namespace API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Cocktail> _cocktailsRepo;
-        private readonly IGenericRepository<Ingredient> _ingredientsRepo;
+        private readonly IGenericRepository<Product> _productsRepo;
         private readonly IConfiguration _config;
         private readonly IBlobService _blobService;
         private readonly CocktailPicturesService _cocktailPicturesService;
@@ -34,18 +34,18 @@ namespace API.Controllers
         public CocktailsController(
             IMapper mapper,
             IGenericRepository<Cocktail> cocktailsRepo,
-            IGenericRepository<Ingredient> ingredientsRepo,
+            IGenericRepository<Product> productsRepo,
             IConfiguration config,
             IBlobService blobService,
             UserManager<AppUser> userManager)
         {
             _mapper = mapper;
             _cocktailsRepo = cocktailsRepo;
-            _ingredientsRepo = ingredientsRepo;
             _config = config;
             _blobService = blobService;
             _cocktailPicturesService = new CocktailPicturesService(blobService);
             _userManager = userManager;
+            _productsRepo = productsRepo;
         }
 
         [HttpGet("Public")]
@@ -163,6 +163,11 @@ namespace API.Controllers
                 MapEditedCocktailToDbCocktail(cocktailFromDto, cocktailFromDb, !newPicture);
 
                 await _cocktailsRepo.UpdateAsync(cocktailFromDb);
+
+                if (cocktailFromDb.BaseProduct == null)
+                {
+                    cocktailFromDb.BaseProduct = await _productsRepo.GetByIdAsync((int)cocktailFromDb.BaseProductId);
+                }
 
                 var editedCocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
 
