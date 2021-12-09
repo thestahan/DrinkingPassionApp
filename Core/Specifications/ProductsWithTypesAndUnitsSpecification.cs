@@ -4,7 +4,10 @@ namespace Core.Specifications
 {
     public class ProductsWithTypesAndUnitsSpecification : BaseSpecification<Product>
     {
-        public ProductsWithTypesAndUnitsSpecification()
+        public ProductsWithTypesAndUnitsSpecification(bool isPrivate, string authorId = "") 
+            : base(x => 
+                (string.IsNullOrEmpty(authorId) || x.AuthorId == authorId) &&
+                x.IsPrivate == isPrivate)
         {
             AddInclude(x => x.ProductType);
             AddInclude(x => x.ProductUnit);
