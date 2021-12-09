@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
 import authModule from "./modules/auth/index";
 import manageCocktailsModule from "./modules/manageCocktails/index";
+import manageProductsModule from "./modules/manageProducts/index";
 
 export default createStore({
   state: {},
@@ -10,5 +11,6 @@ export default createStore({
   modules: {
     auth: authModule,
     manageCocktails: manageCocktailsModule,
+    manageProducts: manageProductsModule,
   },
 });

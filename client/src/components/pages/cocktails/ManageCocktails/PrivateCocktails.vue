@@ -25,7 +25,7 @@ export default {
       return this.$store.getters.privateCocktailsData;
     },
     products() {
-      return this.$store.getters.products;
+      return this.$store.getters.publicProductsData;
     },
   },
 };
