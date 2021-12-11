@@ -47,7 +47,7 @@ export default class ProductService {
 
   async updateProduct(token, data) {
     const res = await axios.put(
-      `${process.env.VUE_APP_API_URL}/products`,
+      `${process.env.VUE_APP_API_URL}/products/${data.id}`,
       data,
       {
         headers: {

@@ -49,6 +49,51 @@ export default {
     }
   },
 
+  async addProduct(context, payload) {
+    try {
+      const createdProduct = await productService.addProduct(
+        payload.token,
+        payload.product
+      );
+
+      if (!payload.product.isPrivate) {
+        context.commit("addPublicProduct", {
+          product: createdProduct,
+        });
+      } else {
+        context.commit("addPrivateProduct", {
+          product: createdProduct,
+        });
+      }
+    } catch (err) {
+      console.warn(err.toJSON());
+
+      return false;
+    }
+  },
+
+  async updateProduct(context, payload) {
+    console.log("updating");
+    console.log(payload);
+    try {
+      await productService.updateProduct(payload.token, payload.product);
+
+      if (!payload.product.isPrivate) {
+        context.commit("updatePublicProduct", {
+          product: payload.product,
+        });
+      } else {
+        context.commit("updatePrivateProduct", {
+          product: payload.product,
+        });
+      }
+    } catch (err) {
+      console.warn(err);
+
+      return false;
+    }
+  },
+
   async deleteProduct(context, payload) {
     try {
       await productService.deleteCocktail(payload.id, payload.token);
