@@ -176,7 +176,7 @@ namespace API.Controllers
         {
             var user = await GetAuthorizedUser();
 
-            var spec = new IngredientIsPartOfAnyCocktailByPrivacy(dto.Id, user.Id, dto.IsPrivate);
+            var spec = new IngredientIsPartOfAnyCocktailByPrivacySpec(dto.Id, user.Id, dto.IsPrivate);
 
             bool anyCocktailExists = await _ingredientsRepo.EntityExistsWithSpecAsync(spec);
 

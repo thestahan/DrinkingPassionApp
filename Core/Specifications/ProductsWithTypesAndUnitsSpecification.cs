@@ -11,12 +11,14 @@ namespace Core.Specifications
         {
             AddInclude(x => x.ProductType);
             AddInclude(x => x.ProductUnit);
+            AddOrderBy(x => x.Name);
         }
 
         public ProductsWithTypesAndUnitsSpecification(int id) : base(x => x.Id == id)
         {
             AddInclude(x => x.ProductType);
             AddInclude(x => x.ProductUnit);
+            AddOrderBy(x => x.Name);
         }
     }
 }

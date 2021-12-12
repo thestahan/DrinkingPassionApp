@@ -13,9 +13,15 @@ export default {
   },
   addPublicProduct(state, payload) {
     state.publicProductsData.push(payload.product);
+    state.publicProductsData = state.publicProductsData.sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
   },
   addPrivateProduct(state, payload) {
     state.privateProductsData.push(payload.product);
+    state.privateProductsData = state.privateProductsData.sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
   },
   updatePublicProduct(state, payload) {
     const index = state.publicProductsData.findIndex(
