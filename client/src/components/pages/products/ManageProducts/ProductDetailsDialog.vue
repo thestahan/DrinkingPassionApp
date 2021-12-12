@@ -132,11 +132,15 @@ export default {
         return;
       }
 
+      const selectedUnit = this.units.find((u) => u.id == this.unit.id);
+
       const product = {
         id: this.product.id ?? 0,
         name: this.name,
         productUnitId: this.unit.id,
+        productUnit: selectedUnit.abbreviation ?? selectedUnit.name,
         productTypeId: this.type.id,
+        productType: this.type.name,
       };
 
       this.$emit("manage-ingredient", product);

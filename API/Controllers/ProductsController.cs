@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Core.Entities.Identity;
+using API.Dtos.Ingredients;
 
 namespace API.Controllers
 {
@@ -20,16 +21,18 @@ namespace API.Controllers
         private readonly IGenericRepository<Product> _productsRepo;
         private readonly IGenericRepository<ProductUnit> _productUnitsRepo;
         private readonly IGenericRepository<ProductType> _productTypesRepo;
+        private readonly IGenericRepository<Ingredient> _ingredientsRepo;
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> productsRepo, IGenericRepository<ProductUnit> productUnitsRepo, IGenericRepository<ProductType> productTypesRepo, IMapper mapper, UserManager<AppUser> userManager)
+        public ProductsController(IGenericRepository<Product> productsRepo, IGenericRepository<ProductUnit> productUnitsRepo, IGenericRepository<ProductType> productTypesRepo, IMapper mapper, UserManager<AppUser> userManager, IGenericRepository<Ingredient> ingredientsRepo)
         {
             _productsRepo = productsRepo;
             _productUnitsRepo = productUnitsRepo;
             _productTypesRepo = productTypesRepo;
             _mapper = mapper;
             _userManager = userManager;
+            _ingredientsRepo = ingredientsRepo;
         }
 
         [AllowAnonymous]
@@ -165,6 +168,19 @@ namespace API.Controllers
             await _productsRepo.DeleteAsync(product);
 
             return NoContent();
+        }
+
+        [Authorize]
+        [HttpGet("IsPartOfCocktail")]
+        public async Task<bool> IngredientIsPartOfAnyCocktail([FromQuery]IngredientAsPartOfCocktailDto dto)
+        {
+            var user = await GetAuthorizedUser();
+
+            var spec = new IngredientIsPartOfAnyCocktailByPrivacy(dto.Id, user.Id, dto.IsPrivate);
+
+            bool anyCocktailExists = await _ingredientsRepo.EntityExistsWithSpecAsync(spec);
+
+            return anyCocktailExists;
         }
 
         private async Task<AppUser> GetAuthorizedUser()

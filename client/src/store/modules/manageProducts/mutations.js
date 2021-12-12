@@ -22,28 +22,12 @@ export default {
       (p) => p.id == payload.product.id
     );
 
-    payload.product.productType = state.productTypes.find(
-      (t) => t.id == payload.product.productTypeId
-    ).name;
-
-    payload.product.productUnit = state.productUnits.find(
-      (u) => u.id == payload.product.productUnitId
-    ).name;
-
     state.publicProductsData[index] = payload.product;
   },
   updatePrivateProduct(state, payload) {
     const index = state.privateProductsData.findIndex(
       (p) => p.id == payload.product.id
     );
-
-    payload.product.productType = state.productTypes.find(
-      (t) => t.id == payload.product.productTypeId
-    ).name;
-
-    payload.product.productUnit = state.productUnits.find(
-      (u) => u.id == payload.product.productUnitId
-    ).name;
 
     state.privateProductsData[index] = payload.product;
   },

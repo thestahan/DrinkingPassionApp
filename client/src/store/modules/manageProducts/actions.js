@@ -73,8 +73,6 @@ export default {
   },
 
   async updateProduct(context, payload) {
-    console.log("updating");
-    console.log(payload);
     try {
       await productService.updateProduct(payload.token, payload.product);
 
@@ -94,9 +92,25 @@ export default {
     }
   },
 
+  async isPartOfCocktail(_, payload) {
+    try {
+      const response = await productService.isPartOfCocktail(
+        payload.id,
+        payload.isPrivate,
+        payload.token
+      );
+
+      return response;
+    } catch (err) {
+      const error = err.toJSON();
+
+      console.log(error);
+    }
+  },
+
   async deleteProduct(context, payload) {
     try {
-      await productService.deleteCocktail(payload.id, payload.token);
+      await productService.deleteProduct(payload.id, payload.token);
 
       if (payload.isPrivate) {
         context.commit("deletePrivateProduct", { id: payload.id });
@@ -104,11 +118,11 @@ export default {
         context.commit("deletePublicProduct", { id: payload.id });
       }
 
-      return true;
+      return { success: true };
     } catch (err) {
-      console.warn(err.toJSON());
+      const error = err.toJSON();
 
-      return false;
+      return { success: false, message: error.message };
     }
   },
 };

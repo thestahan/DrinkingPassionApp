@@ -59,10 +59,27 @@ export default class ProductService {
     return res.data;
   }
 
-  async deleteProduct(token, id) {
+  async deleteProduct(id, token) {
     const res = await axios.delete(
       `${process.env.VUE_APP_API_URL}/products/${id}`,
       {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  }
+
+  async isPartOfCocktail(id, isPrivate, token) {
+    const res = await axios.get(
+      `${process.env.VUE_APP_API_URL}/products/IsPartOfCocktail`,
+      {
+        params: {
+          id: id,
+          isPrivate: isPrivate,
+        },
         headers: {
           Authorization: `Bearer ${token}`,
         },

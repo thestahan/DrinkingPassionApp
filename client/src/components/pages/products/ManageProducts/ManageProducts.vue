@@ -17,9 +17,8 @@
       :rowsPerPageOptions="[10, 20, 50]"
       responsiveLayout="scroll"
       stripedRows
-      v-if="ingredients.length > 0"
     >
-      <Column field="name" header="Nazwa" :sortable="true"></Column>
+      <Column field="name" header="Nazwa" :sortable="true"> </Column>
       <Column field="productType" header="Typ" :sortable="true"></Column>
       <Column field="productUnit" header="Jednostka" :sortable="true"></Column>
       <Column header="Edytuj">
@@ -40,6 +39,7 @@
           />
         </template>
       </Column>
+      <template #empty> Nie znaleziono składników. </template>
     </DataTable>
   </section>
 
@@ -53,6 +53,8 @@
     v-model:visible="showProductsDetailsDialog"
   >
   </product-details-dialog>
+
+  <Toast position="bottom-right" />
 </template>
 
 <script>
@@ -61,6 +63,7 @@ import Column from "primevue/column";
 import Button from "primevue/button";
 import ProductDetailsDialog from "../ManageProducts/ProductDetailsDialog.vue";
 import ProductsService from "../../../../services/ProductSerivce";
+import Toast from "primevue/toast";
 
 export default {
   components: {
@@ -68,6 +71,7 @@ export default {
     DataTable,
     Column,
     ProductDetailsDialog,
+    Toast,
   },
   props: {
     ingredientsType: {
@@ -121,8 +125,42 @@ export default {
       this.showProductsDetailsDialog = true;
       this.productToManage = {};
     },
-    deleteIngredient(ingredientId) {
-      console.log("deletnig: " + ingredientId);
+    async deleteIngredient(ingredientId) {
+      try {
+        const isPartOfAnyCocktail = await this.$store.dispatch(
+          "isPartOfCocktail",
+          {
+            id: ingredientId,
+            isPrivate: this.ingredientsType == "private",
+            token: this.token,
+          }
+        );
+
+        if (isPartOfAnyCocktail) {
+          this.showDeleteError(
+            "Składnik jest wykorzystywany w co najmniej jednym koktajlu. Usuń najpierw koktajl."
+          );
+
+          return;
+        }
+
+        const deletedInfo = await this.$store.dispatch("deleteProduct", {
+          token: this.token,
+          id: ingredientId,
+          isPrivate: this.ingredientsType == "private",
+        });
+
+        if (deletedInfo.success) {
+          this.showDeleteSuccess();
+          return;
+        }
+
+        console.log(deletedInfo);
+
+        this.showDeleteError(deletedInfo.message);
+      } catch (err) {
+        console.warn(err);
+      }
     },
     closeProductDetailsDialog() {
       this.showProductsDetailsDialog = false;
@@ -132,38 +170,57 @@ export default {
         product.isPrivate = this.ingredientsType == "public" ? false : true;
 
         if (product.id == 0) {
-          // //   const response = await this.productsService.addProduct(
-          // //     this.token,
-          // //     product
-          // //   );
-
-          //   const newProduct = response.data;
           this.$store.dispatch("addProduct", {
             token: this.token,
             product: product,
           });
+
+          this.showAddSuccess();
         } else {
-          //   const response = await this.productsService.updateProduct(
-          //     this.token,
-          //     product
-          //   );
-          //   const updatedProduct = response.data;
-          //   this.$store.dispatch(
-          //     this.product.isPrivate
-          //       ? "updatePrivateProduct"
-          //       : "updatePublicProduct",
-          //     {
-          //       product: updatedProduct,
-          //     }
-          //   );
           this.$store.dispatch("updateProduct", {
             token: this.token,
             product: product,
           });
+
+          this.showEditSuccess();
         }
+
+        this.closeProductDetailsDialog();
       } catch (err) {
         console.warn(err.toJSON());
       }
+    },
+    showEditSuccess() {
+      this.$toast.add({
+        severity: "success",
+        summary: "Sukces",
+        detail: "Dane składnika zostały zapisane",
+        life: 3000,
+      });
+    },
+    showAddSuccess() {
+      this.$toast.add({
+        severity: "success",
+        summary: "Sukces",
+        detail: "Składnik został pomyślnie dodany",
+        life: 3000,
+      });
+    },
+    showDeleteSuccess() {
+      this.$toast.add({
+        severity: "success",
+        summary: "Sukces",
+        detail: "Składnik został usunięty",
+        life: 3000,
+      });
+    },
+    showDeleteError(errorMessage) {
+      this.$toast.add({
+        severity: "error",
+        summary: "Wystąpił błąd",
+        detail: errorMessage,
+        life: 10000,
+      });
     },
   },
 };
