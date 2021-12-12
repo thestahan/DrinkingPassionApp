@@ -25,7 +25,7 @@ export default {
         privateProductsData: privateProductsData,
       });
     } catch (err) {
-      console.error(err.toJSON());
+      console.warn(err);
     }
   },
 
@@ -35,7 +35,7 @@ export default {
 
       context.commit("setProductUnits", { productUnits: units });
     } catch (err) {
-      console.error(err.toJSON());
+      console.warn(err);
     }
   },
 
@@ -104,7 +104,7 @@ export default {
     } catch (err) {
       const error = err.toJSON();
 
-      console.log(error);
+      console.warn(error);
     }
   },
 

@@ -40,7 +40,8 @@ export default {
   },
   mounted() {
     this.getPrivateCocktails();
-    this.getProducts();
+    this.getPublicProducts();
+    this.getPrivateProducts();
 
     if (this.isAdmin) {
       this.getPublicCocktails();
@@ -67,8 +68,11 @@ export default {
 
       this.isLoading = false;
     },
-    async getProducts() {
+    async getPublicProducts() {
       this.$store.dispatch("fetchPublicProducts");
+    },
+    async getPrivateProducts() {
+      this.$store.dispatch("fetchPrivateProducts", { token: this.token });
     },
   },
 };

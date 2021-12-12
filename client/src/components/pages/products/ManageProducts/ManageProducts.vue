@@ -117,8 +117,6 @@ export default {
       );
       this.mode = "edit";
       this.showProductsDetailsDialog = true;
-      console.log("editing: " + ingredientId);
-      console.log(this.productToManage);
     },
     openAddIngredientDialog() {
       this.mode = "add";
@@ -154,8 +152,6 @@ export default {
           this.showDeleteSuccess();
           return;
         }
-
-        console.log(deletedInfo);
 
         this.showDeleteError(deletedInfo.message);
       } catch (err) {

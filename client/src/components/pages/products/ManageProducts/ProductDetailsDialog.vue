@@ -138,7 +138,8 @@ export default {
         id: this.product.id ?? 0,
         name: this.name,
         productUnitId: this.unit.id,
-        productUnit: selectedUnit.abbreviation ?? selectedUnit.name,
+        productUnit: selectedUnit.name,
+        productUnitAbbreviation: selectedUnit.abbreviation,
         productTypeId: this.type.id,
         productType: this.type.name,
       };

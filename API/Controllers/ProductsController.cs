@@ -99,7 +99,7 @@ namespace API.Controllers
 
             var productToAdd = _mapper.Map<Product>(product);
 
-            if (!isAdmin) productToAdd.IsPrivate = false;
+            if (!isAdmin) productToAdd.IsPrivate = true;
 
             productToAdd.AuthorId = user.Id;
 

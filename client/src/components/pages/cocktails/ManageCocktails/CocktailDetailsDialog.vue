@@ -141,7 +141,14 @@
               filterPlaceholder="Znajdź składnik"
               emptyFilterMessage="Nie znaleziono składnika"
               @change="setIngredientUnit"
-            />
+            >
+              <template #option="slotProps">
+                <span
+                  :class="{ 'p-text-italic': slotProps.option.isPrivate }"
+                  >{{ slotProps.option.name }}</span
+                >
+              </template>
+            </Dropdown>
           </div>
           <div class="p-col-5">
             <div class="p-inputgroup">
@@ -270,7 +277,7 @@ export default {
       this.picture = e.files[0];
     },
     setIngredientUnit(e) {
-      this.newIngredient.unit = e.value.productUnit;
+      this.newIngredient.unit = e.value.productUnitAbbreviation;
     },
     deleteIngredient(ingredient) {
       this.ingredients = this.ingredients.filter((x) => x != ingredient);
