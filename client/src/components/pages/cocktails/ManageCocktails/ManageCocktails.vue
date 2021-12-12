@@ -50,6 +50,7 @@
           />
         </template>
       </Column>
+      <template #empty> Nie znaleziono koktajli. </template>
     </DataTable>
   </section>
 
@@ -128,7 +129,6 @@ export default {
     },
   },
   cocktailService: null,
-  productService: null,
   created() {
     this.cocktailService = new CocktailService();
   },

@@ -1,7 +1,7 @@
 <template>
   <div v-if="cocktail">
     <div class="p-d-sm-none p-grid p-flex-column p-ml-2 p-mr-2">
-      <div class="p-col">
+      <div class="p-col-12">
         <header class="p-mb-3 p-text-center">
           <h3
             class="main-font heading-font"
@@ -11,14 +11,14 @@
           </h3>
         </header>
       </div>
-      <div class="p-col">
+      <div class="p-col-12">
         <img
           class="cocktail-details-picture-mobile p-m-auto p-shadow-10"
           alt="Zdjęcie koktajlu"
           :src="cocktail.picture"
         />
       </div>
-      <div class="p-col">
+      <div class="p-col-12">
         <section class="ingredients">
           <div
             class="p-grid p-jc-center"
@@ -29,7 +29,9 @@
               <span>{{ ingredient.name }}</span>
             </div>
             <div class="p-col-2 p-text-left">
-              <span class="primary-color">{{ ingredient.amount }}</span>
+              <span class="primary-color"
+                >{{ ingredient.amount }} {{ ingredient.unit }}</span
+              >
             </div>
           </div>
         </section>
@@ -58,7 +60,9 @@
               <span>{{ ingredient.name }}</span>
             </div>
             <div class="p-col-2 p-text-left">
-              <span class="primary-color">{{ ingredient.amount }}</span>
+              <span class="primary-color"
+                >{{ ingredient.amount }} {{ ingredient.unit }}</span
+              >
             </div>
           </div>
         </section>

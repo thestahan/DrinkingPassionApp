@@ -9,6 +9,9 @@ namespace API.Dtos.Products
         public string Name { get; set; }
 
         [Required]
+        public bool IsPrivate { get; set; }
+
+        [Required]
         public int ProductUnitId { get; set; }
 
         [Required]

@@ -2,10 +2,10 @@
   <div class="card p-mb-6">
     <header class="p-mb-6">
       <h2 class="p-text-center main-font heading-font">
-        Zarządzanie koktajlami
+        Zarządzanie składnikami koktajli
       </h2>
     </header>
-    <TabMenu :model="cocktailsTypes" v-model:activeIndex="activeIndex" />
+    <TabMenu :model="ingredientsTypes" v-model:activeIndex="activeIndex" />
 
     <router-view></router-view>
   </div>
@@ -21,11 +21,11 @@ export default {
   data() {
     return {
       activeIndex: 0,
-      cocktailsTypes: [
+      ingredientsTypes: [
         {
           label: "Prywatne",
           icon: "pi pi-fw pi-lock",
-          to: "/cocktails/manage/private",
+          to: "/ingredients/manage/private",
         },
       ],
     };
@@ -39,40 +39,40 @@ export default {
     },
   },
   mounted() {
-    this.getPrivateCocktails();
-    this.getPublicProducts();
     this.getPrivateProducts();
+    this.getUnits();
+    this.getTypes();
 
     if (this.isAdmin) {
-      this.getPublicCocktails();
+      this.getPublicProducts();
 
-      this.cocktailsTypes.unshift({
+      this.ingredientsTypes.unshift({
         label: "Publiczne",
         icon: "pi pi-fw pi-lock-open",
-        to: "/cocktails/manage/public",
+        to: "/ingredients/manage/public",
       });
     }
   },
   methods: {
-    async getPublicCocktails() {
-      this.isLoading = true;
-
-      this.$store.dispatch("fetchPublicCocktails");
-
-      this.isLoading = false;
-    },
-    async getPrivateCocktails() {
-      this.isLoading = true;
-
-      this.$store.dispatch("fetchPrivateCocktails", { token: this.token });
-
-      this.isLoading = false;
-    },
     async getPublicProducts() {
+      this.isLoading = true;
+
       this.$store.dispatch("fetchPublicProducts");
+
+      this.isLoading = false;
     },
     async getPrivateProducts() {
+      this.isLoading = true;
+
       this.$store.dispatch("fetchPrivateProducts", { token: this.token });
+
+      this.isLoading = false;
+    },
+    async getUnits() {
+      this.$store.dispatch("fetchProductUnits");
+    },
+    async getTypes() {
+      this.$store.dispatch("fetchProductTypes");
     },
   },
 };

@@ -3,6 +3,7 @@ using API.Errors;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -26,7 +27,9 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<ProductUnitToReturnDto>>> GetProductUnits()
         {
-            var units = await _repo.ListAllAsync();
+            var spec = new ProductUnitsOrderedByNameSpec();
+
+            var units = await _repo.ListAsync(spec);
 
             var unitsToReturn = _mapper.Map<IReadOnlyList<ProductUnitToReturnDto>>(units);
 

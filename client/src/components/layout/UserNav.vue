@@ -74,6 +74,11 @@ export default {
           key: "manageCocktails",
         },
         {
+          label: "Zarządzaj składnikami",
+          to: "/ingredients/manage",
+          key: "manageIngredients",
+        },
+        {
           label: "Wyloguj się",
           to: "",
           command: this.logout,

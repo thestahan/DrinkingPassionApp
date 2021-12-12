@@ -1,6 +1,6 @@
 <template>
   <Dialog
-    :style="{ width: '550px' }"
+    :style="{ width: '600px' }"
     header="Szczegóły koktajlu"
     :modal="true"
     class="p-fluid"
@@ -101,7 +101,7 @@
               ></InputText
             ></template>
           </Column>
-          <Column field="amount" header="Ilość" style="width: 40%">
+          <Column field="amount" header="Ilość" style="width: 35%">
             <template #editor="slotProps"
               ><InputNumber
                 v-model="slotProps.data[slotProps.column.props.field]"
@@ -114,6 +114,7 @@
               ></InputNumber
             ></template>
           </Column>
+          <Column field="unit" header="Jednostka" style="width: 25%"> </Column>
           <Column :exportable="false" style="min-width: 2rem">
             <template #body="slotProps">
               <Button
@@ -127,9 +128,9 @@
       </div>
 
       <div class="p-field">
-        <label>Dodaj składnik</label>
+        <label class="green-caption p-text-bold p-mb-2">Dodaj składnik</label>
         <div class="p-grid">
-          <div class="p-col-5">
+          <div class="p-col-12">
             <Dropdown
               v-model="newIngredient"
               :options="filteredProducts"
@@ -139,11 +140,15 @@
               dataKey="id"
               filterPlaceholder="Znajdź składnik"
               emptyFilterMessage="Nie znaleziono składnika"
-            />
-            <!-- <div class="p-inputgroup">
-            <span class="p-inputgroup-addon">Nazwa</span>
-            <InputText v-model="newIngredient.name" />
-          </div> -->
+              @change="setIngredientUnit"
+            >
+              <template #option="slotProps">
+                <span
+                  :class="{ 'p-text-italic': slotProps.option.isPrivate }"
+                  >{{ slotProps.option.name }}</span
+                >
+              </template>
+            </Dropdown>
           </div>
           <div class="p-col-5">
             <div class="p-inputgroup">
@@ -159,7 +164,17 @@
               ></InputNumber>
             </div>
           </div>
-          <div class="p-col-2">
+          <div class="p-col-5">
+            <div class="p-inputgroup">
+              <span class="p-inputgroup-addon">Jednostka</span>
+              <InputText
+                type="text"
+                v-model="newIngredient.unit"
+                disabled
+              ></InputText>
+            </div>
+          </div>
+          <div class="p-col-2 p-text-center">
             <Button
               icon="pi pi-plus"
               class="p-button-success"
@@ -255,14 +270,14 @@ export default {
     closeDialog() {
       this.$emit("close-modal");
     },
-    handleDelete(e) {
-      console.log("deleting");
-      console.log(e);
+    handleDelete() {
       this.picture = null;
     },
     handleSelect(e) {
       this.picture = e.files[0];
-      console.log(this.picture);
+    },
+    setIngredientUnit(e) {
+      this.newIngredient.unit = e.value.productUnitAbbreviation;
     },
     deleteIngredient(ingredient) {
       this.ingredients = this.ingredients.filter((x) => x != ingredient);
@@ -275,6 +290,7 @@ export default {
         amount: this.newIngredient.amount,
         name: this.newIngredient.name,
         productId: this.newIngredient.id,
+        unit: this.newIngredient.unit,
       });
 
       this.newIngredient = {};
@@ -284,6 +300,8 @@ export default {
 
       if (this.ingredients.length < 2) {
         this.minIngredientsError = true;
+      } else {
+        this.minIngredientsError = false;
       }
 
       if (this.v$.$error || this.minIngredientsError) {
@@ -298,8 +316,6 @@ export default {
         preparationInstruction: this.preparationInstruction,
         ingredients: this.getTransformedIngredients(),
       };
-
-      console.log(cocktail);
 
       this.$emit("manage-cocktail", cocktail);
     },
