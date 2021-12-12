@@ -49,9 +49,10 @@ namespace API.Helpers
             CreateMap<Product, ProductToReturnDto>()
                 .ForMember(
                     dest => dest.ProductUnit,
-                    opt => opt.MapFrom(src => string.IsNullOrEmpty(src.ProductUnit.Abbreviation) ?
-                        src.ProductUnit.Name :
-                        src.ProductUnit.Abbreviation))
+                    opt => opt.MapFrom(src => src.ProductUnit.Name))
+                .ForMember(
+                    dest => dest.ProductUnitAbbreviation,
+                    opt => opt.MapFrom(src => src.ProductUnit.Abbreviation))
                 .ForMember(
                     dest => dest.ProductUnitId,
                     opt => opt.MapFrom(src => src.ProductUnit.Id))

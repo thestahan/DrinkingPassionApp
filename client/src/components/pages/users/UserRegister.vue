@@ -261,7 +261,7 @@ export default {
 
         this.openModal = true;
       } catch (err) {
-        console.log(err);
+        console.warn(err);
       }
 
       this.isLoading = false;

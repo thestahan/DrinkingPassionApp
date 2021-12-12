@@ -13,6 +13,9 @@ import UserConfirmEmail from "../components/pages/users/UserConfirmEmail.vue";
 import ChangeForgottenPassword from "../components/pages/users/ChangeForgottenPassword.vue";
 import PublicCocktails from "../components/pages/cocktails/ManageCocktails/PublicCocktails.vue";
 import PrivateCocktails from "../components/pages/cocktails/ManageCocktails/PrivateCocktails.vue";
+import ManageProductsMenu from "../components/pages/products/ManageProducts/ManageProductsMenu.vue";
+import PublicIngredients from "../components/pages/products/ManageProducts/PublicIngredients.vue";
+import PrivateIngredients from "../components/pages/products/ManageProducts/PrivateIngredients.vue";
 import store from "../store/index.js";
 
 const routes = [
@@ -90,6 +93,23 @@ const routes = [
       {
         path: "private",
         component: PrivateCocktails,
+      },
+    ],
+  },
+  {
+    path: "/ingredients/manage",
+    name: "ManageIngredients",
+    component: ManageProductsMenu,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: "public",
+        component: PublicIngredients,
+        meta: { requiresAdmin: true },
+      },
+      {
+        path: "private",
+        component: PrivateIngredients,
       },
     ],
   },
