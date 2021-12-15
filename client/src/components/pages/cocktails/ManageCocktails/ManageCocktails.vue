@@ -12,10 +12,12 @@
     <DataTable
       :value="cocktails"
       :paginator="true"
-      :rows="10"
-      :totalRecords="cocktailsTotal"
+      :rows="pageSize"
+      :totalRecords="totalCount"
       :loading="isLoading"
-      :rowsPerPageOptions="[10, 20, 50]"
+      :rowsPerPageOptions="[5, 10, 20]"
+      :lazy="true"
+      @page="getCocktails($event)"
       stripedRows
       responsiveLayout="stack"
       breakpoint="960px"
@@ -95,9 +97,6 @@ export default {
   },
   data() {
     return {
-      cocktailsTotal: null,
-      pageIndex: 1,
-      pageSize: 12,
       isLoading: false,
       deleteCocktailDialog: false,
       newCocktailDialog: false,
@@ -126,6 +125,16 @@ export default {
       if (!this.cocktailsData) return;
 
       return this.cocktailsData.data;
+    },
+    pageSize() {
+      if (!this.cocktailsData) return;
+
+      return this.cocktailsData.pageSize;
+    },
+    totalCount() {
+      if (!this.cocktailsData) return;
+
+      return this.cocktailsData.count;
     },
   },
   cocktailService: null,
@@ -205,6 +214,22 @@ export default {
       }
 
       this.isLoading = false;
+    },
+    async getCocktails(event) {
+      const queryParams = {
+        pageIndex: event.page + 1,
+        pageSize: event.rows,
+      };
+
+      const actionName =
+        this.cocktailsType == "private"
+          ? "fetchPrivateCocktails"
+          : "fetchPublicCocktails";
+
+      await this.$store.dispatch(actionName, {
+        token: this.token,
+        queryParams: queryParams,
+      });
     },
     openEditCocktailDetailsDialog(cocktailId) {
       this.mode = "edit";

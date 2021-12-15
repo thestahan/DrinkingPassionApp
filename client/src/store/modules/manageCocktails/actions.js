@@ -5,9 +5,11 @@ const cocktailService = new CocktailService();
 const productService = new ProductService();
 
 export default {
-  async fetchPublicCocktails(context) {
+  async fetchPublicCocktails(context, payload) {
     try {
-      const publicCocktailsData = await cocktailService.getCocktails();
+      const publicCocktailsData = await cocktailService.getCocktails(
+        payload.queryParams
+      );
 
       context.commit("setPublicCocktails", {
         publicCocktailsData: publicCocktailsData,
@@ -19,7 +21,8 @@ export default {
   async fetchPrivateCocktails(context, payload) {
     try {
       const privateCocktailsData = await cocktailService.getPrivateCocktails(
-        payload.token
+        payload.token,
+        payload.queryParams
       );
 
       context.commit("setPrivateCocktails", {
