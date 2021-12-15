@@ -4,10 +4,22 @@
   </header>
 
   <cocktails-list
-    v-if="cocktails"
-    :cocktails="cocktails"
+    v-if="cocktailsData.cocktails"
+    :cocktailsData="cocktailsData"
     cocktailsType="private"
   ></cocktails-list>
+
+  <Paginator
+    v-if="
+      cocktailsData.cocktails &&
+      cocktailsData.pageSize < cocktailsData.totalCount
+    "
+    v-model:rows="cocktailsData.pageSize"
+    :totalRecords="cocktailsData.totalCount"
+    :rowsPerPageOptions="[3, 9, 18]"
+    @page="getPrivateCocktails($event)"
+  ></Paginator>
+
   <Spinner v-if="isLoading"></Spinner>
 </template>
 
@@ -15,12 +27,13 @@
 import CocktailService from "../../../services/CocktailService";
 import Spinner from "../../utilities/Spinner.vue";
 import CocktailsList from "./CocktailsList.vue";
+import Paginator from "primevue/paginator";
 
 export default {
-  components: { Spinner, CocktailsList },
+  components: { Spinner, CocktailsList, Paginator },
   data() {
     return {
-      cocktails: null,
+      cocktailsData: {},
       isLoading: false,
       url: process.env.VUE_APP_API_URL,
     };
@@ -30,7 +43,7 @@ export default {
     this.cocktailService = new CocktailService();
   },
   mounted() {
-    this.getPrivateCocktails();
+    this.getPrivateCocktails(null);
   },
   computed: {
     token() {
@@ -38,16 +51,24 @@ export default {
     },
   },
   methods: {
-    async getPrivateCocktails() {
+    async getPrivateCocktails(event) {
       this.isLoading = true;
 
       try {
-        const data = await this.cocktailService.getPrivateCocktails(this.token);
+        const queryParams = {
+          pageIndex: (event?.page ?? 0) + 1,
+          pageSize: event?.rows ?? 9,
+        };
 
-        this.cocktails = data.data;
-        // this.cocktailsTotal = data.count;
-        // this.pageIndex = data.pageIndex;
-        // this.pageSize = data.pageSize;
+        const data = await this.cocktailService.getPrivateCocktails(
+          this.token,
+          queryParams
+        );
+
+        this.cocktailsData.cocktails = data.data;
+        this.cocktailsData.totalCount = data.count;
+        this.cocktailsData.pageIndex = data.pageIndex - 1;
+        this.cocktailsData.pageSize = data.pageSize;
       } catch (err) {
         console.error(err.toJSON());
       }

@@ -2,9 +2,9 @@
 {
     public class CocktailSpecParams
     {
-        private const int _maxPageSize = 50;
+        private const int _maxPageSize = 20;
         private string _search;
-        private int _pageSize = 6;
+        private int _pageSize = 3;
 
         public int PageIndex { get; set; } = 1;
         public int? ProductId { get; set; }

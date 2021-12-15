@@ -1,23 +1,36 @@
 import axios from "axios";
 
 export default class CocktailService {
-  async getCocktails() {
+  async getCocktails(queryParams) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_URL}/cocktails/public`
-    );
-    return res.data;
-  }
-  async getPrivateCocktails(token) {
-    const res = await axios.get(
-      `${process.env.VUE_APP_API_URL}/cocktails/private`,
+      `${process.env.VUE_APP_API_URL}/cocktails/public`,
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
+        params: {
+          pageIndex: queryParams.pageIndex,
+          pageSize: queryParams.pageSize,
         },
       }
     );
     return res.data;
   }
+
+  async getPrivateCocktails(token, queryParams) {
+    const res = await axios.get(
+      `${process.env.VUE_APP_API_URL}/cocktails/private`,
+      {
+        params: {
+          pageIndex: queryParams.pageIndex,
+          pageSize: queryParams.pageSize,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
+  }
+
   async getCocktail(id, token) {
     const res = await axios.get(
       `${process.env.VUE_APP_API_URL}/cocktails/${id}`,
@@ -29,6 +42,7 @@ export default class CocktailService {
     );
     return res.data;
   }
+
   async manageCocktail(formData, token) {
     const res = await axios.post(
       `${process.env.VUE_APP_API_URL}/cocktails`,
@@ -42,6 +56,7 @@ export default class CocktailService {
     );
     return res;
   }
+
   async deleteCocktail(id, token) {
     const res = await axios.delete(
       `${process.env.VUE_APP_API_URL}/cocktails/${id}`,

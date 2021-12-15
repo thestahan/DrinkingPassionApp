@@ -57,14 +57,29 @@ export default {
     async getPublicCocktails() {
       this.isLoading = true;
 
-      this.$store.dispatch("fetchPublicCocktails");
+      const queryParams = {
+        pageIndex: 1,
+        pageSize: 10,
+      };
+
+      this.$store.dispatch("fetchPublicCocktails", {
+        queryParams: queryParams,
+      });
 
       this.isLoading = false;
     },
     async getPrivateCocktails() {
       this.isLoading = true;
 
-      this.$store.dispatch("fetchPrivateCocktails", { token: this.token });
+      const queryParams = {
+        pageIndex: 1,
+        pageSize: 10,
+      };
+
+      this.$store.dispatch("fetchPrivateCocktails", {
+        token: this.token,
+        queryParams: queryParams,
+      });
 
       this.isLoading = false;
     },
