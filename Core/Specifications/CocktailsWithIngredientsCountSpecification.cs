@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Models;
 using System.Linq;
 
 namespace Core.Specifications
@@ -21,8 +22,14 @@ namespace Core.Specifications
             {
                 switch (cocktailParams.Sort)
                 {
-                    case "nameDesc":
+                    case CocktailsSort.NameDesc:
                         AddOrderByDescending(x => x.Name);
+                        break;
+                    case CocktailsSort.IngredientsAsc:
+                        AddOrderBy(x => x.IngredientsCount);
+                        break;
+                    case CocktailsSort.IngredientsDesc:
+                        AddOrderByDescending(x => x.IngredientsCount);
                         break;
                     default:
                         AddOrderBy(x => x.Name);

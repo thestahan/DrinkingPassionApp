@@ -3,6 +3,8 @@
     <h2 class="p-text-center main-font heading-font">Lista koktajli</h2>
   </header>
 
+  <cocktails-filters @set-filters="setFilters"></cocktails-filters>
+
   <cocktails-list
     v-if="cocktailsData.cocktails"
     :cocktailsData="cocktailsData"
@@ -28,14 +30,16 @@ import CocktailService from "../../../services/CocktailService";
 import Spinner from "../../utilities/Spinner.vue";
 import CocktailsList from "./CocktailsList.vue";
 import Paginator from "primevue/paginator";
+import CocktailsFilters from "./CocktailsFilters.vue";
 
 export default {
-  components: { Spinner, CocktailsList, Paginator },
+  components: { Spinner, CocktailsList, Paginator, CocktailsFilters },
   data() {
     return {
       cocktailsData: {},
       isLoading: false,
       url: process.env.VUE_APP_API_URL,
+      currentSort: null,
     };
   },
   cocktailService: null,
@@ -53,6 +57,7 @@ export default {
         const queryParams = {
           pageIndex: (event?.page ?? 0) + 1,
           pageSize: event?.rows ?? 9,
+          sort: this.currentSort,
         };
 
         const data = await this.cocktailService.getCocktails(queryParams);
@@ -66,6 +71,11 @@ export default {
       }
 
       this.isLoading = false;
+    },
+    setFilters(filters) {
+      this.currentSort = filters.sort;
+
+      this.getCocktails(null);
     },
   },
 };
