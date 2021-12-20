@@ -3,7 +3,10 @@
     <h2 class="p-text-center main-font heading-font">Lista Twoich koktajli</h2>
   </header>
 
-  <cocktails-filters @set-filters="setFilters"></cocktails-filters>
+  <cocktails-filters
+    @set-filters="setFilters"
+    cocktailsType="private"
+  ></cocktails-filters>
 
   <cocktails-list
     v-if="cocktailsData.cocktails"
