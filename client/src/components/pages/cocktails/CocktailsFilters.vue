@@ -49,7 +49,7 @@
         <span class="p-float-label">
           <Dropdown
             v-model="filterMainIngredient"
-            :options="products"
+            :options="productsForMainIngredient"
             dataKey="id"
             optionLabel="name"
             forceSelection
@@ -99,7 +99,7 @@ export default {
   data() {
     return {
       filteredProducts: null,
-      products: [],
+      productsForMainIngredient: [],
       sortOptions: [
         { name: "Nazwa rosnąco", code: "NAME_ASC" },
         { name: "Nazwa malejąco", code: "NAME_DESC" },
@@ -129,6 +129,10 @@ export default {
     setFilters() {
       const filters = {
         sort: this.currentSort.code,
+        ingredients: this.filterIngredients.map((ingredient) => ingredient.id),
+        ingredientsExactCount: +this.filterCocktailIngredientsCount,
+        productId: this.filterMainIngredient?.id,
+        cocktailName: this.filterCocktailName,
       };
 
       this.$emit("set-filters", filters);
@@ -156,7 +160,12 @@ export default {
         this.products = publicProducts;
       }
 
-      this.products.unshift({ id: 0, name: "-- Wszystkie --" });
+      this.productsForMainIngredient = [...this.products];
+
+      this.productsForMainIngredient.unshift({
+        id: 0,
+        name: "-- Wszystkie --",
+      });
     },
     searchProduct(event) {
       if (!event.query.trim().length) {

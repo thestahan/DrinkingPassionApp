@@ -43,6 +43,10 @@ export default {
       isLoading: false,
       url: process.env.VUE_APP_API_URL,
       currentSort: null,
+      productId: null,
+      ingredients: [],
+      ingredientsExactCount: null,
+      cocktailName: null,
     };
   },
   cocktailService: null,
@@ -61,6 +65,10 @@ export default {
           pageIndex: (event?.page ?? 0) + 1,
           pageSize: event?.rows ?? 9,
           sort: this.currentSort,
+          cocktailName: this.cocktailName ? this.cocktailName : null,
+          ingredientsExactCount: this.ingredientsExactCount,
+          productId: this.productId != 0 ? this.productId : null,
+          ingredients: JSON.stringify(this.ingredients),
         };
 
         const data = await this.cocktailService.getCocktails(queryParams);
@@ -77,6 +85,10 @@ export default {
     },
     setFilters(filters) {
       this.currentSort = filters.sort;
+      this.cocktailName = filters.cocktailName;
+      this.ingredientsExactCount = filters.ingredientsExactCount;
+      this.productId = filters.productId;
+      this.ingredients = filters.ingredients;
 
       this.getCocktails(null);
     },
