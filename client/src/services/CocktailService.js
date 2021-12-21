@@ -5,10 +5,7 @@ export default class CocktailService {
     const res = await axios.get(
       `${process.env.VUE_APP_API_URL}/cocktails/public`,
       {
-        params: {
-          pageIndex: queryParams.pageIndex,
-          pageSize: queryParams.pageSize,
-        },
+        params: queryParams,
       }
     );
     return res.data;
@@ -18,10 +15,7 @@ export default class CocktailService {
     const res = await axios.get(
       `${process.env.VUE_APP_API_URL}/cocktails/private`,
       {
-        params: {
-          pageIndex: queryParams.pageIndex,
-          pageSize: queryParams.pageSize,
-        },
+        params: queryParams,
         headers: {
           Authorization: `Bearer ${token}`,
         },

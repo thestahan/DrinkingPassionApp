@@ -7,9 +7,10 @@ namespace Core.Specifications
     {
         public CocktailsWithFiltersForCountSpecification(CocktailSpecParams cocktailParams, bool isPrivate, string authorId = "")
             : base(x =>
-                (string.IsNullOrEmpty(cocktailParams.Search) || x.Name.ToLower().Contains(cocktailParams.Search)) &&
+                (string.IsNullOrEmpty(cocktailParams.CocktailName) || x.Name.ToLower().Contains(cocktailParams.CocktailName)) &&
                 (!cocktailParams.ProductId.HasValue || x.Ingredients.Any(y => y.ProductId == cocktailParams.ProductId)) &&
                 (string.IsNullOrEmpty(authorId) || x.AuthorId == authorId) &&
+                (cocktailParams.IngredientsExactCount == 0 || x.IngredientsCount == cocktailParams.IngredientsExactCount) &&
                 x.IsPrivate == isPrivate
             )
         {
