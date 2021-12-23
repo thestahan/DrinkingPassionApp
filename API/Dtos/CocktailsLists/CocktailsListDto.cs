@@ -1,0 +1,11 @@
+﻿using System;
+
+namespace API.Dtos.CocktailsLists
+{
+    public class CocktailsListDto
+    {
+        public Guid UniqueLink { get; set; }
+        public string Name { get; set; }
+        public int CocktailsCount { get; set; }
+    }
+}
