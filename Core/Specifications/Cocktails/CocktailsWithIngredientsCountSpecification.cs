@@ -2,7 +2,7 @@
 using Core.Models;
 using System.Linq;
 
-namespace Core.Specifications
+namespace Core.Specifications.Cocktails
 {
     public class CocktailsWithIngredientsCountSpecification : BaseSpecification<Cocktail>
     {
@@ -12,7 +12,7 @@ namespace Core.Specifications
                 (!cocktailParams.ProductId.HasValue || x.BaseProductId == cocktailParams.ProductId) &&
                 (string.IsNullOrEmpty(authorId) || x.AuthorId == authorId) &&
                 (cocktailParams.IngredientsExactCount == 0 || x.IngredientsCount == cocktailParams.IngredientsExactCount) &&
-                (cocktailParams.IngredientsList.Count == 0 || (x.Ingredients.Count(i => cocktailParams.IngredientsList.Contains(i.ProductId)) == cocktailParams.IngredientsList.Count)) &&
+                (cocktailParams.IngredientsList.Count == 0 || x.Ingredients.Count(i => cocktailParams.IngredientsList.Contains(i.ProductId)) == cocktailParams.IngredientsList.Count) &&
                 x.IsPrivate == isPrivate
             )
         {

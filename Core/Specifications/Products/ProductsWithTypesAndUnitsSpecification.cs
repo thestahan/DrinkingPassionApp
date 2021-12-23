@@ -1,11 +1,11 @@
 ﻿using Core.Entities;
 
-namespace Core.Specifications
+namespace Core.Specifications.Products
 {
     public class ProductsWithTypesAndUnitsSpecification : BaseSpecification<Product>
     {
-        public ProductsWithTypesAndUnitsSpecification(bool isPrivate, string authorId = "") 
-            : base(x => 
+        public ProductsWithTypesAndUnitsSpecification(bool isPrivate, string authorId = "")
+            : base(x =>
                 (string.IsNullOrEmpty(authorId) || x.AuthorId == authorId) &&
                 x.IsPrivate == isPrivate)
         {

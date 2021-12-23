@@ -6,6 +6,8 @@ using Core.Entities;
 using Core.Entities.Identity;
 using Core.Interfaces;
 using Core.Specifications;
+using Core.Specifications.Cocktails;
+using Core.Specifications.CocktailsLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
