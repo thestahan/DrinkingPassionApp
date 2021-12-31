@@ -6,7 +6,7 @@ namespace Core.Specifications.CocktailsLists
     {
         public CocktailsListByIdWithCocktails(int id) : base(l => l.Id == id)
         {
-            AddInclude(l => l.Cocktails);
+            AddInclude("Cocktails.BaseProduct");
         }
     }
 }

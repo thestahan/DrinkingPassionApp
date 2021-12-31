@@ -11,7 +11,9 @@ using Core.Specifications.CocktailsLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -34,7 +36,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetCocktailsLists()
+        public async Task<ActionResult<CocktailsListDto>> GetCocktailsLists()
         {
             var user = await GetAuthorizedUser();
 
@@ -48,7 +50,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetCocktailsListDetails(int id)
+        public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListDetails(int id)
         {
             var user = await GetAuthorizedUser();
 
@@ -65,7 +67,7 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}/guestview")]
-        public async Task<ActionResult> GetCocktailsListForGuest(int id)
+        public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListForGuest(int id)
         {
             var spec = new CocktailsListByIdWithCocktails(id);
 
@@ -80,7 +82,7 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}/guestview/{cocktailId}")]
-        public async Task<ActionResult> GetCocktailFromList(int id, int cocktailId)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailFromList(int id, int cocktailId)
         {
             var spec = new CocktailsListWithCocktailExists(id, cocktailId);
 
@@ -97,6 +99,34 @@ namespace API.Controllers
             var mappedCocktail = _mapper.Map<CocktailDetailsToReturnDto>(cocktail);
 
             return Ok(mappedCocktail);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CocktailsListDetailsDto>> AddCocktailsList(CocktailsListToAddDto dto)
+        {
+            var user = await GetAuthorizedUser();
+
+            if (dto.Cocktails.Count == 0) return BadRequest(new ApiResponse(400));
+
+            var list = _mapper.Map<CocktailsList>(dto);
+
+            var spec = new CocktailsByIds(dto.Cocktails);
+
+            var cocktails = await _cocktailsRepo.ListAsync(spec);
+
+            if (cocktails.Count != dto.Cocktails.Count) return BadRequest(new ApiResponse(400));
+
+            list.Cocktails = cocktails.ToList();
+
+            list.AuthorId = user.Id;
+
+            list.UniqueLink = Guid.NewGuid().ToString();
+
+            var addedList = await _listsRepo.AddAsync(list);
+
+            var listToReturn = _mapper.Map<CocktailsListDetailsDto>(addedList);
+
+            return CreatedAtAction(nameof(GetCocktailsListDetails), new { id = listToReturn.Id }, listToReturn);
         }
 
         private async Task<AppUser> GetAuthorizedUser()

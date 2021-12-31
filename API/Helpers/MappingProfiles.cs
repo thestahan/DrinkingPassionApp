@@ -1,10 +1,12 @@
 ﻿using API.Dtos.Accounts;
 using API.Dtos.Cocktails;
+using API.Dtos.CocktailsLists;
 using API.Dtos.Ingredients;
 using API.Dtos.Products;
 using AutoMapper;
 using Core.Entities;
 using Core.Entities.Identity;
+using System.Linq;
 
 namespace API.Helpers
 {
@@ -73,6 +75,12 @@ namespace API.Helpers
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));
+            CreateMap<CocktailsList, CocktailsListDetailsDto>();
+            CreateMap<CocktailsList, CocktailsListDto>();
+            CreateMap<CocktailsListToAddDto, CocktailsList>()
+                .ForMember(
+                    dest => dest.Cocktails,
+                    opt => opt.Ignore());
         }
     }
 }
