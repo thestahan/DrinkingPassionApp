@@ -17,6 +17,7 @@ import ManageProductsMenu from "../components/pages/products/ManageProducts/Mana
 import PublicIngredients from "../components/pages/products/ManageProducts/PublicIngredients.vue";
 import PrivateIngredients from "../components/pages/products/ManageProducts/PrivateIngredients.vue";
 import CocktailsLists from "../components/pages/cocktailsLists/CocktailsLists.vue";
+import GuestCocktailsLists from "../components/pages/guestCocktailsLists/GuestCocktailsLists.vue";
 import store from "../store/index.js";
 
 const routes = [
@@ -102,6 +103,11 @@ const routes = [
     name: "CocktailsLists",
     component: CocktailsLists,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/guests/cocktailsLists/:id",
+    name: GuestCocktailsLists,
+    component: GuestCocktailsLists,
   },
   {
     path: "/ingredients/manage",

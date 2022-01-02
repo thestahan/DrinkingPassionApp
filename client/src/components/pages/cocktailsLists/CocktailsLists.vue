@@ -21,9 +21,11 @@
       <Column field="name" header="Nazwa"></Column>
       <Column field="uniqueLink" header="Link">
         <template #body="{ data }">
-          <router-link to="/cocktails/lists" class="primary-color">{{
-            data.uniqueLink
-          }}</router-link>
+          <router-link
+            :to="'/guests/cocktailslists/' + data.uniqueLink"
+            class="primary-color"
+            >Przejdź do listy</router-link
+          >
         </template>
       </Column>
       <Column field="cocktailsCount" header="Ilość koktajli"></Column>
