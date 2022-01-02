@@ -79,6 +79,11 @@ export default {
           key: "manageIngredients",
         },
         {
+          label: "Listy koktajli",
+          to: "/cocktails/lists",
+          key: "cocktailsLists",
+        },
+        {
           label: "Wyloguj się",
           to: "",
           command: this.logout,

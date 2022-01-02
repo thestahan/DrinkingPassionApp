@@ -16,6 +16,7 @@ import PrivateCocktails from "../components/pages/cocktails/ManageCocktails/Priv
 import ManageProductsMenu from "../components/pages/products/ManageProducts/ManageProductsMenu.vue";
 import PublicIngredients from "../components/pages/products/ManageProducts/PublicIngredients.vue";
 import PrivateIngredients from "../components/pages/products/ManageProducts/PrivateIngredients.vue";
+import CocktailsLists from "../components/pages/cocktailsLists/CocktailsLists.vue";
 import store from "../store/index.js";
 
 const routes = [
@@ -95,6 +96,12 @@ const routes = [
         component: PrivateCocktails,
       },
     ],
+  },
+  {
+    path: "/cocktails/lists",
+    name: "CocktailsLists",
+    component: CocktailsLists,
+    meta: { requiresAuth: true },
   },
   {
     path: "/ingredients/manage",
