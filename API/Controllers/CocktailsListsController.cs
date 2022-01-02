@@ -148,6 +148,19 @@ namespace API.Controllers
             return CreatedAtAction(nameof(GetCocktailsListDetails), new { id = listToReturn.Id }, listToReturn);
         }
 
+        [HttpDelete]
+        public async Task<ActionResult> DeleteCocktailsList(int id)
+        {
+            var spec = new CocktailsListForUserById(id);
+
+            var list = await _listsRepo.GetEntityWithSpec(spec);
+
+            if (list == null) return NotFound(new ApiResponse(404));
+
+            await _listsRepo.DeleteAsync(list);
+
+            return NoContent();
+        }
 
         private async Task<AppUser> GetAuthorizedUser()
         {
