@@ -27,7 +27,11 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
 
-        public CocktailsListsController(IGenericRepository<CocktailsList> listsRepo, UserManager<AppUser> userManager, IMapper mapper, IGenericRepository<Cocktail> cocktailsRepo)
+        public CocktailsListsController(
+            IGenericRepository<CocktailsList> listsRepo,
+            UserManager<AppUser> userManager,
+            IMapper mapper,
+            IGenericRepository<Cocktail> cocktailsRepo)
         {
             _listsRepo = listsRepo;
             _userManager = userManager;
@@ -102,7 +106,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CocktailsListDetailsDto>> AddCocktailsList(CocktailsListToAddDto dto)
+        public async Task<ActionResult<CocktailsListDetailsDto>> ManageCocktailsList(CocktailsListToAddDto dto)
         {
             var user = await GetAuthorizedUser();
 
@@ -116,10 +120,25 @@ namespace API.Controllers
 
             if (cocktails.Count != dto.Cocktails.Count) return BadRequest(new ApiResponse(400));
 
+            if (dto.Id != 0)
+            {
+                var listSpec = new CocktailsListByIdWithCocktails(dto.Id);
+
+                var listFromDb = await _listsRepo.GetEntityWithSpec(listSpec);
+
+                if (listFromDb.AuthorId != user.Id) return BadRequest(new ApiResponse(400));
+
+                listFromDb.Cocktails = cocktails.ToList();
+                listFromDb.CocktailsCount = cocktails.Count;
+                listFromDb.Name = dto.Name;
+
+                await _listsRepo.UpdateAsync(listFromDb);
+
+                return NoContent();
+            }
+
             list.Cocktails = cocktails.ToList();
-
             list.AuthorId = user.Id;
-
             list.UniqueLink = Guid.NewGuid().ToString();
 
             var addedList = await _listsRepo.AddAsync(list);
@@ -128,6 +147,7 @@ namespace API.Controllers
 
             return CreatedAtAction(nameof(GetCocktailsListDetails), new { id = listToReturn.Id }, listToReturn);
         }
+
 
         private async Task<AppUser> GetAuthorizedUser()
         {

@@ -5,6 +5,8 @@ namespace API.Dtos.CocktailsLists
 {
     public class CocktailsListToAddDto
     {
+        public int Id { get; set; }
+
         [Required]
         public string Name { get; set; }
 
