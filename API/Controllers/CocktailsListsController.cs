@@ -70,10 +70,10 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{id}/guestview")]
-        public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListForGuest(int id)
+        [HttpGet("{uniqueLink}/guestview")]
+        public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListForGuest(string uniqueLink)
         {
-            var spec = new CocktailsListByIdWithCocktails(id);
+            var spec = new CocktailsListByLinkWithCocktails(uniqueLink);
 
             var list = await _listsRepo.GetEntityWithSpec(spec);
 
@@ -85,16 +85,16 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{id}/guestview/{cocktailId}")]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailFromList(int id, int cocktailId)
+        [HttpGet("{uniqueLink}/guestview/{cocktailId}")]
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailFromList(string uniqueLink, int cocktailId)
         {
-            var spec = new CocktailsListWithCocktailExists(id, cocktailId);
+            var spec = new CocktailsListWithCocktailExists(uniqueLink, cocktailId);
 
             var listWithCoctailExists = await _listsRepo.EntityExistsWithSpecAsync(spec);
 
             if (!listWithCoctailExists) return NotFound(new ApiResponse(404));
 
-            var cocktailSpec = new CocktailWithIngredientsSpecification(id);
+            var cocktailSpec = new CocktailWithIngredientsSpecification(cocktailId);
 
             var cocktail = await _cocktailsRepo.GetEntityWithSpec(cocktailSpec);
 
