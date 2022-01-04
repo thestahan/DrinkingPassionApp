@@ -21,11 +21,21 @@
       <Column field="name" header="Nazwa"></Column>
       <Column field="uniqueLink" header="Link">
         <template #body="{ data }">
-          <router-link
-            :to="'/guests/cocktailslists/' + data.uniqueLink"
-            class="primary-color"
-            >Przejdź do listy</router-link
-          >
+          <div class="p-d-flex">
+            <router-link
+              :to="'/guests/cocktailslists/' + data.uniqueLink"
+              class="primary-color"
+              >Przejdź do listy</router-link
+            >
+            <i
+              class="pi pi-copy p-ml-2"
+              style="font-size: 1.5rem; cursor: pointer"
+              v-tooltip="'Skopiuj link'"
+              @click="
+                copyLinkToClipboard('/guests/cocktailslists/' + data.uniqueLink)
+              "
+            ></i>
+          </div>
         </template>
       </Column>
       <Column field="cocktailsCount" header="Ilość koktajli"></Column>
@@ -52,6 +62,7 @@
     </DataTable>
   </section>
 
+  <Toast position="bottom-right" />
   <Spinner v-if="isLoading"></Spinner>
 </template>
 
@@ -61,13 +72,15 @@ import Spinner from "../../utilities/Spinner.vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
+import Toast from "primevue/toast";
 
 export default {
-  components: { Spinner, DataTable, Column, Button },
+  components: { Spinner, DataTable, Column, Button, Toast },
   data() {
     return {
       isLoading: false,
       cocktailsLists: [],
+      focusedLinkToList: null,
     };
   },
   cocktailListService: null,
@@ -116,6 +129,17 @@ export default {
 
     editCocktailsList(id) {
       console.log("editing list of id" + id);
+    },
+
+    async copyLinkToClipboard(link) {
+      await navigator.clipboard.writeText(
+        process.env.VUE_APP_CLIENT_URL + link
+      );
+
+      this.$toast.add({
+        severity: "info",
+        summary: "Skopiowano link do schowka",
+      });
     },
   },
 };

@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import ToastService from "primevue/toastservice";
+import Tooltip from "primevue/tooltip";
 
 import PrimeVue from "primevue/config";
 
@@ -18,5 +19,6 @@ app.use(store);
 app.use(router);
 app.use(PrimeVue);
 app.use(ToastService);
+app.directive("tooltip", Tooltip);
 
 app.mount("#app");
