@@ -21,4 +21,21 @@ export default class CocktailsListService {
 
     return res.data;
   }
+
+  async getCocktailFromList(uniqueLink, cocktailId) {
+    const res = await axios.get(
+      `${process.env.VUE_APP_API_URL}/cocktailsLists/` +
+        uniqueLink +
+        "/guestview/" +
+        cocktailId,
+      {
+        params: {
+          uniqueLink: uniqueLink,
+          cocktailId: +cocktailId,
+        },
+      }
+    );
+
+    return res.data;
+  }
 }

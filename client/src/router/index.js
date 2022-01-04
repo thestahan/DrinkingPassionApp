@@ -55,12 +55,12 @@ const routes = [
     component: PrivateCocktailsList,
   },
   {
-    path: "/cocktails/public/:id",
+    path: "/cocktails/public/:cocktailId",
     name: "PublicCocktailDetails",
     component: CocktailDetails,
   },
   {
-    path: "/cocktails/private/:id",
+    path: "/cocktails/private/:cocktailId",
     name: "PrivateCocktailDetails",
     component: CocktailDetails,
   },
@@ -106,8 +106,13 @@ const routes = [
   },
   {
     path: "/guests/cocktailsLists/:id",
-    name: GuestCocktailsLists,
+    name: "GuestCocktailsLists",
     component: GuestCocktailsLists,
+  },
+  {
+    path: "/guests/cocktailsLists/:id/:cocktailId",
+    name: "CocktailsListsCocktailDetails",
+    component: CocktailDetails,
   },
   {
     path: "/ingredients/manage",

@@ -114,7 +114,7 @@ namespace API.Controllers
 
             var list = _mapper.Map<CocktailsList>(dto);
 
-            var spec = new CocktailsByIds(dto.Cocktails);
+            var spec = new CocktailsPublicAndPrivateByIds(dto.Cocktails, user.Id);
 
             var cocktails = await _cocktailsRepo.ListAsync(spec);
 
