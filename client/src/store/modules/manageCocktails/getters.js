@@ -1,4 +1,7 @@
 export default {
+  allAvailableCocktails: (state) => {
+    return state.allAvailableCocktails;
+  },
   publicCocktailsData: (state) => {
     return state.publicCocktailsData;
   },

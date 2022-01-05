@@ -1,4 +1,7 @@
 export default {
+  setAllAvailableCocktails(state, payload) {
+    state.allAvailableCocktails = payload.cocktails;
+  },
   setPublicCocktails(state, payload) {
     state.publicCocktailsData = payload.publicCocktailsData;
   },

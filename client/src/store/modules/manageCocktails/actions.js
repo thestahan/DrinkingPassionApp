@@ -5,6 +5,17 @@ const cocktailService = new CocktailService();
 const productService = new ProductService();
 
 export default {
+  async fetchAllAvailableCocktails(context, payload) {
+    try {
+      const cocktails = await cocktailService.getAllCocktailsAvailableForUser(
+        payload.token
+      );
+
+      context.commit("setAllAvailableCocktails", { cocktails: cocktails });
+    } catch (err) {
+      console.error(err.toJSON());
+    }
+  },
   async fetchPublicCocktails(context, payload) {
     try {
       const publicCocktailsData = await cocktailService.getCocktails(

@@ -5,6 +5,7 @@ import getters from "./getters.js";
 export default {
   state() {
     return {
+      allAvailableCocktails: null,
       publicCocktailsData: null,
       privateCocktailsData: null,
       products: null,
