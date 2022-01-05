@@ -34,6 +34,7 @@ namespace API.Helpers
                 .ForMember(
                     dest => dest.BaseIngredient,
                     opt => opt.MapFrom(src => src.BaseProduct.Name));
+            CreateMap<Cocktail, CocktailBasicInfoDto>();
             CreateMap<Ingredient, IngredientToReturnDto>()
                 .ForMember(
                     dest => dest.Name,

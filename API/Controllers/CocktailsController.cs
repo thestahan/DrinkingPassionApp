@@ -50,7 +50,7 @@ namespace API.Controllers
         }
 
         [HttpGet("Public")]
-        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery]CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
             if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
             {
@@ -96,6 +96,21 @@ namespace API.Controllers
 
             return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
                 cocktailParams.PageSize, totalItems, data));
+        }
+
+        [Authorize]
+        [HttpGet("AvailableCocktailsForUser")]
+        public async Task<ActionResult<List<CocktailBasicInfoDto>>> GetCocktailsAvailableForUser()
+        {
+            var user = await GetAuthorizedUser();
+
+            var spec = new CocktailsForUser(user.Id);
+
+            var cocktails = await _cocktailsRepo.ListAsync(spec);
+
+            var mappedCocktails = _mapper.Map<IReadOnlyList<CocktailBasicInfoDto>>(cocktails);
+
+            return Ok(mappedCocktails);
         }
 
         [HttpGet("{id}")]
