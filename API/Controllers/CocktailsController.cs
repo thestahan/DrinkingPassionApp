@@ -7,6 +7,7 @@ using Core.Entities;
 using Core.Entities.Identity;
 using Core.Interfaces;
 using Core.Specifications;
+using Core.Specifications.Cocktails;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -49,8 +50,13 @@ namespace API.Controllers
         }
 
         [HttpGet("Public")]
-        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery]CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
+            if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
+            {
+                cocktailParams.IngredientsList = JsonConvert.DeserializeObject<List<int>>(cocktailParams.Ingredients);
+            }
+
             var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams, false);
 
             var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams, false);
@@ -69,6 +75,11 @@ namespace API.Controllers
         [HttpGet("Private")]
         public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
+            if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
+            {
+                cocktailParams.IngredientsList = JsonConvert.DeserializeObject<List<int>>(cocktailParams.Ingredients);
+            }
+
             var email = User.FindFirstValue(ClaimTypes.Email);
 
             var user = await _userManager.FindByEmailAsync(email);
@@ -85,6 +96,21 @@ namespace API.Controllers
 
             return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
                 cocktailParams.PageSize, totalItems, data));
+        }
+
+        [Authorize]
+        [HttpGet("AvailableCocktailsForUser")]
+        public async Task<ActionResult<List<CocktailBasicInfoDto>>> GetCocktailsAvailableForUser()
+        {
+            var user = await GetAuthorizedUser();
+
+            var spec = new CocktailsForUser(user.Id);
+
+            var cocktails = await _cocktailsRepo.ListAsync(spec);
+
+            var mappedCocktails = _mapper.Map<IReadOnlyList<CocktailBasicInfoDto>>(cocktails);
+
+            return Ok(mappedCocktails);
         }
 
         [HttpGet("{id}")]

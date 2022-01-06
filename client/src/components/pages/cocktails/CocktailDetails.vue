@@ -100,6 +100,7 @@
 
 <script>
 import CocktailService from "../../../services/CocktailService";
+import CocktailsListService from "../../../services/CocktailsListService";
 
 export default {
   data() {
@@ -109,9 +110,13 @@ export default {
     };
   },
   cocktailService: null,
+  cocktailsListService: null,
   computed: {
-    cocktailId() {
+    cocktailsListId() {
       return this.$route.params.id;
+    },
+    cocktailId() {
+      return this.$route.params.cocktailId;
     },
     cocktailName() {
       return this.cocktail.name;
@@ -122,16 +127,23 @@ export default {
   },
   created() {
     this.cocktailService = new CocktailService();
+    this.cocktailsListService = new CocktailsListService();
     this.getCocktailDetails();
   },
   methods: {
     async getCocktailDetails() {
       this.isLoading = true;
 
-      const responseData = await this.cocktailService.getCocktail(
-        this.cocktailId,
-        this.token
-      );
+      const isFromList = !!this.cocktailsListId;
+
+      console.log(isFromList);
+
+      const responseData = isFromList
+        ? await this.cocktailsListService.getCocktailFromList(
+            this.cocktailsListId,
+            this.cocktailId
+          )
+        : await this.cocktailService.getCocktail(this.cocktailId, this.token);
 
       this.isLoading = false;
 

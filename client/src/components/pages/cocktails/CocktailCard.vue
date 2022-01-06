@@ -42,11 +42,19 @@ export default {
       type: String,
       required: true,
     },
+    listUniqueLink: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
-      pathToCocktailDetails:
-        "/cocktails/" + this.cocktailType + "/" + this.cocktail.id,
+      pathToCocktailDetails: this.listUniqueLink
+        ? "/guests/cocktailslists/" +
+          this.listUniqueLink +
+          "/" +
+          this.cocktail.id
+        : "/cocktails/" + this.cocktailType + "/" + this.cocktail.id,
     };
   },
 };

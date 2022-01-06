@@ -1,6 +1,6 @@
 ﻿using Core.Entities;
 
-namespace Core.Specifications
+namespace Core.Specifications.ProductTypes
 {
     public class ProductTypesOrderedByNameSpec : BaseSpecification<ProductType>
     {

@@ -16,5 +16,6 @@ namespace Core.Entities
         public Product BaseProduct { get; set; }
         public int IngredientsCount { get; set; }
         public ICollection<Ingredient> Ingredients { get; set; }
+        public ICollection<CocktailsList> CocktailsLists { get; set; }
     }
 }

@@ -19,6 +19,21 @@ namespace Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.9");
 
+            modelBuilder.Entity("CocktailCocktailsList", b =>
+                {
+                    b.Property<int>("CocktailsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CocktailsListsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CocktailsId", "CocktailsListsId");
+
+                    b.HasIndex("CocktailsListsId");
+
+                    b.ToTable("CocktailCocktailsList");
+                });
+
             modelBuilder.Entity("Core.Entities.Cocktail", b =>
                 {
                     b.Property<int>("Id")
@@ -67,6 +82,42 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("BaseProductId");
 
                     b.ToTable("Cocktails");
+                });
+
+            modelBuilder.Entity("Core.Entities.CocktailsList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .UseIdentityByDefaultColumn();
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("CocktailsCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTime>("ModifiedDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UniqueLink")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("CocktailsLists");
                 });
 
             modelBuilder.Entity("Core.Entities.Identity.AppUser", b =>
@@ -414,6 +465,21 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("CocktailCocktailsList", b =>
+                {
+                    b.HasOne("Core.Entities.Cocktail", null)
+                        .WithMany()
+                        .HasForeignKey("CocktailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.CocktailsList", null)
+                        .WithMany()
+                        .HasForeignKey("CocktailsListsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Core.Entities.Cocktail", b =>
                 {
                     b.HasOne("Core.Entities.Identity.AppUser", "Author")
@@ -427,6 +493,15 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("BaseProduct");
+                });
+
+            modelBuilder.Entity("Core.Entities.CocktailsList", b =>
+                {
+                    b.HasOne("Core.Entities.Identity.AppUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Core.Entities.Ingredient", b =>

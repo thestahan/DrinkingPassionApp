@@ -70,13 +70,18 @@ export default {
         },
         {
           label: "Zarządzaj koktajlami",
-          to: "/cocktails/manage",
+          to: "/cocktails/manage/private",
           key: "manageCocktails",
         },
         {
           label: "Zarządzaj składnikami",
-          to: "/ingredients/manage",
+          to: "/ingredients/manage/private",
           key: "manageIngredients",
+        },
+        {
+          label: "Listy koktajli",
+          to: "/cocktails/lists",
+          key: "cocktailsLists",
         },
         {
           label: "Wyloguj się",

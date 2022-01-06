@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Core.Entities.Identity;
 using API.Dtos.Ingredients;
+using Core.Specifications.Products;
+using Core.Specifications.Ingredients;
 
 namespace API.Controllers
 {

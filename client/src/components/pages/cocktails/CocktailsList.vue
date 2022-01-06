@@ -1,10 +1,11 @@
 <template>
   <section class="p-grid p-m-4">
     <cocktail-card
-      v-for="cocktail in cocktails"
+      v-for="cocktail in cocktailsData.cocktails"
       :key="cocktail.id"
       :cocktail="cocktail"
       :cocktailType="cocktailsType"
+      :listUniqueLink="listUniqueLink"
     ></cocktail-card>
   </section>
 </template>
@@ -15,13 +16,17 @@ import CocktailCard from "./CocktailCard.vue";
 export default {
   components: { CocktailCard },
   props: {
-    cocktails: {
-      type: Array,
+    cocktailsData: {
+      type: Object,
       required: true,
     },
     cocktailsType: {
       type: String,
       required: true,
+    },
+    listUniqueLink: {
+      type: String,
+      required: false,
     },
   },
 };
