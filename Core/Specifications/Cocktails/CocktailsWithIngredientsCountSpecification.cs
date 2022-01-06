@@ -1,20 +1,18 @@
 ﻿using Core.Entities;
 using Core.Models;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Linq;
 
-namespace Core.Specifications
+namespace Core.Specifications.Cocktails
 {
     public class CocktailsWithIngredientsCountSpecification : BaseSpecification<Cocktail>
     {
         public CocktailsWithIngredientsCountSpecification(CocktailSpecParams cocktailParams, bool isPrivate, string authorId = "")
             : base(x =>
                 (string.IsNullOrEmpty(cocktailParams.CocktailName) || x.Name.ToLower().Contains(cocktailParams.CocktailName)) &&
-                (!cocktailParams.ProductId.HasValue || x.Ingredients.Any(y => y.ProductId == cocktailParams.ProductId)) &&
+                (!cocktailParams.ProductId.HasValue || x.BaseProductId == cocktailParams.ProductId) &&
                 (string.IsNullOrEmpty(authorId) || x.AuthorId == authorId) &&
                 (cocktailParams.IngredientsExactCount == 0 || x.IngredientsCount == cocktailParams.IngredientsExactCount) &&
-                (cocktailParams.IngredientsList.Count == 0 || (x.Ingredients.Count(i => cocktailParams.IngredientsList.Contains(i.ProductId)) == cocktailParams.IngredientsList.Count)) &&
+                (cocktailParams.IngredientsList.Count == 0 || x.Ingredients.Count(i => cocktailParams.IngredientsList.Contains(i.ProductId)) == cocktailParams.IngredientsList.Count) &&
                 x.IsPrivate == isPrivate
             )
         {

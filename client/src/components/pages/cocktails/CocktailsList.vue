@@ -5,6 +5,7 @@
       :key="cocktail.id"
       :cocktail="cocktail"
       :cocktailType="cocktailsType"
+      :listUniqueLink="listUniqueLink"
     ></cocktail-card>
   </section>
 </template>
@@ -22,6 +23,10 @@ export default {
     cocktailsType: {
       type: String,
       required: true,
+    },
+    listUniqueLink: {
+      type: String,
+      required: false,
     },
   },
 };

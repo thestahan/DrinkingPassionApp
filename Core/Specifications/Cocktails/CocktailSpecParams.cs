@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.Specifications
+namespace Core.Specifications.Cocktails
 {
     public class CocktailSpecParams
     {
@@ -17,7 +17,7 @@ namespace Core.Specifications
         public int PageSize
         {
             get => _pageSize;
-            set => _pageSize = (value > _maxPageSize) ? _maxPageSize : value;
+            set => _pageSize = value > _maxPageSize ? _maxPageSize : value;
         }
         public string CocktailName
         {
