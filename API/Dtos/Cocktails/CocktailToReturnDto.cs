@@ -7,5 +7,6 @@
         public string Picture { get; set; }
         public string BaseIngredient { get; set; }
         public int IngredientsCount { get; set; }
+        public bool IsPrivate { get; set; }
     }
 }

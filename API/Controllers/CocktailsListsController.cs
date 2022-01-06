@@ -134,7 +134,7 @@ namespace API.Controllers
 
                 await _listsRepo.UpdateAsync(listFromDb);
 
-                return NoContent();
+                return Ok(_mapper.Map<CocktailsListDetailsDto>(listFromDb));
             }
 
             list.Cocktails = cocktails.ToList();
@@ -148,7 +148,7 @@ namespace API.Controllers
             return CreatedAtAction(nameof(GetCocktailsListDetails), new { id = listToReturn.Id }, listToReturn);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCocktailsList(int id)
         {
             var spec = new CocktailsListForUserById(id);
