@@ -1,7 +1,16 @@
 <template>
-  <header class="p-mb-6">
+  <header class="p-mb-4">
     <h2 class="p-text-center main-font heading-font">Listy koktajli</h2>
   </header>
+
+  <section class="cocktails-lists-description p-mb-4">
+    Listy koktajli umożliwiają Ci podzielenie się swoimi przepisami ze znajomymi
+    oraz upraszczają gromadzenie wielu pozycji w jednym miejscu. Listy mogą
+    składać się zarówno z koktajli publicznych, jak i prywatnych - utworzonych
+    przez Ciebie. Po utworzeniu listy możesz skopiować do niej link oraz
+    udostępnić znajomym. Nawet jeśli w liście będzie zawarty prywatny koktajl,
+    Twój znajomy będzie mógł go zobaczyć!
+  </section>
 
   <section class="cocktails-lists-toolbar p-ml-4">
     <Button
