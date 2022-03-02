@@ -4,6 +4,7 @@ using API.Errors;
 using AutoMapper;
 using Core.Entities;
 using Core.Entities.Identity;
+using Core.Extensions;
 using Core.Interfaces;
 using Core.Specifications;
 using Core.Specifications.Cocktails;
@@ -70,10 +71,14 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{uniqueLink}/guestview")]
-        public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListForGuest(string uniqueLink)
+        [HttpGet("{username}/{listSlug}")]
+        public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListForGuest(string userName, string listSlug)
         {
-            var spec = new CocktailsListByLinkWithCocktails(uniqueLink);
+            var user = _userManager.FindByNameAsync(userName);
+
+            if (user == null) return NotFound(new ApiResponse(404));
+
+            var spec = new CocktailsListByUserIdAndSlug(userName, listSlug);
 
             var list = await _listsRepo.GetEntityWithSpec(spec);
 
@@ -85,10 +90,10 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{uniqueLink}/guestview/{cocktailId}")]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailFromList(string uniqueLink, int cocktailId)
+        [HttpGet("{username}/{listSlug}/{cocktailId}")]
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailFromList(string userName, string listSlug, int cocktailId)
         {
-            var spec = new CocktailsListWithCocktailExists(uniqueLink, cocktailId);
+            var spec = new CocktailsListWithCocktailExists(userName, listSlug, cocktailId);
 
             var listWithCoctailExists = await _listsRepo.EntityExistsWithSpecAsync(spec);
 
@@ -131,6 +136,7 @@ namespace API.Controllers
                 listFromDb.Cocktails = cocktails.ToList();
                 listFromDb.CocktailsCount = cocktails.Count;
                 listFromDb.Name = dto.Name;
+                listFromDb.Slug = dto.Name.Slugify();
 
                 await _listsRepo.UpdateAsync(listFromDb);
 
@@ -139,7 +145,7 @@ namespace API.Controllers
 
             list.Cocktails = cocktails.ToList();
             list.AuthorId = user.Id;
-            list.UniqueLink = Guid.NewGuid().ToString();
+            list.Slug = dto.Name.Slugify();
 
             var addedList = await _listsRepo.AddAsync(list);
 

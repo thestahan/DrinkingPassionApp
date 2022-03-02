@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{5F4FCDA0-B3A6-413B-9F2B-C829B0ED0882}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Core", "Tests.Core\Tests.Core.csproj", "{05CCD33B-8B5E-4C4A-A079-7B1879D91595}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Core", "Tests.Core\Tests.Core.csproj", "{05CCD33B-8B5E-4C4A-A079-7B1879D91595}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

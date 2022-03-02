@@ -5,8 +5,7 @@ namespace Core.Entities
 {
     public class CocktailsList : BaseEntity
     {
-        public string UniqueLink { get; set; }
-        public string FriendlyLink { get; set; }
+        public string Slug { get; set; }
         public string Name { get; set; }
         public AppUser Author { get; set; }
         public string AuthorId { get; set; }
