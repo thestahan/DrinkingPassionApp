@@ -10,6 +10,7 @@ namespace API.Dtos.CocktailsLists
         [Required]
         public string Name { get; set; }
 
+
         public IReadOnlyList<int> Cocktails { get; set; } = new List<int>();
     }
 }
