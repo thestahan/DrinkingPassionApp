@@ -74,7 +74,7 @@ namespace API.Controllers
         [HttpGet("{username}/{listSlug}")]
         public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListForGuest(string userName, string listSlug)
         {
-            var user = _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
 
             if (user == null) return NotFound(new ApiResponse(404));
 
