@@ -45,5 +45,25 @@ namespace Tests.API.Controllers
             //Assert
             Assert.AreEqual(result.StatusCode, (int)HttpStatusCode.NotFound);
         }
+
+        [Test]
+        public async Task ReturnsNotFoundCode_When_SlugIsIncorrect()
+        {
+            //Arrange
+            string userName = "username";
+
+            _userManagerMock.Setup(x => x.FindByNameAsync(userName)).ReturnsAsync(new AppUser());
+
+            var controller = new CocktailsListsController(_cocktailsListsRepoMock.Object,
+                                                          _userManagerMock.Object,
+                                                          _mapperMock.Object,
+                                                          _cocktailsRepoMock.Object);
+
+            //Act
+            var result = (await controller.GetCocktailsListForGuest(userName, "incorrectSlug")).Result as ObjectResult;
+
+            //Assert
+            Assert.AreEqual(result.StatusCode, (int)HttpStatusCode.NotFound);
+        }
     }
 }
