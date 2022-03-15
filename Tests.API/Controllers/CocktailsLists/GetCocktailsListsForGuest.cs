@@ -1,8 +1,10 @@
 ﻿using API.Controllers;
+using API.Dtos.CocktailsLists;
 using AutoMapper;
 using Core.Entities;
 using Core.Entities.Identity;
 using Core.Interfaces;
+using Core.Specifications.CocktailsLists;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -64,6 +66,28 @@ namespace Tests.API.Controllers
 
             //Assert
             Assert.AreEqual(result.StatusCode, (int)HttpStatusCode.NotFound);
+        }
+
+        [Test]
+        [TestCase("username", "slug")]
+        public async Task ReturnsListWithSameId(string username, string slug)
+        {
+            //Arrange
+            _userManagerMock.Setup(u => u.FindByNameAsync(username)).ReturnsAsync(new AppUser());
+            _cocktailsListsRepoMock.Setup(r => r.GetEntityWithSpec(It.IsAny<CocktailsListByUserIdAndSlug>())).ReturnsAsync(new CocktailsList { Id = 1 });
+            _mapperMock.Setup(m => m.Map<CocktailsListDetailsDto>(It.IsAny<CocktailsList>())).Returns(new CocktailsListDetailsDto { Id = 1 });
+
+            var controller = new CocktailsListsController(_cocktailsListsRepoMock.Object,
+                                                          _userManagerMock.Object,
+                                                          _mapperMock.Object,
+                                                          _cocktailsRepoMock.Object);
+
+            //Act
+            var result = (await controller.GetCocktailsListForGuest(username, slug)).Result as ObjectResult;
+
+            //Assert
+            Assert.AreEqual((int)HttpStatusCode.OK, result.StatusCode);
+            Assert.AreEqual(1, ((CocktailsListDetailsDto)result.Value).Id);
         }
     }
 }
