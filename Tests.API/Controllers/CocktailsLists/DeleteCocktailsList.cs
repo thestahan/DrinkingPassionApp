@@ -44,8 +44,8 @@ namespace Tests.API.Controllers.CocktailsLists
             var result = (await controller.DeleteCocktailsList(1)) as ObjectResult;
 
             //Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
         }
 
         [Test]
@@ -63,8 +63,8 @@ namespace Tests.API.Controllers.CocktailsLists
             var result = (await controller.DeleteCocktailsList(1)) as StatusCodeResult;
 
             //Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual((int)HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NoContent));
         }
     }
 }

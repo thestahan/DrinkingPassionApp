@@ -48,8 +48,8 @@ namespace Tests.API.Controllers.CocktailsLists
             var result = (await controller.GetCocktailFromList("username", "slug", 1)).Result as ObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
         }
 
         [Test]
@@ -67,8 +67,8 @@ namespace Tests.API.Controllers.CocktailsLists
             var result = (await controller.GetCocktailFromList("username", "slug", 1)).Result as ObjectResult;
 
             // Assert
-            Assert.NotNull(result);
-            Assert.AreEqual((int)HttpStatusCode.NotFound, result.StatusCode);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
         }
 
         [Test]
@@ -89,9 +89,9 @@ namespace Tests.API.Controllers.CocktailsLists
             var mappedCocktail = result.Value as CocktailDetailsToReturnDto;
 
             // Assert
-            Assert.NotNull(mappedCocktail);
-            Assert.IsInstanceOf(typeof(CocktailDetailsToReturnDto), mappedCocktail);
-            Assert.AreEqual(mappedCocktail.Id, 1);
+            Assert.That(mappedCocktail, Is.Not.Null);
+            Assert.That(mappedCocktail, Is.InstanceOf<CocktailDetailsToReturnDto>());
+            Assert.That(mappedCocktail.Id, Is.EqualTo(1));
         }
     }
 }

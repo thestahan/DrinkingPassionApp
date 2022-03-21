@@ -45,7 +45,7 @@ namespace Tests.API.Controllers
             var result = (await controller.GetCocktailsListForGuest("incorrect", "slug")).Result as ObjectResult;
 
             //Assert
-            Assert.AreEqual(result.StatusCode, (int)HttpStatusCode.NotFound);
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace Tests.API.Controllers
             var result = (await controller.GetCocktailsListForGuest(userName, "incorrectSlug")).Result as ObjectResult;
 
             //Assert
-            Assert.AreEqual(result.StatusCode, (int)HttpStatusCode.NotFound);
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.NotFound));
         }
 
         [Test]
@@ -86,8 +86,8 @@ namespace Tests.API.Controllers
             var result = (await controller.GetCocktailsListForGuest(username, slug)).Result as ObjectResult;
 
             //Assert
-            Assert.AreEqual((int)HttpStatusCode.OK, result.StatusCode);
-            Assert.AreEqual(1, ((CocktailsListDetailsDto)result.Value).Id);
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
+            Assert.That(((CocktailsListDetailsDto)result.Value).Id, Is.EqualTo(1));
         }
     }
 }

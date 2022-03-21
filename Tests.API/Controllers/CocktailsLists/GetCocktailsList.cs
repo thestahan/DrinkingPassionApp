@@ -58,10 +58,10 @@ namespace Tests.API.Controllers.CocktailsLists
             var lists = result.Value as List<CocktailsListDto>;
 
             //Assert
-            Assert.NotNull(lists);
-            Assert.IsInstanceOf(typeof(IEnumerable<CocktailsListDto>), lists);
-            Assert.AreEqual(lists.Count, 2);
-            Assert.AreEqual(lists[0].Id, 1);
+            Assert.That(lists, Is.Not.Null);
+            Assert.That(lists, Is.InstanceOf<IEnumerable<CocktailsListDto>>());
+            Assert.That(lists.Count, Is.EqualTo(2));
+            Assert.That(lists[0].Id, Is.EqualTo(1));
         }
 
         private static List<CocktailsList> GetTestCocktailsLists() =>
