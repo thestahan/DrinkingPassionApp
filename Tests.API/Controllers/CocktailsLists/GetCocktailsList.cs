@@ -60,8 +60,8 @@ namespace Tests.API.Controllers.CocktailsLists
             //Assert
             Assert.That(lists, Is.Not.Null);
             Assert.That(lists, Is.InstanceOf<IEnumerable<CocktailsListDto>>());
-            Assert.That(lists.Count, Is.EqualTo(2));
-            Assert.That(lists[0].Id, Is.EqualTo(1));
+            Assert.That(lists, Has.Exactly(2).Items);
+            Assert.That(lists[0], Has.Property("Id").EqualTo(1));
         }
 
         private static List<CocktailsList> GetTestCocktailsLists() =>

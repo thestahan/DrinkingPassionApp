@@ -84,10 +84,11 @@ namespace Tests.API.Controllers
 
             //Act
             var result = (await controller.GetCocktailsListForGuest(username, slug)).Result as ObjectResult;
+            var list = result.Value as CocktailsListDetailsDto;
 
             //Assert
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
-            Assert.That(((CocktailsListDetailsDto)result.Value).Id, Is.EqualTo(1));
+            Assert.That(list, Has.Property("Id").EqualTo(1));
         }
     }
 }

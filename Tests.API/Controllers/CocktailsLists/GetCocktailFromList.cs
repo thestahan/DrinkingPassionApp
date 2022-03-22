@@ -91,7 +91,7 @@ namespace Tests.API.Controllers.CocktailsLists
             // Assert
             Assert.That(mappedCocktail, Is.Not.Null);
             Assert.That(mappedCocktail, Is.InstanceOf<CocktailDetailsToReturnDto>());
-            Assert.That(mappedCocktail.Id, Is.EqualTo(1));
+            Assert.That(mappedCocktail, Has.Property("Id").EqualTo(1));
         }
     }
 }
