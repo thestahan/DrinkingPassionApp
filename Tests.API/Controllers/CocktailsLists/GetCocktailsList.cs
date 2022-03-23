@@ -13,6 +13,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Tests.API.Controllers.Helpers;
 
 namespace Tests.API.Controllers.CocktailsLists
 {
@@ -49,7 +50,7 @@ namespace Tests.API.Controllers.CocktailsLists
             {
                 ControllerContext = new ControllerContext
                 {
-                    HttpContext = new DefaultHttpContext() { User = GetMockUser() }
+                    HttpContext = new DefaultHttpContext() { User = UserMockHelpers.GetMockUser() }
                 }
             };
 
@@ -77,11 +78,5 @@ namespace Tests.API.Controllers.CocktailsLists
                 new CocktailsListDto { Id = 1 },
                 new CocktailsListDto { Id = 2 },
             };
-
-        private static ClaimsPrincipal GetMockUser() =>
-            new(new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Email, "mockEmail")
-            }));
     }
 }
