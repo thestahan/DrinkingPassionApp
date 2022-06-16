@@ -6,6 +6,7 @@ export default {
   state() {
     return {
       displayName: null,
+      email: null,
       token: null,
       isAuthenticated: false,
       didAutoLogout: false,

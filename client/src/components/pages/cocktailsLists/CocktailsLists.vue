@@ -39,7 +39,7 @@
         <template #body="{ data }">
           <div class="p-d-flex">
             <router-link
-              :to="'/guests/cocktailslists/' + data.uniqueLink"
+              :to="'/guests/cocktailslists/' + email + '/' + data.slug"
               class="primary-color"
               >Przejdź do listy</router-link
             >
@@ -48,7 +48,9 @@
               style="font-size: 1.5rem; cursor: pointer"
               v-tooltip="'Skopiuj link'"
               @click="
-                copyLinkToClipboard('/guests/cocktailslists/' + data.uniqueLink)
+                copyLinkToClipboard(
+                  '/guests/cocktailslists/' + email + '/' + data.slug
+                )
               "
             ></i>
           </div>
@@ -133,6 +135,9 @@ export default {
   computed: {
     token() {
       return this.$store.getters.token;
+    },
+    email() {
+      return this.$store.getters.email;
     },
   },
   methods: {

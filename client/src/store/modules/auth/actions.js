@@ -36,6 +36,7 @@ export default {
 
     localStorage.setItem("token", responseData.token);
     localStorage.setItem("displayName", responseData.displayName);
+    localStorage.setItem("email", responseData.email);
     localStorage.setItem("tokenExpiration", expirationDate);
     localStorage.setItem("roles", responseData.roles);
 
@@ -45,6 +46,7 @@ export default {
 
     context.commit("setUser", {
       displayName: responseData.displayName,
+      email: responseData.email,
       token: responseData.token,
       roles: responseData.roles,
     });

@@ -105,12 +105,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/guests/cocktailsLists/:id",
+    path: "/guests/cocktailsLists/:userName/:slug",
     name: "GuestCocktailsLists",
     component: GuestCocktailsLists,
   },
   {
-    path: "/guests/cocktailsLists/:id/:cocktailId",
+    path: "/guests/cocktailsLists/:userName/:slug/:cocktailId",
     name: "CocktailsListsCocktailDetails",
     component: CocktailDetails,
   },

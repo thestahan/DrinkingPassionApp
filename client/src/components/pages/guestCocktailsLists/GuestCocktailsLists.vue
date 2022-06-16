@@ -25,7 +25,8 @@ export default {
   components: { Spinner, CocktailsList },
   data() {
     return {
-      listId: null,
+      userName: null,
+      slug: null,
       list: null,
       isLoading: false,
       notFound: false,
@@ -34,7 +35,8 @@ export default {
   cocktailListService: null,
   created() {
     this.cocktailListService = new CocktailsListService();
-    this.listId = this.$route.params.id;
+    this.userName = this.$route.params.userName;
+    this.slug = this.$route.params.slug;
   },
   mounted() {
     this.getCocktailsList();
@@ -45,7 +47,8 @@ export default {
 
       try {
         const list = await this.cocktailListService.getCocktailsList(
-          this.listId
+          this.userName,
+          this.slug
         );
 
         list.createdDate = this.formatDate(list.createdDate);

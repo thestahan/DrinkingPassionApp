@@ -2,6 +2,9 @@ export default {
   isAuthenticated: (state) => {
     return !!state.token;
   },
+  email: (state) => {
+    return state?.email;
+  },
   displayName: (state) => {
     return state.displayName;
   },
