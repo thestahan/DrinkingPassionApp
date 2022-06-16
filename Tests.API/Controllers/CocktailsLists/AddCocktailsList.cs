@@ -1,16 +1,16 @@
-﻿using AutoMapper;
-using Core.Entities.Identity;
+﻿using API.Controllers;
+using API.Dtos.CocktailsLists;
+using AutoMapper;
 using Core.Entities;
+using Core.Entities.Identity;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System.Threading.Tasks;
-using API.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Tests.API.Controllers.Helpers;
-using API.Dtos.CocktailsLists;
 using System.Net;
+using System.Threading.Tasks;
+using Tests.API.Controllers.Helpers;
 
 namespace Tests.API.Controllers.CocktailsLists
 {
@@ -30,6 +30,29 @@ namespace Tests.API.Controllers.CocktailsLists
             _cocktailsListsRepoMock = new();
             _cocktailsRepoMock = new();
             _mapperMock = new();
+        }
+
+        [Test]
+        [TestCase("")]
+        [TestCase(null)]
+        public async Task ReturnsBadRequest_When_NameIsInvalid(string name)
+        {
+            // Arrange
+            var dto = new CocktailsListToAddDto { Name = name };
+
+            var controller = new CocktailsListsController(_cocktailsListsRepoMock.Object,
+                                                          _userManagerMock.Object,
+                                                          _mapperMock.Object,
+                                                          _cocktailsRepoMock.Object)
+            {
+                ControllerContext = UserMockHelpers.GetControllerContextWithMockedUser()
+            };
+
+            // Act
+            var result = (await controller.ManageCocktailsList(dto)).Result as StatusCodeResult;
+
+            // Assert
+            Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
         }
 
         [Test]
@@ -53,6 +76,12 @@ namespace Tests.API.Controllers.CocktailsLists
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
+        }
+
+        [Test]
+        public async Task ReturnsCorrectResponse_When_CocktailsIsAdded()
+        {
+
         }
     }
 }
