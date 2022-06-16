@@ -14,9 +14,9 @@ export default class CocktailsListService {
     return res.data;
   }
 
-  async getCocktailsList(id) {
+  async getCocktailsList(userName, slug) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_URL}/cocktailsLists/` + id + "/guestview"
+      `${process.env.VUE_APP_API_URL}/cocktailsLists/${userName}/${slug}`
     );
 
     return res.data;
@@ -34,18 +34,9 @@ export default class CocktailsListService {
 
     return res.data;
   }
-  async getCocktailFromList(uniqueLink, cocktailId) {
+  async getCocktailFromList(userName, slug, cocktailId) {
     const res = await axios.get(
-      `${process.env.VUE_APP_API_URL}/cocktailsLists/` +
-        uniqueLink +
-        "/guestview/" +
-        cocktailId,
-      {
-        params: {
-          uniqueLink: uniqueLink,
-          cocktailId: +cocktailId,
-        },
-      }
+      `${process.env.VUE_APP_API_URL}/cocktailsLists/${userName}/${slug}}/${cocktailId}`
     );
 
     return res.data;
