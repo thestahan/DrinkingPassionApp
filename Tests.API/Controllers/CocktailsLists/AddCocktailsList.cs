@@ -49,7 +49,7 @@ namespace Tests.API.Controllers.CocktailsLists
             };
 
             // Act
-            var result = (await controller.ManageCocktailsList(dto)).Result as StatusCodeResult;
+            var result = (await controller.ManageCocktailsList(dto)).Result as ObjectResult;
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
@@ -76,12 +76,6 @@ namespace Tests.API.Controllers.CocktailsLists
 
             // Assert
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
-        }
-
-        [Test]
-        public async Task ReturnsCorrectResponse_When_CocktailsIsAdded()
-        {
-
         }
     }
 }
