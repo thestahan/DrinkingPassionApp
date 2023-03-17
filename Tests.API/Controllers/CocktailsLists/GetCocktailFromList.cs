@@ -1,17 +1,17 @@
-﻿using AutoMapper;
-using Core.Entities.Identity;
+﻿using API.Controllers;
+using API.Dtos.Cocktails;
+using AutoMapper;
 using Core.Entities;
+using Core.Entities.Identity;
 using Core.Interfaces;
+using Core.Specifications.Cocktails;
+using Core.Specifications.CocktailsLists;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System.Threading.Tasks;
-using API.Controllers;
-using Core.Specifications.CocktailsLists;
-using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Core.Specifications.Cocktails;
-using API.Dtos.Cocktails;
+using System.Threading.Tasks;
 
 namespace Tests.API.Controllers.CocktailsLists
 {
@@ -22,6 +22,8 @@ namespace Tests.API.Controllers.CocktailsLists
         private Mock<IGenericRepository<CocktailsList>> _cocktailsListsRepoMock;
         private Mock<IGenericRepository<Cocktail>> _cocktailsRepoMock;
         private Mock<IMapper> _mapperMock;
+
+        private readonly string _username = "Username";
 
         [SetUp]
         public void SetUp()
@@ -45,7 +47,7 @@ namespace Tests.API.Controllers.CocktailsLists
                                                           _cocktailsRepoMock.Object);
 
             // Act
-            var result = (await controller.GetCocktailFromList("username", "slug", 1)).Result as ObjectResult;
+            var result = (await controller.GetCocktailFromList(_username, "slug", 1)).Result as ObjectResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -64,7 +66,7 @@ namespace Tests.API.Controllers.CocktailsLists
                                                           _cocktailsRepoMock.Object);
 
             // Act
-            var result = (await controller.GetCocktailFromList("username", "slug", 1)).Result as ObjectResult;
+            var result = (await controller.GetCocktailFromList(_username, "slug", 1)).Result as ObjectResult;
 
             // Assert
             Assert.That(result, Is.Not.Null);
@@ -75,6 +77,7 @@ namespace Tests.API.Controllers.CocktailsLists
         public async Task ReturnMappedCocktail_When_CocktailIsFound()
         {
             // Arrange
+            _userManagerMock.Setup(u => u.FindByNameAsync(_username)).ReturnsAsync(new AppUser { UserName = _username });
             _cocktailsListsRepoMock.Setup(c => c.EntityExistsWithSpecAsync(It.IsAny<CocktailsListWithCocktailExists>())).ReturnsAsync(true);
             _cocktailsRepoMock.Setup(c => c.GetEntityWithSpec(It.IsAny<CocktailWithIngredientsSpecification>())).ReturnsAsync(new Cocktail { Id = 1 });
             _mapperMock.Setup(m => m.Map<CocktailDetailsToReturnDto>(It.IsAny<Cocktail>())).Returns(new CocktailDetailsToReturnDto { Id = 1 });
@@ -85,7 +88,7 @@ namespace Tests.API.Controllers.CocktailsLists
                                                           _cocktailsRepoMock.Object);
 
             // Act
-            var result = (await controller.GetCocktailFromList("username", "slug", 1)).Result as ObjectResult;
+            var result = (await controller.GetCocktailFromList(_username, "slug", 1)).Result as ObjectResult;
             var mappedCocktail = result.Value as CocktailDetailsToReturnDto;
 
             // Assert
