@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net70</TargetFramework>
   </PropertyGroup>
-
+	
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
