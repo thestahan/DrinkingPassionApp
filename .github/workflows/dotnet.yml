@@ -39,6 +39,9 @@ jobs:
       run: |
         dotnet tool install --global dotnet-sonarscanner
 
+    - name: Install Report Generator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
     - name: Build and analyze with SonarCloud
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,4 +52,5 @@ jobs:
         dotnet restore
         dotnet build --no-restore
         dotnet test --no-build --verbosity normal
+        reportgenerator -reports:$GITHUB_WORKSPACE/test/testresults/**/coverage.cobertura.xml -targetdir:$GITHUB_WORKSPACE/test/coverlet/reports -reporttypes:"SonarQube"
         dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
