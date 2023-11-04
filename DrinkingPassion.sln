@@ -11,7 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Core", "Tests.Core\Tests.Core.csproj", "{05CCD33B-8B5E-4C4A-A079-7B1879D91595}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.API", "Tests.API\Tests.API.csproj", "{B0AC2A58-367A-4C57-A1E8-8930AFA866FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.API", "Tests.API\Tests.API.csproj", "{B0AC2A58-367A-4C57-A1E8-8930AFA866FC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B5D26D8-8C72-468A-8747-68BF59A202A1}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
