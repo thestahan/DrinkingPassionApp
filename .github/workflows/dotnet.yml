@@ -49,10 +49,7 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: pwsh
       run: |
-        dotnet-sonarscanner begin /k:"thestahan_DrinkingPassionAPI" /o:"thestahan" 
-          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" 
-          /d:sonar.host.url="https://sonarcloud.io"
-          /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+        dotnet-sonarscanner begin /k:"thestahan_DrinkingPassionAPI" /o:"thestahan" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
         dotnet restore
         dotnet build --no-restore
         dotnet test --no-build --verbosity normal
