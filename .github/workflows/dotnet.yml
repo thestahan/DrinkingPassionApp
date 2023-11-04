@@ -39,8 +39,9 @@ jobs:
       run: |
         dotnet tool install --global dotnet-sonarscanner
 
-    - name: Install Report Generator
-      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+    - name: Install dotnet-coverage
+      run: |
+        dotnet tool install --global dotnet-coverage
 
     - name: Build and analyze with SonarCloud
       env:
@@ -48,9 +49,12 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: pwsh
       run: |
-        dotnet-sonarscanner begin /k:"thestahan_DrinkingPassionAPI" /o:"thestahan" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        dotnet-sonarscanner begin /k:"thestahan_DrinkingPassionAPI" /o:"thestahan" 
+          /d:sonar.token="${{ secrets.SONAR_TOKEN }}" 
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
         dotnet restore
         dotnet build --no-restore
         dotnet test --no-build --verbosity normal
-        reportgenerator -reports:$GITHUB_WORKSPACE/test/testresults/**/coverage.cobertura.xml -targetdir:$GITHUB_WORKSPACE/test/coverlet/reports -reporttypes:"SonarQube"
+        dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
         dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
