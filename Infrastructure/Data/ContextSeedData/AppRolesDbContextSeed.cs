@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data.Migrations
+namespace Infrastructure.Data.ContextSeedData
 {
     public class AppRolesDbContextSeed
     {
@@ -13,11 +13,11 @@ namespace Infrastructure.Data.Migrations
             {
                 var roles = new List<IdentityRole>
                 {
-                    new IdentityRole
+                    new()
                     {
                         Name = "admin"
                     },
-                    new IdentityRole
+                    new()
                     {
                         Name = "user"
                     }

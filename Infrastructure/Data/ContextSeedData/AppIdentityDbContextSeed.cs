@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data.Migrations
+namespace Infrastructure.Data.ContextSeedData
 {
     public class AppIdentityDbContextSeed
     {

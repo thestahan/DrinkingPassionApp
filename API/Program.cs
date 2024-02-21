@@ -1,11 +1,9 @@
-using System;
-using System.Threading.Tasks;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Core.Entities.Identity;
 using Infrastructure.Data;
-using Infrastructure.Data.Migrations;
+using Infrastructure.Data.ContextSeedData;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace API
 {
@@ -56,11 +56,7 @@ namespace API
                         return;
                     }
 
-                    var clientSecretCred = new ClientSecretCredential(Environment.GetEnvironmentVariable("KEY_VAULT_TENANT_ID"),
-                                                                      Environment.GetEnvironmentVariable("KEY_VAULT_CLIENT_ID"),
-                                                                      Environment.GetEnvironmentVariable("KEY_VAULT_CLIENT_SECRET"));
-
-                    var client = new SecretClient(new Uri($"https://{Environment.GetEnvironmentVariable("KEY_VAULT_NAME")}.vault.azure.net/"), clientSecretCred);
+                    var client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("VaultUri")), new DefaultAzureCredential());
 
                     config.AddAzureKeyVault(client, new AzureKeyVaultConfigurationOptions());
                 })

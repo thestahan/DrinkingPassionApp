@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data.Migrations
+namespace Infrastructure.Data.ContextSeedData
 {
     public class AppDataDbContextSeed
     {
@@ -13,28 +13,22 @@ namespace Infrastructure.Data.Migrations
             {
                 var productTypes = new List<ProductType>
                 {
-                    new ProductType
-                    {
+                    new() {
                         Name = "Mocny alkohol"
                     },
-                    new ProductType
-                    {
+                    new() {
                         Name = "Sok"
                     },
-                    new ProductType
-                    {
+                    new() {
                         Name = "Likier"
                     },
-                    new ProductType
-                    {
+                    new() {
                         Name = "Piwo"
                     },
-                    new ProductType
-                    {
+                    new() {
                         Name = "Wino"
                     },
-                    new ProductType
-                    {
+                    new() {
                         Name = "Bitter"
                     }
                 };
@@ -48,21 +42,17 @@ namespace Infrastructure.Data.Migrations
             {
                 var productUnits = new List<ProductUnit>
                 {
-                    new ProductUnit
-                    {
+                    new() {
                         Name = "Mililitr",
                         Abbreviation = "ml"
                     },
-                    new ProductUnit
-                    {
+                    new() {
                         Name = "Łyżeczka"
                     },
-                    new ProductUnit
-                    {
+                    new() {
                         Name = "Łyżka stołowa"
                     },
-                    new ProductUnit
-                    {
+                    new() {
                         Name = "Gram",
                         Abbreviation = "g"
                     }
@@ -86,62 +76,52 @@ namespace Infrastructure.Data.Migrations
 
                 var products = new List<Product>
                 {
-                    new Product
-                    {
+                    new() {
                         Name = "Tequila",
                         ProductType = strongAlcohol,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Wódka",
                         ProductType = strongAlcohol,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Wódka limonkowa",
                         ProductType = strongAlcohol,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Whisky",
                         ProductType = strongAlcohol,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Sok z cytryny",
                         ProductType = juice,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Sok z limonki",
                         ProductType = juice,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Triple sec",
                         ProductType = liqueur,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Gin",
                         ProductType = strongAlcohol,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Wermut",
                         ProductType = wine,
                         ProductUnit = ml
                     },
-                    new Product
-                    {
+                    new() {
                         Name = "Campari",
                         ProductType = bitter,
                         ProductUnit = ml
@@ -174,20 +154,17 @@ namespace Infrastructure.Data.Migrations
 
                 var ingredients = new List<Ingredient>
                 {
-                    new Ingredient
-                    {
+                    new() {
                         Amount = 40,
                         Cocktail = cocktail,
                         Product = tequila,
                     },
-                    new Ingredient
-                    {
+                    new() {
                         Amount = 20,
                         Cocktail = cocktail,
                         Product = tripleSec,
                     },
-                    new Ingredient
-                    {
+                    new() {
                         Amount = 20,
                         Cocktail = cocktail,
                         Product = limeJuice,
@@ -209,20 +186,17 @@ namespace Infrastructure.Data.Migrations
 
                 ingredients = new List<Ingredient>
                 {
-                    new Ingredient
-                    {
+                    new() {
                         Amount = 30,
                         Cocktail = cocktail,
                         Product = gin,
                     },
-                    new Ingredient
-                    {
+                    new() {
                         Amount = 30,
                         Cocktail = cocktail,
                         Product = vermouth,
                     },
-                    new Ingredient
-                    {
+                    new() {
                         Amount = 30,
                         Cocktail = cocktail,
                         Product = campari,

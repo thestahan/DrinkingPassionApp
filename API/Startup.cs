@@ -1,5 +1,4 @@
 using API.Extensions;
-using API.Helpers;
 using API.Middleware;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using System;
 
 namespace API
@@ -25,17 +25,20 @@ namespace API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddNewtonsoftJson(options => 
+            services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
-            if (_env.IsProduction())
+            var connection = string.Empty;
+            if (_env.IsDevelopment())
             {
-                services.AddDbContext<AppDbContext>(x => x.UseNpgsql(ConnectionStringsHelpers.GetEnvironmentNpgConnectionString()));
+                connection = _config.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
             }
             else
             {
-                services.AddDbContext<AppDbContext>(x => x.UseNpgsql(_config.GetConnectionString("DefaultConnection")));
+                connection = Environment.GetEnvironmentVariable("AZURE_SQL_CONNECTIONSTRING");
             }
+
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
 
             services.AddApplicationServices(_config);
 
@@ -47,7 +50,7 @@ namespace API
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(_config["ClientUrl"]);
+                    policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                 });
             });
         }
