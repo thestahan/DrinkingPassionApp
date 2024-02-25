@@ -46,13 +46,6 @@ namespace API
 
             services.AddSwaggerDocumentation();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddCors(opt =>
-            {
-                opt.AddPolicy("CorsPolicy", policy =>
-                {
-                    policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-                });
-            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
