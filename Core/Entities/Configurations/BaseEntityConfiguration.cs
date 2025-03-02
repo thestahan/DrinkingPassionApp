@@ -12,10 +12,10 @@ namespace Core.Entities.Configurations
             modelBuilder.Entity<TEntity>(builder =>
             {
                 builder.Property(x => x.CreatedDate)
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP"); //TODO, use getutcdate() in sqlserver
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                 builder.Property(x => x.ModifiedDate)
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP"); //TODO, use getutcdate() in sqlserver
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
         }
 
