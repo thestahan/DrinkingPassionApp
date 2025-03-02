@@ -1,16 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net70</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
-	
   <ItemGroup>
     <PackageReference Include="AutoMapper" />
-    <PackageReference Include="Azure.Storage.Blobs" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
-    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="System.Text.Encoding.CodePages" />
   </ItemGroup>
-
 </Project>
