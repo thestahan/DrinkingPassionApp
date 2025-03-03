@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Core.Entities.Configurations
+namespace DrinkingPassion.Api.Core.Entities.Configurations
 {
     public static class BaseEntityConfiguration
     {
-        static void Configure<TEntity, T>(ModelBuilder modelBuilder)
+        private static void Configure<TEntity, T>(ModelBuilder modelBuilder)
             where TEntity : BaseEntity
         {
             modelBuilder.Entity<TEntity>(builder =>

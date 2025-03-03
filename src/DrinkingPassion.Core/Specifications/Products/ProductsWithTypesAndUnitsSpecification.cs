@@ -1,8 +1,6 @@
-﻿using Core.Entities;
-
-namespace Core.Specifications.Products
+﻿namespace DrinkingPassion.Api.Core.Specifications.Products
 {
-    public class ProductsWithTypesAndUnitsSpecification : BaseSpecification<Product>
+    public class ProductsWithTypesAndUnitsSpecification : BaseSpecification<DrinkingPassion.Api.Core.Entities.Product>
     {
         public ProductsWithTypesAndUnitsSpecification(bool isPrivate, string authorId = "")
             : base(x =>

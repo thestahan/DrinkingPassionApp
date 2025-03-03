@@ -1,5 +1,5 @@
-﻿using Core.Entities.Identity;
-using Infrastructure.Data;
+﻿using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace API.Extensions
+namespace DrinkingPassion.Api.Extensions
 {
     public static class IdentityServiceExtensions
     {

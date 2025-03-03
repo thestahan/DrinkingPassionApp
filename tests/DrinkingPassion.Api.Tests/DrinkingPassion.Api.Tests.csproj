@@ -10,6 +10,6 @@
     <PackageReference Include="NUnit3TestAdapter" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\API\DrinkingPassion.Api.csproj" />
+    <ProjectReference Include="..\..\src\DrinkingPassion.Api\DrinkingPassion.Api.csproj" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos.Cocktails
+namespace DrinkingPassion.Api.Dtos.Cocktails
 {
     public class CocktailInfoToUpdateDto
     {

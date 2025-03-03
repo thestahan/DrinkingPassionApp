@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Helpers
+﻿namespace DrinkingPassion.Api.Infrastructure.Helpers
 {
     public static class EmailTemplates
     {

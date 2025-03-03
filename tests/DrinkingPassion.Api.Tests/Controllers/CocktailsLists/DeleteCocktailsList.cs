@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
-using Core.Entities.Identity;
-using Core.Entities;
-using Core.Interfaces;
+using DrinkingPassion.Api.Controllers;
+using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Core.Interfaces;
+using DrinkingPassion.Api.Core.Specifications.CocktailsLists;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System.Threading.Tasks;
-using API.Controllers;
-using Microsoft.AspNetCore.Mvc;
 using System.Net;
-using Core.Specifications.CocktailsLists;
+using System.Threading.Tasks;
 
-namespace Tests.API.Controllers.CocktailsLists
+namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
 {
     [TestFixture]
     public class DeleteCocktailsList

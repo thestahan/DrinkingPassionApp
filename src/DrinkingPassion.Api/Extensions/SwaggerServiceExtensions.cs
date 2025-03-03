@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
-namespace API.Extensions
+namespace DrinkingPassion.Api.Extensions
 {
     public static class SwaggerServiceExtensions
     {

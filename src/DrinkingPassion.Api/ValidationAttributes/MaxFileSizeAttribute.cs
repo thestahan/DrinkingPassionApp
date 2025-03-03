@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.ValidationAttributes
+namespace DrinkingPassion.Api.ValidationAttributes
 {
     public class MaxFileSizeAttribute : ValidationAttribute
     {

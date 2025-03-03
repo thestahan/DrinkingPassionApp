@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace API.Helpers
+namespace DrinkingPassion.Api.Helpers
 {
     public class Pagination<T> where T: class
     {

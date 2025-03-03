@@ -1,13 +1,13 @@
-﻿using Core.Entities;
-using Core.Specifications;
+﻿using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Specifications;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
-namespace Infrastructure.Data
+namespace DrinkingPassion.Api.Infrastructure.Data
 {
     public class SpecificationEvaluator<TEntity> where TEntity : BaseEntity
     {
-        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification <TEntity> spec)
+        public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecification<TEntity> spec)
         {
             var query = inputQuery;
 

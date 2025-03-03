@@ -1,7 +1,6 @@
-﻿using Core.Entities.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Core.Entities
+namespace DrinkingPassion.Api.Core.Entities
 {
     public class Cocktail : BaseEntity
     {
@@ -11,7 +10,7 @@ namespace Core.Entities
         public string PreparationInstruction { get; set; }
         public bool IsPrivate { get; set; }
         public string AuthorId { get; set; }
-        public AppUser Author { get; set; }
+        public DrinkingPassion.Api.Core.Entities.Identity.AppUser Author { get; set; }
         public int? BaseProductId { get; set; }
         public Product BaseProduct { get; set; }
         public int IngredientsCount { get; set; }

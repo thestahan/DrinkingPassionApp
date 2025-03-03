@@ -1,4 +1,4 @@
-﻿namespace Core.Entities.Enums
+﻿namespace DrinkingPassion.Api.Core.Entities.Enums
 {
     public enum ProductUnit
     {

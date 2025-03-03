@@ -1,14 +1,13 @@
-﻿using API.Errors;
-using Azure.Storage.Blobs;
-using Core.Interfaces;
-using Infrastructure.Data;
-using Infrastructure.Services;
+﻿using Azure.Storage.Blobs;
+using DrinkingPassion.Api.Core.Interfaces;
+using DrinkingPassion.Api.Infrastructure.Data;
+using DrinkingPassion.Api.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 
-namespace API.Extensions
+namespace DrinkingPassion.Api.Extensions
 {
     public static class ApplicationServicesExtensions
     {
@@ -30,7 +29,7 @@ namespace API.Extensions
                         .SelectMany(x => x.Value.Errors)
                         .Select(x => x.ErrorMessage).ToArray();
 
-                    var errorResponse = new ApiValidationErrorResponse
+                    var errorResponse = new Errors.ApiValidationErrorResponse
                     {
                         Errors = errors
                     };

@@ -1,6 +1,6 @@
-﻿using Core.Entities;
+﻿using DrinkingPassion.Api.Core.Entities;
 
-namespace Core.Specifications.CocktailsLists
+namespace DrinkingPassion.Api.Core.Specifications.CocktailsLists
 {
     public class CocktailsListForUserById : BaseSpecification<CocktailsList>
     {

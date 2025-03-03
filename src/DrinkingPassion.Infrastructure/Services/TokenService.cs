@@ -1,5 +1,5 @@
-﻿using Core.Entities.Identity;
-using Core.Interfaces;
+﻿using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Infrastructure.Services
+namespace DrinkingPassion.Api.Infrastructure.Services
 {
     public class TokenService : ITokenService
     {

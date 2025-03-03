@@ -1,4 +1,4 @@
-﻿namespace API.Dtos.Accounts
+﻿namespace DrinkingPassion.Api.Dtos.Accounts
 {
     public class UserRegisterReturnDto
     {

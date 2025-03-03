@@ -1,8 +1,6 @@
-﻿using Core.Entities;
-
-namespace Core.Specifications.ProductTypes
+﻿namespace DrinkingPassion.Api.Core.Specifications.ProductTypes
 {
-    public class ProductTypesOrderedByNameSpec : BaseSpecification<ProductType>
+    public class ProductTypesOrderedByNameSpec : BaseSpecification<DrinkingPassion.Api.Core.Entities.ProductType>
     {
         public ProductTypesOrderedByNameSpec() : base()
         {

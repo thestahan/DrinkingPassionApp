@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Core.Specifications.Cocktails
+namespace DrinkingPassion.Api.Core.Specifications.Cocktails
 {
     public class CocktailSpecParams
     {

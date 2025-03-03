@@ -1,10 +1,9 @@
-﻿using Core.Entities.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Core.Interfaces
+namespace DrinkingPassion.Api.Core.Interfaces
 {
     public interface ITokenService
     {
-        string CreateToken(AppUser user, IList<string> roles);
+        string CreateToken(DrinkingPassion.Api.Core.Entities.Identity.AppUser user, IList<string> roles);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Core.Models
+﻿namespace DrinkingPassion.Api.Core.Models
 {
     public class UploadContentRequest
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos.Ingredients
+namespace DrinkingPassion.Api.Dtos.Ingredients
 {
     public class IngredientToAddDto
     {

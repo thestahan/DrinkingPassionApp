@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
-namespace API.ValidationAttributes
+namespace DrinkingPassion.Api.ValidationAttributes
 {
     public class AllowedFileExtensionsAttribute : ValidationAttribute
     {

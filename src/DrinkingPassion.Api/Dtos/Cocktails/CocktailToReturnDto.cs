@@ -1,4 +1,4 @@
-﻿namespace API.Dtos.Cocktails
+﻿namespace DrinkingPassion.Api.Dtos.Cocktails
 {
     public class CocktailToReturnDto
     {

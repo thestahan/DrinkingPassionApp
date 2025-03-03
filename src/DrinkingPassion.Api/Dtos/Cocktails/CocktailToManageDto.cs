@@ -1,8 +1,7 @@
-﻿using API.ValidationAttributes;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos.Cocktails
+namespace DrinkingPassion.Api.Dtos.Cocktails
 {
     public class CocktailToManageDto
     {
@@ -12,8 +11,8 @@ namespace API.Dtos.Cocktails
         [StringLength(maximumLength: 60, MinimumLength = 2)]
         public string Name { get; set; }
 
-        [MaxFileSize(5 * 1024 * 1014)]
-        [AllowedFileExtensions(new string[] { ".jpg", ".jpeg", ".png" })]
+        [DrinkingPassion.Api.ValidationAttributes.MaxFileSizeAttribute(5 * 1024 * 1014)]
+        [DrinkingPassion.Api.ValidationAttributes.AllowedFileExtensionsAttribute(new string[] { ".jpg", ".jpeg", ".png" })]
         public IFormFile Picture { get; set; }
 
         public string Description { get; set; }

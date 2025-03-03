@@ -1,11 +1,10 @@
-﻿using API.Dtos.Cocktails;
-using Core.Entities;
+﻿using DrinkingPassion.Api.Core.Entities;
 
-namespace API.Helpers
+namespace DrinkingPassion.Api.Helpers
 {
     public class CocktailHelpers
     {
-        public static Cocktail ApplyCocktailInfoChangesToCocktail(CocktailInfoToUpdateDto toUpdate, Cocktail cocktail)
+        public static Cocktail ApplyCocktailInfoChangesToCocktail(Dtos.Cocktails.CocktailInfoToUpdateDto toUpdate, Cocktail cocktail)
         {
             cocktail.Name = toUpdate.Name;
             cocktail.Picture = toUpdate.Picture;

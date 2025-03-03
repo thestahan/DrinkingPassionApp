@@ -1,15 +1,14 @@
-﻿using API.Errors;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace DrinkingPassion.Api.Controllers
 {
     [Route("errors/{code}")]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class ErrorController : BaseApiController
+    public class ErrorController : DrinkingPassion.Api.Controllers.BaseApiController
     {
         public IActionResult Error(int code)
         {
-            return new ObjectResult(new ApiResponse(code));
+            return new ObjectResult(new DrinkingPassion.Api.Errors.ApiResponse(code));
         }
     }
 }

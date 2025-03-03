@@ -1,13 +1,10 @@
-﻿using API.Dtos.Cocktails;
-using API.Dtos.CocktailsLists;
-using API.Errors;
-using AutoMapper;
-using Core.Entities;
-using Core.Entities.Identity;
-using Core.Extensions;
-using Core.Interfaces;
-using Core.Specifications.Cocktails;
-using Core.Specifications.CocktailsLists;
+﻿using AutoMapper;
+using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Core.Interfaces;
+using DrinkingPassion.Api.Core.Specifications.Cocktails;
+using DrinkingPassion.Api.Core.Specifications.CocktailsLists;
+using DrinkingPassion.Shared.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace API.Controllers
+namespace DrinkingPassion.Api.Controllers
 {
     [Authorize]
     public class CocktailsListsController : BaseApiController
@@ -39,7 +36,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<CocktailsListDto>> GetCocktailsLists()
+        public async Task<ActionResult<Dtos.CocktailsLists.CocktailsListDto>> GetCocktailsLists()
         {
             var user = await GetAuthorizedUser();
 
@@ -47,13 +44,13 @@ namespace API.Controllers
 
             var cocktailsLists = await _listsRepo.ListAsync(spec);
 
-            var mappedLists = _mapper.Map<List<CocktailsListDto>>(cocktailsLists);
+            var mappedLists = _mapper.Map<List<Dtos.CocktailsLists.CocktailsListDto>>(cocktailsLists);
 
             return Ok(mappedLists);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListDetails(int id)
+        public async Task<ActionResult<Dtos.CocktailsLists.CocktailsListDetailsDto>> GetCocktailsListDetails(int id)
         {
             var user = await GetAuthorizedUser();
 
@@ -63,23 +60,23 @@ namespace API.Controllers
 
             if (list == null)
             {
-                return NotFound(new ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
-            var mappedList = _mapper.Map<CocktailsListDetailsDto>(list);
+            var mappedList = _mapper.Map<Dtos.CocktailsLists.CocktailsListDetailsDto>(list);
 
             return Ok(mappedList);
         }
 
         [AllowAnonymous]
         [HttpGet("{userName}/{listSlug}")]
-        public async Task<ActionResult<CocktailsListDetailsDto>> GetCocktailsListForGuest(string userName, string listSlug)
+        public async Task<ActionResult<Dtos.CocktailsLists.CocktailsListDetailsDto>> GetCocktailsListForGuest(string userName, string listSlug)
         {
             var user = await _userManager.FindByNameAsync(userName);
 
             if (user == null)
             {
-                return NotFound(new ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
             var spec = new CocktailsListByUserIdAndSlug(user.Id, listSlug);
@@ -88,23 +85,23 @@ namespace API.Controllers
 
             if (list == null)
             {
-                return NotFound(new ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
-            var mappedList = _mapper.Map<CocktailsListDetailsDto>(list);
+            var mappedList = _mapper.Map<Dtos.CocktailsLists.CocktailsListDetailsDto>(list);
 
             return Ok(mappedList);
         }
 
         [AllowAnonymous]
         [HttpGet("{userName}/{listSlug}/{cocktailId}")]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailFromList(string userName, string listSlug, int cocktailId)
+        public async Task<ActionResult<Dtos.Cocktails.CocktailDetailsToReturnDto>> GetCocktailFromList(string userName, string listSlug, int cocktailId)
         {
             var user = await _userManager.FindByNameAsync(userName);
 
             if (user == null)
             {
-                return NotFound(new ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
             var spec = new CocktailsListWithCocktailExists(user.Id, listSlug, cocktailId);
@@ -113,7 +110,7 @@ namespace API.Controllers
 
             if (!listWithCoctailExists)
             {
-                return NotFound(new ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
             var cocktailSpec = new CocktailWithIngredientsSpecification(cocktailId);
@@ -122,22 +119,22 @@ namespace API.Controllers
 
             if (cocktail == null)
             {
-                return NotFound(new ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
-            var mappedCocktail = _mapper.Map<CocktailDetailsToReturnDto>(cocktail);
+            var mappedCocktail = _mapper.Map<Dtos.Cocktails.CocktailDetailsToReturnDto>(cocktail);
 
             return Ok(mappedCocktail);
         }
 
         [HttpPost]
-        public async Task<ActionResult<CocktailsListDetailsDto>> ManageCocktailsList(CocktailsListToAddDto dto)
+        public async Task<ActionResult<Dtos.CocktailsLists.CocktailsListDetailsDto>> ManageCocktailsList(Dtos.CocktailsLists.CocktailsListToAddDto dto)
         {
             var user = await GetAuthorizedUser();
 
             if (dto.Cocktails.Count == 0)
             {
-                return BadRequest(new ApiResponse(400));
+                return BadRequest(new Errors.ApiResponse(400));
             }
 
             var list = _mapper.Map<CocktailsList>(dto);
@@ -148,7 +145,7 @@ namespace API.Controllers
 
             if (cocktails.Count != dto.Cocktails.Count)
             {
-                return BadRequest(new ApiResponse(400));
+                return BadRequest(new Errors.ApiResponse(400));
             }
 
             if (dto.Id != 0)
@@ -159,7 +156,7 @@ namespace API.Controllers
 
                 if (listFromDb.AuthorId != user.Id)
                 {
-                    return BadRequest(new ApiResponse(400));
+                    return BadRequest(new Errors.ApiResponse(400));
                 }
 
                 listFromDb.Cocktails = cocktails.ToList();
@@ -169,7 +166,7 @@ namespace API.Controllers
 
                 await _listsRepo.UpdateAsync(listFromDb);
 
-                return Ok(_mapper.Map<CocktailsListDetailsDto>(listFromDb));
+                return Ok(_mapper.Map<Dtos.CocktailsLists.CocktailsListDetailsDto>(listFromDb));
             }
 
             list.Cocktails = cocktails.ToList();
@@ -178,7 +175,7 @@ namespace API.Controllers
 
             var addedList = await _listsRepo.AddAsync(list);
 
-            var listToReturn = _mapper.Map<CocktailsListDetailsDto>(addedList);
+            var listToReturn = _mapper.Map<Dtos.CocktailsLists.CocktailsListDetailsDto>(addedList);
 
             return CreatedAtAction(nameof(GetCocktailsListDetails), new { id = listToReturn.Id }, listToReturn);
         }
@@ -192,7 +189,7 @@ namespace API.Controllers
 
             if (list == null)
             {
-                return NotFound(new ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
             await _listsRepo.DeleteAsync(list);

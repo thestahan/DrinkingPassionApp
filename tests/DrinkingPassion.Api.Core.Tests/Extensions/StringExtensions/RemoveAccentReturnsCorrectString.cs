@@ -1,7 +1,7 @@
-﻿using Core.Extensions;
+﻿using DrinkingPassion.Shared.Extensions;
 using NUnit.Framework;
 
-namespace Tests.Core.Extensions.StringExtensions
+namespace DrinkingPassion.Api.Shared.Tests.Extensions.StringExtensions
 {
     [TestFixture]
     public class RemoveAccentReturnsCorrectString

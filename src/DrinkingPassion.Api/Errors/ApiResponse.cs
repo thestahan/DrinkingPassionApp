@@ -1,4 +1,4 @@
-﻿namespace API.Errors
+﻿namespace DrinkingPassion.Api.Errors
 {
     public class ApiResponse
     {

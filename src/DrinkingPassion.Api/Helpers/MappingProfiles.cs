@@ -1,55 +1,49 @@
-﻿using API.Dtos.Accounts;
-using API.Dtos.Cocktails;
-using API.Dtos.CocktailsLists;
-using API.Dtos.Ingredients;
-using API.Dtos.Products;
-using AutoMapper;
-using Core.Entities;
-using Core.Entities.Identity;
-using System.Linq;
+﻿using AutoMapper;
+using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Entities.Identity;
 
-namespace API.Helpers
+namespace DrinkingPassion.Api.Helpers
 {
     public class MappingProfiles : Profile
     {
         public MappingProfiles()
         {
-            CreateMap<ProductUnit, ProductUnitToReturnDto>();
-            CreateMap<ProductUnitToAddDto, ProductUnit>();
-            CreateMap<ProductUnitToUpdateDto, ProductUnit>();
-            CreateMap<ProductType, ProductTypeToReturnDto>();
-            CreateMap<ProductTypeToAddDto, ProductType>();
-            CreateMap<ProductTypeToUpdateDto, ProductType>();
-            CreateMap<Cocktail, CocktailDetailsToReturnDto>()
+            CreateMap<ProductUnit, Dtos.Products.ProductUnitToReturnDto>();
+            CreateMap<Dtos.Products.ProductUnitToAddDto, ProductUnit>();
+            CreateMap<Dtos.Products.ProductUnitToUpdateDto, ProductUnit>();
+            CreateMap<ProductType, Dtos.Products.ProductTypeToReturnDto>();
+            CreateMap<Dtos.Products.ProductTypeToAddDto, ProductType>();
+            CreateMap<Dtos.Products.ProductTypeToUpdateDto, ProductType>();
+            CreateMap<Cocktail, Dtos.Cocktails.CocktailDetailsToReturnDto>()
                 .ForMember(
                     dest => dest.Picture,
                     opt => opt.MapFrom<CocktailUrlResolver>())
                 .ForMember(
                     dest => dest.BaseIngredient,
                     opt => opt.MapFrom(src => src.BaseProduct.Name));
-            CreateMap<Cocktail, CocktailToReturnDto>()
+            CreateMap<Cocktail, Dtos.Cocktails.CocktailToReturnDto>()
                 .ForMember(
                     dest => dest.Picture,
                     opt => opt.MapFrom<CocktailUrlResolver>())
                 .ForMember(
                     dest => dest.BaseIngredient,
                     opt => opt.MapFrom(src => src.BaseProduct.Name));
-            CreateMap<Cocktail, CocktailBasicInfoDto>();
-            CreateMap<Ingredient, IngredientToReturnDto>()
+            CreateMap<Cocktail, Dtos.Cocktails.CocktailBasicInfoDto>();
+            CreateMap<Ingredient, Dtos.Ingredients.IngredientToReturnDto>()
                 .ForMember(
                     dest => dest.Name,
                     opt => opt.MapFrom(src => src.Product.Name))
                 .ForMember(
                     dest => dest.Unit,
-                    opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Product.ProductUnit.Abbreviation) ? 
-                        src.Product.ProductUnit.Name : 
+                    opt => opt.MapFrom(src => string.IsNullOrEmpty(src.Product.ProductUnit.Abbreviation) ?
+                        src.Product.ProductUnit.Name :
                         src.Product.ProductUnit.Abbreviation));
-            CreateMap<CocktailToManageDto, Cocktail>()
+            CreateMap<Dtos.Cocktails.CocktailToManageDto, Cocktail>()
                 .ForMember(dest => dest.Ingredients, opt => opt.Ignore())
                 .ForMember(dest => dest.Picture, opt => opt.Ignore());
-            CreateMap<IngredientToAddDto, Ingredient>();
-            CreateMap<IngredientToUpdateDto, Ingredient>();
-            CreateMap<Product, ProductToReturnDto>()
+            CreateMap<Dtos.Ingredients.IngredientToAddDto, Ingredient>();
+            CreateMap<Dtos.Ingredients.IngredientToUpdateDto, Ingredient>();
+            CreateMap<Product, Dtos.Products.ProductToReturnDto>()
                 .ForMember(
                     dest => dest.ProductUnit,
                     opt => opt.MapFrom(src => src.ProductUnit.Name))
@@ -65,20 +59,20 @@ namespace API.Helpers
                 .ForMember(
                     dest => dest.ProductTypeId,
                     opt => opt.MapFrom(src => src.ProductType.Id));
-            CreateMap<ProductToAddDto, Product>();
-            CreateMap<ProductToUpdateDto, Product>();
-            CreateMap<AppUser, UserDetailsDto>();
-            CreateMap<UserRegisterDto, AppUser>()
+            CreateMap<Dtos.Products.ProductToAddDto, Product>();
+            CreateMap<Dtos.Products.ProductToUpdateDto, Product>();
+            CreateMap<AppUser, Dtos.Accounts.UserDetailsDto>();
+            CreateMap<Dtos.Accounts.UserRegisterDto, AppUser>()
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));
-            CreateMap<UserUpdateDto, AppUser>()
+            CreateMap<Dtos.Accounts.UserUpdateDto, AppUser>()
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));
-            CreateMap<CocktailsList, CocktailsListDetailsDto>();
-            CreateMap<CocktailsList, CocktailsListDto>();
-            CreateMap<CocktailsListToAddDto, CocktailsList>()
+            CreateMap<CocktailsList, Dtos.CocktailsLists.CocktailsListDetailsDto>();
+            CreateMap<CocktailsList, Dtos.CocktailsLists.CocktailsListDto>();
+            CreateMap<Dtos.CocktailsLists.CocktailsListToAddDto, CocktailsList>()
                 .ForMember(
                     dest => dest.Cocktails,
                     opt => opt.Ignore());

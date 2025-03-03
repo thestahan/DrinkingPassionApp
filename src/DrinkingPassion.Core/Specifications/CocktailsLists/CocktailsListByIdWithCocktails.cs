@@ -1,8 +1,6 @@
-﻿using Core.Entities;
-
-namespace Core.Specifications.CocktailsLists
+﻿namespace DrinkingPassion.Api.Core.Specifications.CocktailsLists
 {
-    public class CocktailsListByIdWithCocktails : BaseSpecification<CocktailsList>
+    public class CocktailsListByIdWithCocktails : BaseSpecification<DrinkingPassion.Api.Core.Entities.CocktailsList>
     {
         public CocktailsListByIdWithCocktails(int id) : base(l => l.Id == id)
         {

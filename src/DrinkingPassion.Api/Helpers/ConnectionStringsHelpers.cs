@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace API.Helpers
+namespace DrinkingPassion.Api.Helpers
 {
     public static class ConnectionStringsHelpers
     {

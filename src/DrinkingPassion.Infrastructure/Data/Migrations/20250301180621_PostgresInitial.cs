@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infrastructure.Data.Migrations
+namespace DrinkingPassion.Api.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
     public partial class PostgresInitial : Migration
