@@ -1,0 +1,47 @@
+﻿@page "/products"
+@using DrinkingPassion.WebApp.Features.Products.Store
+@inherits FluxorComponent
+
+@inject IDispatcher Dispatcher
+@inject IState<DrinkingPassion.WebApp.Features.Products.Store.ProductsState> ProductsState
+@inject NavigationManager Navigation
+
+<MudText Typo="Typo.h4" Align="Align.Center" Class="py-2">
+    Produkty
+</MudText>
+
+@if (ProductsState.Value.IsLoading)
+{
+    <p><em>Ładowanie...</em></p>
+}
+else
+{
+    if (ProductsState.Value.IsError)
+    {
+        <p><em>Coś poszło nie tak!</em></p>
+        <p>@ProductsState.Value.ErrorMessage</p>
+    }
+    else if (ProductsState.Value.IsInitialized)
+    {
+        <MudDataGrid Items="ProductsState.Value.PaginatedProducts!">
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="Nazwa" />
+                <PropertyColumn Property="x => x.ProductType" Title="Typ" />
+                <PropertyColumn Property="x => x.ProductUnit" Title="Jednostka" />
+                <PropertyColumn Property="x => x.ProductUnitAbbreviation" Title="Skrót" />
+            </Columns>
+        </MudDataGrid>
+    }
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (!ProductsState.Value.IsInitialized)
+        {
+            Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Products.Store.FetchProductsAction());
+        }
+
+        base.OnInitialized();
+    }
+}

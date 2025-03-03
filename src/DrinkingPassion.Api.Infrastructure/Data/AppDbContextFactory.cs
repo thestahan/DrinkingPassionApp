@@ -30,7 +30,7 @@ namespace DrinkingPassion.Api.Infrastructure.Data
 
             optionsBuilder.UseNpgsql(connectionString,
                 x => x.MigrationsHistoryTable("__EFMigrationsHistory", "public")
-                      .MigrationsAssembly("Infrastructure"));
+                      .MigrationsAssembly("DrinkingPassion.Api.Infrastructure"));
 
             return new AppDbContext(optionsBuilder.Options);
         }

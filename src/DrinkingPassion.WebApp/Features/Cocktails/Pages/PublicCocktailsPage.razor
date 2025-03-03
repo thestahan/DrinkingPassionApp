@@ -1,0 +1,84 @@
+﻿@page "/cocktails"
+@using DrinkingPassion.WebApp.Features.Cocktails.Store
+@inherits FluxorComponent
+
+@inject IDispatcher Dispatcher
+@inject IState<DrinkingPassion.WebApp.Features.Cocktails.Store.PublicCocktailsState> PublicCocktailsState
+@inject NavigationManager Navigation
+
+<MudText Typo="Typo.h4" Align="Align.Center" Class="py-2">
+    Koktajle
+</MudText>
+
+@if (PublicCocktailsState.Value.IsLoading)
+{
+    <p><em>Ładowanie...</em></p>
+}
+else
+{
+    if (PublicCocktailsState.Value.IsError)
+    {
+        <p><em>Coś poszło nie tak!</em></p>
+        <p>@PublicCocktailsState.Value.ErrorMessage</p>
+    }
+    else if (PublicCocktailsState.Value.IsInitialized)
+    {
+        <MudContainer Class="d-flex flex-column flex-grow-1 gap-4 py-2">
+            <MudGrid>
+                @foreach (var cocktail in PublicCocktailsState.Value.PaginatedCocktails!.Data)
+                {
+                    <MudItem xs="12" sm="6" lg="4">
+                        <MudCard Outlined="true">
+                            <MudCardMedia Image="@cocktail.Picture" Height="300" />
+                            <MudCardContent>
+                                <MudText Typo="Typo.h5">@cocktail.Name</MudText>
+                                    <MudText Typo="Typo.body2">Główny składnik: @cocktail.BaseIngredient</MudText>
+                                    <MudText Typo="Typo.body2">Liczba składników: @cocktail.IngredientsCount</MudText>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudButton Variant="Variant.Text"
+                                               Color="Color.Primary"
+                                               OnClick="(() => NavigateToCocktailDetails(cocktail.Id))">
+                                        Szczegóły
+                                    </MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        </MudItem>
+                }
+            </MudGrid>
+
+            @if (PagesCount > 1)
+            {
+                <MudPagination Selected="@(PublicCocktailsState.Value.PaginatedCocktails!.PageIndex)"
+                               Count="PagesCount"
+                               Class="align-self-center"
+                               SelectedChanged="((pageIndex) => GoToPage(pageIndex))" />
+            }
+        </MudContainer>
+    }
+}
+
+@code {
+    public int PagesCount =>
+        PublicCocktailsState.Value.PaginatedCocktails!.Count / PublicCocktailsState.Value.PaginatedCocktails!.PageSize;
+
+    protected override void OnInitialized()
+    {
+        if (!PublicCocktailsState.Value.IsInitialized)
+        {
+            Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Cocktails.Store.FetchPublicCocktailsAction(1));
+        }
+
+        base.OnInitialized();
+    }
+
+    private void GoToPage(int pageIndex)
+    {
+        Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Cocktails.Store.FetchPublicCocktailsAction(pageIndex));
+    }
+
+    private void NavigateToCocktailDetails(int id)
+    {
+        Navigation.NavigateTo($"/cocktails/{id}");
+    }
+}

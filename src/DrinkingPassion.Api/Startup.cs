@@ -60,7 +60,24 @@ public class Startup
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connection, x =>
                 x.MigrationsHistoryTable("__EFMigrationsHistory", "public")
-                 .MigrationsAssembly("Infrastructure")));
+                 .MigrationsAssembly("DrinkingPassion.Api.Infrastructure")));
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy("BlazorAppPolicy", policy =>
+            {
+                if (_env.IsDevelopment())
+                {
+                    policy.WithOrigins("https://localhost:5001", "http://localhost:5000")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                }
+                else
+                {
+                    // No production address yet
+                }
+            });
+        });
 
         services.AddApplicationServices(_config);
         services.AddIdentityServices(_config);
