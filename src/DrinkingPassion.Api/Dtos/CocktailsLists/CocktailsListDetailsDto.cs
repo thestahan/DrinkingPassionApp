@@ -1,8 +1,7 @@
-﻿using API.Dtos.Cocktails;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace API.Dtos.CocktailsLists
+namespace DrinkingPassion.Api.Dtos.CocktailsLists
 {
     public class CocktailsListDetailsDto
     {
@@ -10,6 +9,6 @@ namespace API.Dtos.CocktailsLists
         public string Name { get; set; }
         public int CocktailsCount { get; set; }
         public DateTime CreatedDate { get; set; }
-        public IReadOnlyList<CocktailToReturnDto> Cocktails { get; set; }
+        public IReadOnlyList<DrinkingPassion.Api.Dtos.Cocktails.CocktailToReturnDto> Cocktails { get; set; }
     }
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace Infrastructure.Data
+namespace DrinkingPassion.Api.Infrastructure.Data
 {
     /// <summary>
     /// Factory class for creating AppDbContext instances during design-time operations like

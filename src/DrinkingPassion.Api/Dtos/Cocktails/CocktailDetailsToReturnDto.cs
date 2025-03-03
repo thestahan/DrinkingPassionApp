@@ -1,7 +1,6 @@
-﻿using API.Dtos.Ingredients;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace API.Dtos.Cocktails
+namespace DrinkingPassion.Api.Dtos.Cocktails
 {
     public class CocktailDetailsToReturnDto
     {
@@ -12,6 +11,6 @@ namespace API.Dtos.Cocktails
         public string PreparationInstruction { get; set; }
         public string BaseIngredient { get; set; }
         public int IngredientsCount { get; set; }
-        public ICollection<IngredientToReturnDto> Ingredients { get; set; }
+        public ICollection<DrinkingPassion.Api.Dtos.Ingredients.IngredientToReturnDto> Ingredients { get; set; }
     }
 }

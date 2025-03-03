@@ -1,4 +1,4 @@
-﻿namespace API.Dtos.Products
+﻿namespace DrinkingPassion.Api.Dtos.Products
 {
     public class ProductToReturnDto
     {

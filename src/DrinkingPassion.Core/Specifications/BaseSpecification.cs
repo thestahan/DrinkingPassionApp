@@ -1,11 +1,10 @@
-﻿using Core.Specifications;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Core
+namespace DrinkingPassion.Api.Core.Specifications
 {
-    public abstract class BaseSpecification<T> : ISpecification<T>
+    public abstract class BaseSpecification<T> : DrinkingPassion.Api.Core.Specifications.ISpecification<T>
     {
         public BaseSpecification(Expression<Func<T, bool>> criteria)
         {

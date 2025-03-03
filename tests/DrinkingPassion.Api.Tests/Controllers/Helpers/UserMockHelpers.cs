@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace Tests.API.Controllers.Helpers
+namespace DrinkingPassion.Api.Tests.Controllers.Helpers
 {
     public static class UserMockHelpers
     {

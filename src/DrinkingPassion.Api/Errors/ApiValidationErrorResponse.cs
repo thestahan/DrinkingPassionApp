@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace API.Errors
+namespace DrinkingPassion.Api.Errors
 {
-    public class ApiValidationErrorResponse : ApiResponse
+    public class ApiValidationErrorResponse : DrinkingPassion.Api.Errors.ApiResponse
     {
         public ApiValidationErrorResponse() : base(400)
         {

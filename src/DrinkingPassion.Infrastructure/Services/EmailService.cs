@@ -1,13 +1,12 @@
-﻿using Core.Entities.Identity;
-using Core.Interfaces;
-using Infrastructure.Helpers;
+﻿using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Core.Interfaces;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using System;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Services
+namespace DrinkingPassion.Api.Infrastructure.Services
 {
     public class EmailService : IEmailService
     {
@@ -26,9 +25,8 @@ namespace Infrastructure.Services
             message.Subject = "Rejestracja w DrinkingPassion";
             message.Body = new BodyBuilder
             {
-                HtmlBody = EmailTemplates.EmailConfirmationTemplate(user.FirstName, confirmationLink)
+                HtmlBody = Helpers.EmailTemplates.EmailConfirmationTemplate(user.FirstName, confirmationLink)
             }.ToMessageBody();
-
 
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
@@ -50,7 +48,7 @@ namespace Infrastructure.Services
             message.Subject = "Zmiana hasła w serwisie DrinkingPassion";
             message.Body = new BodyBuilder
             {
-                HtmlBody = EmailTemplates.ForgottedPassowordTemplate(user.Email, link)
+                HtmlBody = Helpers.EmailTemplates.ForgottedPassowordTemplate(user.Email, link)
             }.ToMessageBody();
 
             await client.SendAsync(message);

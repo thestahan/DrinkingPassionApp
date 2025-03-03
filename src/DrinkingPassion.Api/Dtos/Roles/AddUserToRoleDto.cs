@@ -1,4 +1,4 @@
-﻿namespace API.Dtos.Roles
+﻿namespace DrinkingPassion.Api.Dtos.Roles
 {
     public class AddUserToRoleDto
     {

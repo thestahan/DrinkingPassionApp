@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Core.Entities
+namespace DrinkingPassion.Api.Core.Entities
 {
     public class BaseEntity
     {

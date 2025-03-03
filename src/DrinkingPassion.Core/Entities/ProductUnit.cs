@@ -1,4 +1,4 @@
-﻿namespace Core.Entities
+﻿namespace DrinkingPassion.Api.Core.Entities
 {
     public class ProductUnit : BaseEntity
     {

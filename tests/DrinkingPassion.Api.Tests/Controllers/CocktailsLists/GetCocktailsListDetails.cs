@@ -1,20 +1,19 @@
 ﻿using AutoMapper;
-using Core.Entities.Identity;
-using Core.Entities;
-using Core.Interfaces;
+using DrinkingPassion.Api.Controllers;
+using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Core.Interfaces;
+using DrinkingPassion.Api.Core.Specifications.CocktailsLists;
+using DrinkingPassion.Api.Dtos.CocktailsLists;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using System.Threading.Tasks;
-using API.Controllers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Tests.API.Controllers.Helpers;
 using System.Net;
-using Core.Specifications.CocktailsLists;
-using API.Dtos.CocktailsLists;
+using System.Threading.Tasks;
 
-namespace Tests.API.Controllers.CocktailsLists
+namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
 {
     [TestFixture]
     public class GetCocktailsListDetails
@@ -48,7 +47,7 @@ namespace Tests.API.Controllers.CocktailsLists
             {
                 ControllerContext = new ControllerContext
                 {
-                    HttpContext = new DefaultHttpContext() { User = UserMockHelpers.GetMockUser() }
+                    HttpContext = new DefaultHttpContext() { User = Helpers.UserMockHelpers.GetMockUser() }
                 }
             };
 
@@ -75,7 +74,7 @@ namespace Tests.API.Controllers.CocktailsLists
             {
                 ControllerContext = new ControllerContext
                 {
-                    HttpContext = new DefaultHttpContext() { User = UserMockHelpers.GetMockUser() }
+                    HttpContext = new DefaultHttpContext() { User = Helpers.UserMockHelpers.GetMockUser() }
                 }
             };
 

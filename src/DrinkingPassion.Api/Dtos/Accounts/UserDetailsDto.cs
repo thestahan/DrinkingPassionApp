@@ -1,6 +1,6 @@
-﻿using Core.Entities.Enums;
+﻿using DrinkingPassion.Api.Core.Entities.Enums;
 
-namespace API.Dtos.Accounts
+namespace DrinkingPassion.Api.Dtos.Accounts
 {
     public class UserDetailsDto
     {

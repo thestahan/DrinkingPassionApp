@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace API.Dtos.Products
+﻿namespace DrinkingPassion.Api.Dtos.Products
 {
     public class ProductUnitToReturnDto
     {

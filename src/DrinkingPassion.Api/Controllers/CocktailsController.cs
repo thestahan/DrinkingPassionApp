@@ -1,28 +1,22 @@
-﻿using API.Dtos.Cocktails;
-using API.Dtos.Ingredients;
-using API.Errors;
-using API.Helpers;
-using AutoMapper;
-using Core.Entities;
-using Core.Entities.Identity;
-using Core.Interfaces;
-using Core.Specifications;
-using Core.Specifications.Cocktails;
-using Infrastructure.Services;
+﻿using AutoMapper;
+using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Core.Interfaces;
+using DrinkingPassion.Api.Core.Specifications.Cocktails;
+using DrinkingPassion.Api.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace API.Controllers
+namespace DrinkingPassion.Api.Controllers
 {
-    public class CocktailsController : BaseApiController
+    public class CocktailsController : DrinkingPassion.Api.Controllers.BaseApiController
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Cocktail> _cocktailsRepo;
@@ -50,7 +44,7 @@ namespace API.Controllers
         }
 
         [HttpGet("Public")]
-        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Helpers.Pagination<Dtos.Cocktails.CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
             if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
             {
@@ -65,15 +59,15 @@ namespace API.Controllers
 
             var cocktailsFromDb = await _cocktailsRepo.ListAsync(spec);
 
-            var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
+            var data = _mapper.Map<IReadOnlyList<Dtos.Cocktails.CocktailToReturnDto>>(cocktailsFromDb);
 
-            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
+            return Ok(new Helpers.Pagination<Dtos.Cocktails.CocktailToReturnDto>(cocktailParams.PageIndex,
                 cocktailParams.PageSize, totalItems, data));
         }
 
         [Authorize]
         [HttpGet("Private")]
-        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Helpers.Pagination<Dtos.Cocktails.CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
             if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
             {
@@ -92,15 +86,15 @@ namespace API.Controllers
 
             var cocktailsFromDb = await _cocktailsRepo.ListAsync(spec);
 
-            var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
+            var data = _mapper.Map<IReadOnlyList<Dtos.Cocktails.CocktailToReturnDto>>(cocktailsFromDb);
 
-            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
+            return Ok(new Helpers.Pagination<Dtos.Cocktails.CocktailToReturnDto>(cocktailParams.PageIndex,
                 cocktailParams.PageSize, totalItems, data));
         }
 
         [Authorize]
         [HttpGet("AvailableCocktailsForUser")]
-        public async Task<ActionResult<List<CocktailBasicInfoDto>>> GetCocktailsAvailableForUser()
+        public async Task<ActionResult<List<Dtos.Cocktails.CocktailBasicInfoDto>>> GetCocktailsAvailableForUser()
         {
             var user = await GetAuthorizedUser();
 
@@ -108,13 +102,13 @@ namespace API.Controllers
 
             var cocktails = await _cocktailsRepo.ListAsync(spec);
 
-            var mappedCocktails = _mapper.Map<IReadOnlyList<CocktailBasicInfoDto>>(cocktails);
+            var mappedCocktails = _mapper.Map<IReadOnlyList<Dtos.Cocktails.CocktailBasicInfoDto>>(cocktails);
 
             return Ok(mappedCocktails);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailById(int id)
+        public async Task<ActionResult<Dtos.Cocktails.CocktailDetailsToReturnDto>> GetCocktailById(int id)
         {
             var spec = new CocktailWithIngredientsSpecification(id);
 
@@ -124,25 +118,31 @@ namespace API.Controllers
             {
                 var user = await GetAuthorizedUser();
 
-                if (user == null || cocktail.AuthorId != user.Id) return NotFound(new ApiResponse(404));
+                if (user == null || cocktail.AuthorId != user.Id)
+                {
+                    return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+                }
             }
 
-            if (cocktail == null) return NotFound(new ApiResponse(404));
+            if (cocktail == null)
+            {
+                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+            }
 
-            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktail);
+            var cocktailToReturn = _mapper.Map<Dtos.Cocktails.CocktailDetailsToReturnDto>(cocktail);
 
             return Ok(cocktailToReturn);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail([FromForm]CocktailToManageDto dto)
+        public async Task<ActionResult<Dtos.Cocktails.CocktailDetailsToReturnDto>> ManageCocktail([FromForm] Dtos.Cocktails.CocktailToManageDto dto)
         {
             var user = await GetAuthorizedUser();
 
             var cocktailFromDto = _mapper.Map<Cocktail>(dto);
 
-            var ingredients = JsonConvert.DeserializeObject<ICollection<IngredientToAddDto>>(dto.Ingredients);
+            var ingredients = JsonConvert.DeserializeObject<ICollection<DrinkingPassion.Api.Dtos.Ingredients.IngredientToAddDto>>(dto.Ingredients);
 
             cocktailFromDto.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
 
@@ -152,7 +152,10 @@ namespace API.Controllers
 
             bool isAdmin = await _userManager.IsInRoleAsync(user, "admin");
 
-            if (!isAdmin) cocktailFromDto.IsPrivate = true;
+            if (!isAdmin)
+            {
+                cocktailFromDto.IsPrivate = true;
+            }
 
             bool editing = cocktailFromDto.Id != 0;
 
@@ -167,7 +170,10 @@ namespace API.Controllers
 
             var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
 
-            if (cocktailFromDb == null) return NotFound(new ApiResponse(404));
+            if (cocktailFromDb == null)
+            {
+                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+            }
 
             bool newPicture = dto.Picture != null && dto.Picture.Length != 0;
 
@@ -195,14 +201,17 @@ namespace API.Controllers
                     cocktailFromDb.BaseProduct = await _productsRepo.GetByIdAsync((int)cocktailFromDb.BaseProductId);
                 }
 
-                var editedCocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
+                var editedCocktailToReturn = _mapper.Map<Dtos.Cocktails.CocktailDetailsToReturnDto>(cocktailFromDb);
 
                 return Ok(editedCocktailToReturn);
             }
 
-            if (newPicture) await _cocktailsRepo.UpdateAsync(cocktailFromDto);
+            if (newPicture)
+            {
+                await _cocktailsRepo.UpdateAsync(cocktailFromDto);
+            }
 
-            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
+            var cocktailToReturn = _mapper.Map<Dtos.Cocktails.CocktailDetailsToReturnDto>(cocktailFromDb);
 
             return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
         }
@@ -217,9 +226,15 @@ namespace API.Controllers
 
             var cocktail = await _cocktailsRepo.GetByIdAsync(id);
 
-            if (cocktail == null) return NotFound(new ApiResponse(404));
+            if (cocktail == null)
+            {
+                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+            }
 
-            if (!cocktail.IsPrivate && !isAdmin) return Unauthorized(new ApiResponse(401));
+            if (!cocktail.IsPrivate && !isAdmin)
+            {
+                return Unauthorized(new DrinkingPassion.Api.Errors.ApiResponse(401));
+            }
 
             await _cocktailsRepo.DeleteAsync(cocktail);
 
@@ -228,7 +243,11 @@ namespace API.Controllers
 
         private static void MapEditedCocktailToDbCocktail(Cocktail cocktail, Cocktail cocktailFromDb, bool skipPicture)
         {
-            if (!skipPicture) cocktailFromDb.Picture = cocktail.Picture;
+            if (!skipPicture)
+            {
+                cocktailFromDb.Picture = cocktail.Picture;
+            }
+
             cocktailFromDb.BaseProductId = GetCocktailBaseProductId(cocktail);
             cocktailFromDb.Description = cocktail.Description;
             cocktailFromDb.Name = cocktail.Name;
@@ -246,7 +265,10 @@ namespace API.Controllers
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
 
-            if (string.IsNullOrEmpty(email)) return null;
+            if (string.IsNullOrEmpty(email))
+            {
+                return null;
+            }
 
             return await _userManager.FindByEmailAsync(email);
         }

@@ -1,6 +1,6 @@
-﻿using Core.Entities;
-using Core.Entities.Configurations;
-using Core.Entities.Identity;
+﻿using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Entities.Configurations;
+using DrinkingPassion.Api.Core.Entities.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data
+namespace DrinkingPassion.Api.Infrastructure.Data
 {
     public class AppDbContext : IdentityDbContext<AppUser>
     {

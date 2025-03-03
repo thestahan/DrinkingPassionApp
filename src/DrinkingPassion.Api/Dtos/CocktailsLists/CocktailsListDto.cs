@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace API.Dtos.CocktailsLists
+namespace DrinkingPassion.Api.Dtos.CocktailsLists
 {
     public class CocktailsListDto
     {

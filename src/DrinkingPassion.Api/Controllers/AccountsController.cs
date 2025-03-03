@@ -1,8 +1,6 @@
-﻿using API.Dtos.Accounts;
-using API.Errors;
-using AutoMapper;
-using Core.Entities.Identity;
-using Core.Interfaces;
+﻿using AutoMapper;
+using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace API.Controllers
+namespace DrinkingPassion.Api.Controllers
 {
     public class AccountsController : BaseApiController
     {
@@ -36,13 +34,13 @@ namespace API.Controllers
 
         [Authorize]
         [HttpGet("Details")]
-        public async Task<ActionResult<UserDetailsDto>> GetUserDetails()
+        public async Task<ActionResult<Dtos.Accounts.UserDetailsDto>> GetUserDetails()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
 
             var user = await _userManager.FindByEmailAsync(email);
 
-            var userToReturn = _mapper.Map<UserDetailsDto>(user);
+            var userToReturn = _mapper.Map<Dtos.Accounts.UserDetailsDto>(user);
 
             return userToReturn;
         }
@@ -54,11 +52,14 @@ namespace API.Controllers
         }
 
         [HttpGet("SendForgottenPasswordLink")]
-        public async Task<ActionResult> SendForgottenPasswordLink([FromQuery]string email)
+        public async Task<ActionResult> SendForgottenPasswordLink([FromQuery] string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            if (user == null) return Ok();
+            if (user == null)
+            {
+                return Ok();
+            }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
@@ -74,11 +75,14 @@ namespace API.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<UserLoginReturnDto>> Login(UserLoginDto loginDto)
+        public async Task<ActionResult<Dtos.Accounts.UserLoginReturnDto>> Login(Dtos.Accounts.UserLoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-            if (user == null) return Unauthorized(new ApiResponse(401, "Dane logowania są nieprawidłowe."));
+            if (user == null)
+            {
+                return Unauthorized(new DrinkingPassion.Api.Errors.ApiResponse(401, "Dane logowania są nieprawidłowe."));
+            }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, true);
 
@@ -86,16 +90,19 @@ namespace API.Controllers
             {
                 bool isEmailConfimed = await _userManager.IsEmailConfirmedAsync(user);
 
-                if (!isEmailConfimed) return Unauthorized(new ApiResponse(401, "Adres email nie został potwierdzony"));
+                if (!isEmailConfimed)
+                {
+                    return Unauthorized(new DrinkingPassion.Api.Errors.ApiResponse(401, "Adres email nie został potwierdzony"));
+                }
 
-                return Unauthorized(new ApiResponse(401, "Dane logowania są nieprawidłowe."));
+                return Unauthorized(new DrinkingPassion.Api.Errors.ApiResponse(401, "Dane logowania są nieprawidłowe."));
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
             var jwt = _tokenService.CreateToken(user, userRoles);
 
-            return new UserLoginReturnDto
+            return new Dtos.Accounts.UserLoginReturnDto
             {
                 Email = user.Email,
                 DisplayName = user.DisplayName,
@@ -106,12 +113,13 @@ namespace API.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult<UserRegisterReturnDto>> Register(UserRegisterDto registerDto)
+        public async Task<ActionResult<Dtos.Accounts.UserRegisterReturnDto>> Register(Dtos.Accounts.UserRegisterDto registerDto)
         {
             if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
             {
-                return new BadRequestObjectResult(new ApiValidationErrorResponse { 
-                    Errors = new [] { "Email address is in use" } 
+                return new BadRequestObjectResult(new DrinkingPassion.Api.Errors.ApiValidationErrorResponse
+                {
+                    Errors = new[] { "Email address is in use" }
                 });
             }
 
@@ -119,7 +127,10 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (!result.Succeeded) return BadRequest(new ApiResponse(400));
+            if (!result.Succeeded)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400));
+            }
 
             await _userManager.AddToRoleAsync(user, "User");
 
@@ -133,7 +144,7 @@ namespace API.Controllers
 
             await _emailService.SendConfirmationEmailForRegisteredUser(_config, user, confirmationLink);
 
-            return new UserRegisterReturnDto
+            return new Dtos.Accounts.UserRegisterReturnDto
             {
                 Email = user.Email,
                 DisplayName = user.DisplayName
@@ -141,11 +152,14 @@ namespace API.Controllers
         }
 
         [HttpPatch("ChangeForgottenPassword")]
-        public async Task<ActionResult<bool>> ChangeForgottenPassword(ChangeForgottenPasswordDto dto)
+        public async Task<ActionResult<bool>> ChangeForgottenPassword(Dtos.Accounts.ChangeForgottenPasswordDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
 
-            if (user == null) return BadRequest(new ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
+            if (user == null)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
+            }
 
             var tokenDecodedBytes = WebEncoders.Base64UrlDecode(dto.Token);
 
@@ -153,17 +167,23 @@ namespace API.Controllers
 
             var result = await _userManager.ResetPasswordAsync(user, tokenDecoded, dto.NewPassword);
 
-            if (!result.Succeeded) return BadRequest(new ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
+            if (!result.Succeeded)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
+            }
 
             return Ok();
         }
 
         [HttpPatch("ConfirmEmail")]
-        public async Task<ActionResult> ConfirmEmail(ConfirmEmailDto confirmEmail)
+        public async Task<ActionResult> ConfirmEmail(Dtos.Accounts.ConfirmEmailDto confirmEmail)
         {
             var user = await _userManager.FindByEmailAsync(confirmEmail.Email);
 
-            if (user == null) return BadRequest(new ApiResponse(401));
+            if (user == null)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(401));
+            }
 
             var tokenDecodedBytes = WebEncoders.Base64UrlDecode(confirmEmail.Token);
 
@@ -171,14 +191,17 @@ namespace API.Controllers
 
             var result = await _userManager.ConfirmEmailAsync(user, tokenDecoded);
 
-            if (!result.Succeeded) return BadRequest(new ApiResponse(401));
+            if (!result.Succeeded)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(401));
+            }
 
             return NoContent();
         }
 
         [Authorize]
         [HttpPatch("ChangePassword")]
-        public async Task<ActionResult> ChangePassword(ChangePasswordDto passwordDto)
+        public async Task<ActionResult> ChangePassword(Dtos.Accounts.ChangePasswordDto passwordDto)
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
 
@@ -186,14 +209,17 @@ namespace API.Controllers
 
             var result = await _userManager.ChangePasswordAsync(user, passwordDto.CurrentPassword, passwordDto.NewPassword);
 
-            if (!result.Succeeded) return BadRequest(new ApiResponse(400, "Wprowadzone hasła są niepoprawne"));
+            if (!result.Succeeded)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Wprowadzone hasła są niepoprawne"));
+            }
 
             return NoContent();
         }
 
         [Authorize]
         [HttpPut]
-        public async Task<ActionResult> UpdateUserProfile(UserUpdateDto updateDto)
+        public async Task<ActionResult> UpdateUserProfile(Dtos.Accounts.UserUpdateDto updateDto)
         {
             //var userToUpdate = _mapper.Map<AppUser>(updateDto);
 
@@ -208,7 +234,10 @@ namespace API.Controllers
 
             var result = await _userManager.UpdateAsync(user);
 
-            if (!result.Succeeded) return BadRequest(new ApiResponse(400));
+            if (!result.Succeeded)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400));
+            }
 
             return NoContent();
         }

@@ -1,8 +1,6 @@
-﻿using Core.Entities;
-
-namespace Core.Specifications.Cocktails
+﻿namespace DrinkingPassion.Api.Core.Specifications.Cocktails
 {
-    public class CocktailsWithFiltersForCountSpecification : BaseSpecification<Cocktail>
+    public class CocktailsWithFiltersForCountSpecification : BaseSpecification<DrinkingPassion.Api.Core.Entities.Cocktail>
     {
         public CocktailsWithFiltersForCountSpecification(CocktailSpecParams cocktailParams, bool isPrivate, string authorId = "")
             : base(x =>

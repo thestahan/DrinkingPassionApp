@@ -1,9 +1,9 @@
-﻿using Core.Entities;
-using Core.Interfaces;
+﻿using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Interfaces;
 using System;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Services
+namespace DrinkingPassion.Api.Infrastructure.Services
 {
     public class CocktailPicturesService
     {

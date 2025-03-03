@@ -1,12 +1,12 @@
-﻿using Core.Entities;
-using Core.Interfaces;
-using Core.Specifications;
+﻿using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Interfaces;
+using DrinkingPassion.Api.Core.Specifications;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data
+namespace DrinkingPassion.Api.Infrastructure.Data
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity, new()
     {

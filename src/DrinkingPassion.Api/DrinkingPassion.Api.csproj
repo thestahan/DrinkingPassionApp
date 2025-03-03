@@ -12,6 +12,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\DrinkingPassion.Infrastructure\DrinkingPassion.Api.Infrastructure.csproj" />
+    <ProjectReference Include="..\DrinkingPassion.Shared\DrinkingPassion.Shared.csproj" />
   </ItemGroup>
 </Project>

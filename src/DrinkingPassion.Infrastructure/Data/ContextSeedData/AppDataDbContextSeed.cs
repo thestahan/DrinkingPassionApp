@@ -1,9 +1,9 @@
-﻿using Core.Entities;
+﻿using DrinkingPassion.Api.Core.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Data.ContextSeedData
+namespace DrinkingPassion.Api.Infrastructure.Data.ContextSeedData
 {
     public class AppDataDbContextSeed
     {

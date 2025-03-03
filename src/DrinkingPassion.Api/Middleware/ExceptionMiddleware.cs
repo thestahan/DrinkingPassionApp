@@ -1,5 +1,4 @@
-﻿using API.Errors;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,15 +6,15 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace API.Middleware
+namespace DrinkingPassion.Api.Middleware
 {
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ExceptionMiddleware> _logger;
+        private readonly ILogger<DrinkingPassion.Api.Middleware.ExceptionMiddleware> _logger;
         private readonly IHostEnvironment _env;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger,
+        public ExceptionMiddleware(RequestDelegate next, ILogger<DrinkingPassion.Api.Middleware.ExceptionMiddleware> logger,
             IHostEnvironment env)
         {
             _next = next;
@@ -36,8 +35,8 @@ namespace API.Middleware
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 var response = _env.IsDevelopment()
-                    ? new ApiException((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString())
-                    : new ApiException((int)HttpStatusCode.InternalServerError);
+                    ? new DrinkingPassion.Api.Errors.ApiException((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString())
+                    : new DrinkingPassion.Api.Errors.ApiException((int)HttpStatusCode.InternalServerError);
 
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 

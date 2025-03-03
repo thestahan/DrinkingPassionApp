@@ -1,6 +1,6 @@
-﻿namespace API.Errors
+﻿namespace DrinkingPassion.Api.Errors
 {
-    public class ApiException : ApiResponse
+    public class ApiException : DrinkingPassion.Api.Errors.ApiResponse
     {
         public ApiException(int statusCode, string message = null, string details = null) : base(statusCode, message)
         {

@@ -6,12 +6,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Infrastructure.Data.Migrations;
+using Infrastructure;
+using Infrastructure.Data;
 
 #nullable disable
 
-namespace Infrastructure.Data.Migrations
+namespace DrinkingPassion.Api.Infrastructure.Data.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(DrinkingPassion.Api.Infrastructure.Data.AppDbContext))]
     [Migration("20250301180621_PostgresInitial")]
     partial class PostgresInitial
     {

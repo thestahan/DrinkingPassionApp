@@ -1,8 +1,6 @@
-﻿using Core.Entities;
-
-namespace Core.Specifications.Cocktails
+﻿namespace DrinkingPassion.Api.Core.Specifications.Cocktails
 {
-    public class CocktailsForUser : BaseSpecification<Cocktail>
+    public class CocktailsForUser : BaseSpecification<DrinkingPassion.Api.Core.Entities.Cocktail>
     {
         public CocktailsForUser(string userId) : 
             base(c => !c.IsPrivate || c.AuthorId == userId)

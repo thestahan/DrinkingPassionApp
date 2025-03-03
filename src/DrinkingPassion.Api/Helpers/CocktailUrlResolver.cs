@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Core.Entities;
+using DrinkingPassion.Api.Core.Entities;
 using Microsoft.Extensions.Configuration;
 using System;
 
-namespace API.Helpers
+namespace DrinkingPassion.Api.Helpers
 {
     public class CocktailUrlResolver : IValueResolver<Cocktail, Object, string>
     {

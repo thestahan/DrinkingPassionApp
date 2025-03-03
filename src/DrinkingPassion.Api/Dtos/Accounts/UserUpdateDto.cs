@@ -1,7 +1,7 @@
-﻿using Core.Entities.Enums;
+﻿using DrinkingPassion.Api.Core.Entities.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos.Accounts
+namespace DrinkingPassion.Api.Dtos.Accounts
 {
     public class UserUpdateDto
     {

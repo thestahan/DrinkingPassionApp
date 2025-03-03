@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos.CocktailsLists
+namespace DrinkingPassion.Api.Dtos.CocktailsLists
 {
     public class CocktailsListToAddDto
     {

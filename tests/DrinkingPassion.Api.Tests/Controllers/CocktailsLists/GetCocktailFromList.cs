@@ -1,11 +1,11 @@
-﻿using API.Controllers;
-using API.Dtos.Cocktails;
-using AutoMapper;
-using Core.Entities;
-using Core.Entities.Identity;
-using Core.Interfaces;
-using Core.Specifications.Cocktails;
-using Core.Specifications.CocktailsLists;
+﻿using AutoMapper;
+using DrinkingPassion.Api.Controllers;
+using DrinkingPassion.Api.Core.Entities;
+using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Core.Interfaces;
+using DrinkingPassion.Api.Core.Specifications.Cocktails;
+using DrinkingPassion.Api.Core.Specifications.CocktailsLists;
+using DrinkingPassion.Api.Dtos.Cocktails;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -13,7 +13,7 @@ using NUnit.Framework;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Tests.API.Controllers.CocktailsLists
+namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
 {
     [TestFixture]
     public class GetCocktailFromList

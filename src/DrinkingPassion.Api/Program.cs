@@ -1,9 +1,9 @@
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using Core.Entities.Identity;
-using Infrastructure.Data;
-using Infrastructure.Data.ContextSeedData;
+using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Infrastructure.Data;
+using DrinkingPassion.Api.Infrastructure.Data.ContextSeedData;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace API
+namespace DrinkingPassion.Api
 {
     public class Program
     {

@@ -1,6 +1,6 @@
-﻿using Core.Entities;
+﻿using DrinkingPassion.Api.Core.Entities;
 
-namespace Core.Specifications.Ingredients
+namespace DrinkingPassion.Api.Core.Specifications.Ingredients
 {
     public class IngredientIsPartOfAnyCocktailByPrivacySpec : BaseSpecification<Ingredient>
     {

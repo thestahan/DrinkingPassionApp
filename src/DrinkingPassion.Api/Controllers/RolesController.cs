@@ -1,15 +1,12 @@
-﻿using API.Dtos.Roles;
-using API.Errors;
-using Core.Entities.Identity;
+﻿using DrinkingPassion.Api.Core.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace API.Controllers
+namespace DrinkingPassion.Api.Controllers
 {
     [Route("api/[controller]")]
     [Authorize(Roles = "Admin")]
@@ -38,7 +35,10 @@ namespace API.Controllers
         {
             var roleExists = await _roleManager.RoleExistsAsync(name);
 
-            if (roleExists) return BadRequest(new ApiResponse(400, "Such role already exists"));
+            if (roleExists)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Such role already exists"));
+            }
 
             var roleResult = await _roleManager.CreateAsync(new IdentityRole(name));
 
@@ -46,15 +46,21 @@ namespace API.Controllers
         }
 
         [HttpPost("AddUserToRole")]
-        public async Task<ActionResult> AddUserToRole(AddUserToRoleDto dto)
+        public async Task<ActionResult> AddUserToRole(DrinkingPassion.Api.Dtos.Roles.AddUserToRoleDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.UserEmail);
 
-            if (user == null) return BadRequest(new ApiResponse(400, "User with atemptted email wasn't found"));
+            if (user == null)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "User with atemptted email wasn't found"));
+            }
 
             var roleExists = await _roleManager.RoleExistsAsync(dto.Role);
 
-            if (!roleExists) return BadRequest(new ApiResponse(400, "Attempted role doesn't exist"));
+            if (!roleExists)
+            {
+                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Attempted role doesn't exist"));
+            }
 
             await _userManager.AddToRoleAsync(user, dto.Role);
 

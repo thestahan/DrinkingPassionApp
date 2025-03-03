@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Core.Specifications
+namespace DrinkingPassion.Api.Core.Specifications
 {
     public interface ISpecification<T>
     {

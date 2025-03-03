@@ -1,12 +1,12 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Core.Interfaces;
-using Core.Models;
-using Infrastructure.Extensions;
+using DrinkingPassion.Api.Core.Interfaces;
+using DrinkingPassion.Api.Core.Models;
+using DrinkingPassion.Api.Infrastructure.Extensions;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Services
+namespace DrinkingPassion.Api.Infrastructure.Services
 {
     public class BlobService : IBlobService
     {

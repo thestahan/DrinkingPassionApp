@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Extensions
+namespace DrinkingPassion.Api.Infrastructure.Extensions
 {
     public static class FileExtensions
     {

@@ -1,6 +1,5 @@
-using API.Extensions;
-using API.Middleware;
-using Infrastructure.Data;
+using DrinkingPassion.Api.Extensions;
+using DrinkingPassion.Api.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 
-namespace API;
+namespace DrinkingPassion.Api;
 
 public class Startup
 {
@@ -24,7 +23,7 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        app.UseMiddleware<ExceptionMiddleware>();
+        app.UseMiddleware<Middleware.ExceptionMiddleware>();
 
         if (env.IsDevelopment())
         {
