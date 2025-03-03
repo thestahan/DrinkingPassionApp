@@ -1,0 +1,34 @@
+﻿@page "/login"
+@using DrinkingPassion.WebApp.Features.Login.Dtos
+@using DrinkingPassion.WebApp.Features.Login.Store
+@inherits FluxorComponent
+
+<MudGrid Class="d-flex justify-center">
+    <MudItem xs="12" sm="7">
+        <MudText Typo="Typo.h5" Color="Color.Primary">Logowanie</MudText>
+        <MudForm @ref="_form">
+            <MudTextField T="string" Label="Adres email" @bind-Value="Model.Email" />
+            <MudTextField T="string" Label="Hasło" InputType="InputType.Password" @bind-Value="Model.Password" />
+            <MudButton Disabled="@LoginState.Value.IsSending"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       OnClick="@(() => SubmitForm())"
+                       Class="my-4">
+                @if (LoginState.Value.IsSending)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                }
+                else
+                {
+                    <MudText>Zaloguj się</MudText>
+                }
+            </MudButton>
+            @if (LoginState.Value.IsError)
+            {
+                <MudAlert Severity="Severity.Error" Elevation="0" Icon="Icons.Error">
+                    Błąd logowania: @LoginState.Value.ErrorMessage
+                </MudAlert>
+            }
+        </MudForm>
+    </MudItem>
+</MudGrid>

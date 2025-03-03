@@ -1,0 +1,86 @@
+﻿@page "/cocktails/{Id:int}"
+@using DrinkingPassion.WebApp.Features.Cocktails.Store
+
+@inherits FluxorComponent
+
+@inject IDispatcher Dispatcher
+@inject IState<DrinkingPassion.WebApp.Features.Cocktails.Store.CocktailDetailsState> CocktailDetailsState
+
+@if (CocktailDetailsState.Value.IsLoading)
+{
+    <MudOverlay Visible="true" DarkBackground="true">
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+    </MudOverlay>
+}
+else
+{
+    <MudGrid>
+        <MudItem>
+            <MudButton Href="/cocktails" Variant="Variant.Filled" Color="Color.Primary">Powróc do listy</MudButton>
+        </MudItem>
+    </MudGrid>
+    if (CocktailDetailsState.Value.IsError)
+    {
+        <p><em>Something went wrong!</em></p>
+        <p>@CocktailDetailsState.Value.ErrorMessage</p>
+    }
+    else if (CocktailDetailsState.Value.IsInitialized)
+    {
+        <MudGrid>
+            <MudItem xs="12" sm="6" Class="d-flex align-content-center">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudText Typo="Typo.h3">
+                            @Cocktail.Name
+                        </MudText>
+                    </MudItem>
+                    <MudItem xs="12">
+                        @foreach (var ingredient in Cocktail.Ingredients)
+                        {
+                            <MudGrid>
+                                <MudItem xs="7">
+                                    <MudText Typo="Typo.h6">
+                                        @ingredient.Name
+                                    </MudText>
+                                </MudItem>
+                                <MudItem xs="5">
+                                    <MudText Typo="Typo.h6">
+                                        @ingredient.Amount @ingredient.Unit
+                                    </MudText>
+                                </MudItem>
+                            </MudGrid>
+                        }
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudImage Src="@Cocktail.Picture" Alt="Cocktail picture" Width="400" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudText Color="Color.Primary">Opis koktajlu</MudText>
+                <MudText>@Cocktail.Description</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudText Color="Color.Primary">Przygotowanie</MudText>
+                <MudText>@Cocktail.PreparationInstruction</MudText>
+            </MudItem>
+        </MudGrid>
+    }
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public DrinkingPassion.WebApp.Features.Cocktails.Dtos.CocktailDetails Cocktail => CocktailDetailsState.Value.CocktailDetails!;
+
+    protected override void OnInitialized()
+    {
+        if (!CocktailDetailsState.Value.IsLoading)
+        {
+            Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Cocktails.Store.FetchCocktailDetailsAction(Id));
+        }
+
+        base.OnInitialized();
+    }
+}

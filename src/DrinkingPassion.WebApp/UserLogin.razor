@@ -1,0 +1,28 @@
+﻿@using DrinkingPassion.WebApp.Features.Auth
+@inherits FluxorComponent
+
+@inject IState<DrinkingPassion.WebApp.Features.Auth.UserState> UserState
+@inject IDispatcher Dispatcher
+
+<AuthorizeView>
+    <Authorized>
+        <MudButton Variant="Variant.Outlined" Href="#" Class="mr-4" Style="@($"color: white;")" OnClick="Logout">
+            Wyloguj się
+        </MudButton>
+        <MudAvatar Color="Color.Secondary">
+            @UserState.Value.Email?.ToUpper().FirstOrDefault()
+        </MudAvatar>
+    </Authorized>
+    <NotAuthorized>
+            <MudButton Variant="Variant.Outlined" Href="/login" Style="@($"color: white;")">
+                Logowanie
+            </MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private void Logout()
+    {
+        Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Auth.UserLogoutAction());
+    }
+}

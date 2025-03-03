@@ -8,7 +8,6 @@
     <PackageReference Include="NUnit3TestAdapter" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DrinkingPassion.Core\DrinkingPassion.Api.Core.csproj" />
     <ProjectReference Include="..\..\src\DrinkingPassion.Shared\DrinkingPassion.Shared.csproj" />
   </ItemGroup>
 </Project>

@@ -9,10 +9,14 @@
     <PackageReference Include="Azure.Storage.Blobs" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DrinkingPassion.Infrastructure\DrinkingPassion.Api.Infrastructure.csproj" />
+    <ProjectReference Include="..\DrinkingPassion.Api.Infrastructure\DrinkingPassion.Api.Infrastructure.csproj" />
     <ProjectReference Include="..\DrinkingPassion.Shared\DrinkingPassion.Shared.csproj" />
   </ItemGroup>
 </Project>

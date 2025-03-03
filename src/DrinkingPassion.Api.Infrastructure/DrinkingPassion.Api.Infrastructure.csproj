@@ -11,7 +11,7 @@
     <Folder Include="Data\Migrations\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DrinkingPassion.Core\DrinkingPassion.Api.Core.csproj" />
+    <ProjectReference Include="..\DrinkingPassion.Api.Core\DrinkingPassion.Api.Core.csproj" />
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
