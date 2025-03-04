@@ -34,7 +34,7 @@ public class Startup
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseStaticFiles();
-        app.UseCors("CorsPolicy");
+        app.UseCors("BlazorAppPolicy");
         app.UseAuthentication();
         app.UseAuthorization();
 
