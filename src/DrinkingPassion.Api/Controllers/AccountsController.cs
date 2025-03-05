@@ -81,7 +81,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (user == null)
             {
-                return Unauthorized(new DrinkingPassion.Api.Errors.ApiResponse(401, "Dane logowania są nieprawidłowe."));
+                return Unauthorized(new Errors.ApiResponse(401, "Dane logowania są nieprawidłowe."));
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, true);
@@ -92,10 +92,10 @@ namespace DrinkingPassion.Api.Controllers
 
                 if (!isEmailConfimed)
                 {
-                    return Unauthorized(new DrinkingPassion.Api.Errors.ApiResponse(401, "Adres email nie został potwierdzony"));
+                    return Unauthorized(new Errors.ApiResponse(401, "Adres email nie został potwierdzony"));
                 }
 
-                return Unauthorized(new DrinkingPassion.Api.Errors.ApiResponse(401, "Dane logowania są nieprawidłowe."));
+                return Unauthorized(new Errors.ApiResponse(401, "Dane logowania są nieprawidłowe."));
             }
 
             var userRoles = await _userManager.GetRolesAsync(user);
@@ -117,7 +117,7 @@ namespace DrinkingPassion.Api.Controllers
         {
             if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
             {
-                return new BadRequestObjectResult(new DrinkingPassion.Api.Errors.ApiValidationErrorResponse
+                return new BadRequestObjectResult(new Errors.ApiValidationErrorResponse
                 {
                     Errors = new[] { "Email address is in use" }
                 });
@@ -129,7 +129,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (!result.Succeeded)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400));
+                return BadRequest(new Errors.ApiResponse(400));
             }
 
             await _userManager.AddToRoleAsync(user, "User");
@@ -158,7 +158,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (user == null)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
+                return BadRequest(new Errors.ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
             }
 
             var tokenDecodedBytes = WebEncoders.Base64UrlDecode(dto.Token);
@@ -169,7 +169,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (!result.Succeeded)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
+                return BadRequest(new Errors.ApiResponse(400, "Token wygasł lub adres email jest niepoprawny"));
             }
 
             return Ok();
@@ -182,7 +182,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (user == null)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(401));
+                return BadRequest(new Errors.ApiResponse(401));
             }
 
             var tokenDecodedBytes = WebEncoders.Base64UrlDecode(confirmEmail.Token);
@@ -193,7 +193,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (!result.Succeeded)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(401));
+                return BadRequest(new Errors.ApiResponse(401));
             }
 
             return NoContent();
@@ -211,7 +211,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (!result.Succeeded)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Wprowadzone hasła są niepoprawne"));
+                return BadRequest(new Errors.ApiResponse(400, "Wprowadzone hasła są niepoprawne"));
             }
 
             return NoContent();
@@ -221,8 +221,6 @@ namespace DrinkingPassion.Api.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUserProfile(Dtos.Accounts.UserUpdateDto updateDto)
         {
-            //var userToUpdate = _mapper.Map<AppUser>(updateDto);
-
             var email = User.FindFirstValue(ClaimTypes.Email);
 
             var user = await _userManager.FindByEmailAsync(email);
@@ -236,7 +234,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (!result.Succeeded)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400));
+                return BadRequest(new Errors.ApiResponse(400));
             }
 
             return NoContent();

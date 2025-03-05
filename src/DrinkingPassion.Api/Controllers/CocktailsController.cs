@@ -3,6 +3,8 @@ using DrinkingPassion.Api.Core.Entities;
 using DrinkingPassion.Api.Core.Entities.Identity;
 using DrinkingPassion.Api.Core.Interfaces;
 using DrinkingPassion.Api.Core.Specifications.Cocktails;
+using DrinkingPassion.Api.Dtos.Cocktails;
+using DrinkingPassion.Api.Dtos.Ingredients;
 using DrinkingPassion.Api.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -44,7 +46,7 @@ namespace DrinkingPassion.Api.Controllers
         }
 
         [HttpGet("Public")]
-        public async Task<ActionResult<Helpers.Pagination<Dtos.Cocktails.CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Helpers.Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
             if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
             {
@@ -59,15 +61,15 @@ namespace DrinkingPassion.Api.Controllers
 
             var cocktailsFromDb = await _cocktailsRepo.ListAsync(spec);
 
-            var data = _mapper.Map<IReadOnlyList<Dtos.Cocktails.CocktailToReturnDto>>(cocktailsFromDb);
+            var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
 
-            return Ok(new Helpers.Pagination<Dtos.Cocktails.CocktailToReturnDto>(cocktailParams.PageIndex,
+            return Ok(new Helpers.Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
                 cocktailParams.PageSize, totalItems, data));
         }
 
         [Authorize]
         [HttpGet("Private")]
-        public async Task<ActionResult<Helpers.Pagination<Dtos.Cocktails.CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Helpers.Pagination<CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
             if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
             {
@@ -86,15 +88,15 @@ namespace DrinkingPassion.Api.Controllers
 
             var cocktailsFromDb = await _cocktailsRepo.ListAsync(spec);
 
-            var data = _mapper.Map<IReadOnlyList<Dtos.Cocktails.CocktailToReturnDto>>(cocktailsFromDb);
+            var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
 
-            return Ok(new Helpers.Pagination<Dtos.Cocktails.CocktailToReturnDto>(cocktailParams.PageIndex,
+            return Ok(new Helpers.Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
                 cocktailParams.PageSize, totalItems, data));
         }
 
         [Authorize]
         [HttpGet("AvailableCocktailsForUser")]
-        public async Task<ActionResult<List<Dtos.Cocktails.CocktailBasicInfoDto>>> GetCocktailsAvailableForUser()
+        public async Task<ActionResult<List<CocktailBasicInfoDto>>> GetCocktailsAvailableForUser()
         {
             var user = await GetAuthorizedUser();
 
@@ -102,17 +104,22 @@ namespace DrinkingPassion.Api.Controllers
 
             var cocktails = await _cocktailsRepo.ListAsync(spec);
 
-            var mappedCocktails = _mapper.Map<IReadOnlyList<Dtos.Cocktails.CocktailBasicInfoDto>>(cocktails);
+            var mappedCocktails = _mapper.Map<IReadOnlyList<CocktailBasicInfoDto>>(cocktails);
 
             return Ok(mappedCocktails);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dtos.Cocktails.CocktailDetailsToReturnDto>> GetCocktailById(int id)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> GetCocktailById(int id)
         {
             var spec = new CocktailWithIngredientsSpecification(id);
 
             var cocktail = await _cocktailsRepo.GetEntityWithSpec(spec);
+
+            if (cocktail == null)
+            {
+                return NotFound(new Errors.ApiResponse(404));
+            }
 
             if (cocktail.IsPrivate)
             {
@@ -120,100 +127,33 @@ namespace DrinkingPassion.Api.Controllers
 
                 if (user == null || cocktail.AuthorId != user.Id)
                 {
-                    return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+                    return NotFound(new Errors.ApiResponse(404));
                 }
             }
 
-            if (cocktail == null)
-            {
-                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
-            }
-
-            var cocktailToReturn = _mapper.Map<Dtos.Cocktails.CocktailDetailsToReturnDto>(cocktail);
+            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktail);
 
             return Ok(cocktailToReturn);
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<Dtos.Cocktails.CocktailDetailsToReturnDto>> ManageCocktail([FromForm] Dtos.Cocktails.CocktailToManageDto dto)
+        public async Task<ActionResult<CocktailDetailsToReturnDto>> ManageCocktail([FromForm] CocktailToManageDto dto)
         {
             var user = await GetAuthorizedUser();
-
-            var cocktailFromDto = _mapper.Map<Cocktail>(dto);
-
-            var ingredients = JsonConvert.DeserializeObject<ICollection<DrinkingPassion.Api.Dtos.Ingredients.IngredientToAddDto>>(dto.Ingredients);
-
-            cocktailFromDto.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
-
-            cocktailFromDto.IngredientsCount = cocktailFromDto.Ingredients.Count;
-
-            cocktailFromDto.AuthorId = user.Id;
-
             bool isAdmin = await _userManager.IsInRoleAsync(user, "admin");
+            bool isEditing = dto.Id != 0;
 
-            if (!isAdmin)
+            var cocktail = CreateCocktailEntityFromDto(dto, user.Id, isAdmin);
+
+            if (isEditing)
             {
-                cocktailFromDto.IsPrivate = true;
+                return await UpdateExistingCocktail(cocktail, dto);
             }
-
-            bool editing = cocktailFromDto.Id != 0;
-
-            if (!editing)
+            else
             {
-                cocktailFromDto.BaseProductId = GetCocktailBaseProductId(cocktailFromDto);
-
-                await _cocktailsRepo.AddAsync(cocktailFromDto);
+                return await CreateNewCocktail(cocktail, dto);
             }
-
-            var spec = new CocktailByPrivacyWithIngredientsSpecification(cocktailFromDto.Id, dto.IsPrivate);
-
-            var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
-
-            if (cocktailFromDb == null)
-            {
-                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
-            }
-
-            bool newPicture = dto.Picture != null && dto.Picture.Length != 0;
-
-            if (newPicture)
-            {
-                string container = _config["AzureBlobStorage:PublicCocktailPicturesContainer"];
-
-                await _cocktailPicturesService.DeletePreviousPictureIfExists(cocktailFromDb, container);
-
-                var newBlobName = _cocktailPicturesService.GenerateNewBlobName(cocktailFromDb.Id);
-
-                cocktailFromDto.Picture = $"{container}/{newBlobName}";
-
-                await _blobService.UploadFileStreamBlobAsync(container, dto.Picture.OpenReadStream(), newBlobName);
-            }
-
-            if (editing)
-            {
-                MapEditedCocktailToDbCocktail(cocktailFromDto, cocktailFromDb, !newPicture);
-
-                await _cocktailsRepo.UpdateAsync(cocktailFromDb);
-
-                if (cocktailFromDb.BaseProduct == null)
-                {
-                    cocktailFromDb.BaseProduct = await _productsRepo.GetByIdAsync((int)cocktailFromDb.BaseProductId);
-                }
-
-                var editedCocktailToReturn = _mapper.Map<Dtos.Cocktails.CocktailDetailsToReturnDto>(cocktailFromDb);
-
-                return Ok(editedCocktailToReturn);
-            }
-
-            if (newPicture)
-            {
-                await _cocktailsRepo.UpdateAsync(cocktailFromDto);
-            }
-
-            var cocktailToReturn = _mapper.Map<Dtos.Cocktails.CocktailDetailsToReturnDto>(cocktailFromDb);
-
-            return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
         }
 
         [Authorize]
@@ -228,12 +168,12 @@ namespace DrinkingPassion.Api.Controllers
 
             if (cocktail == null)
             {
-                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
             if (!cocktail.IsPrivate && !isAdmin)
             {
-                return Unauthorized(new DrinkingPassion.Api.Errors.ApiResponse(401));
+                return Unauthorized(new Errors.ApiResponse(401));
             }
 
             await _cocktailsRepo.DeleteAsync(cocktail);
@@ -271,6 +211,96 @@ namespace DrinkingPassion.Api.Controllers
             }
 
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        private Cocktail CreateCocktailEntityFromDto(CocktailToManageDto dto, string userId, bool isAdmin)
+        {
+            var cocktail = _mapper.Map<Cocktail>(dto);
+
+            var ingredients = JsonConvert.DeserializeObject<ICollection<IngredientToAddDto>>(dto.Ingredients);
+            cocktail.Ingredients = _mapper.Map<ICollection<Ingredient>>(ingredients);
+            cocktail.IngredientsCount = cocktail.Ingredients.Count;
+
+            cocktail.AuthorId = userId;
+
+            // Non-admins can only create private cocktails
+            if (!isAdmin)
+            {
+                cocktail.IsPrivate = true;
+            }
+
+            return cocktail;
+        }
+
+        private async Task<ActionResult<CocktailDetailsToReturnDto>> UpdateExistingCocktail(
+            Cocktail cocktailFromDto,
+            CocktailToManageDto dto)
+        {
+            var spec = new CocktailByPrivacyWithIngredientsSpecification(cocktailFromDto.Id, dto.IsPrivate);
+            var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
+
+            if (cocktailFromDb == null)
+            {
+                return NotFound(new Errors.ApiResponse(404));
+            }
+
+            bool hasPictureUpdate = await ProcessPictureUpload(dto, cocktailFromDto, cocktailFromDb);
+
+            MapEditedCocktailToDbCocktail(cocktailFromDto, cocktailFromDb, !hasPictureUpdate);
+            await _cocktailsRepo.UpdateAsync(cocktailFromDb);
+
+            if (cocktailFromDb.BaseProduct == null)
+            {
+                cocktailFromDb.BaseProduct = await _productsRepo.GetByIdAsync((int)cocktailFromDb.BaseProductId);
+            }
+
+            var editedCocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
+            return Ok(editedCocktailToReturn);
+        }
+
+        private async Task<ActionResult<CocktailDetailsToReturnDto>> CreateNewCocktail(
+            Cocktail cocktail,
+            CocktailToManageDto dto)
+        {
+            cocktail.BaseProductId = GetCocktailBaseProductId(cocktail);
+            await _cocktailsRepo.AddAsync(cocktail);
+
+            bool hasPictureUpdate = await ProcessPictureUpload(dto, cocktail, cocktail);
+
+            if (hasPictureUpdate)
+            {
+                await _cocktailsRepo.UpdateAsync(cocktail);
+            }
+
+            var spec = new CocktailByPrivacyWithIngredientsSpecification(cocktail.Id, dto.IsPrivate);
+            var cocktailFromDb = await _cocktailsRepo.GetEntityWithSpec(spec);
+
+            var cocktailToReturn = _mapper.Map<CocktailDetailsToReturnDto>(cocktailFromDb);
+            return CreatedAtAction(nameof(GetCocktailById), new { id = cocktailToReturn.Id }, cocktailToReturn);
+        }
+
+        private async Task<bool> ProcessPictureUpload(
+            CocktailToManageDto dto,
+            Cocktail cocktailToUpdate,
+            Cocktail existingCocktail)
+        {
+            bool hasPicture = dto.Picture != null && dto.Picture.Length != 0;
+
+            if (!hasPicture)
+            {
+                return false;
+            }
+
+            string container = _config["AzureBlobStorage:PublicCocktailPicturesContainer"];
+
+            await _cocktailPicturesService.DeletePreviousPictureIfExists(existingCocktail, container);
+
+            var newBlobName = _cocktailPicturesService.GenerateNewBlobName(existingCocktail.Id);
+            cocktailToUpdate.Picture = $"{container}/{newBlobName}";
+
+            await _blobService.UploadFileStreamBlobAsync(container, dto.Picture.OpenReadStream(), newBlobName);
+
+            return true;
         }
     }
 }

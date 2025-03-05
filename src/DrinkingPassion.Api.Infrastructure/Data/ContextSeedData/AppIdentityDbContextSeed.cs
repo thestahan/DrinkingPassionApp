@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DrinkingPassion.Api.Infrastructure.Data.ContextSeedData
 {
-    public class AppIdentityDbContextSeed
+    public static class AppIdentityDbContextSeed
     {
         public static async Task SeedUserAsync(UserManager<AppUser> userManager)
         {

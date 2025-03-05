@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DrinkingPassion.Api.Infrastructure.Data.ContextSeedData
 {
-    public class AppDataDbContextSeed
+    public static class AppDataDbContextSeed
     {
         public static async Task SeedDataAsync(AppDbContext context)
         {
@@ -33,7 +33,7 @@ namespace DrinkingPassion.Api.Infrastructure.Data.ContextSeedData
                     }
                 };
 
-                context.AddRange(productTypes);
+                await context.AddRangeAsync(productTypes);
 
                 await context.SaveChangesAsync();
             }
@@ -58,21 +58,21 @@ namespace DrinkingPassion.Api.Infrastructure.Data.ContextSeedData
                     }
                 };
 
-                context.AddRange(productUnits);
+                await context.AddRangeAsync(productUnits);
 
                 await context.SaveChangesAsync();
             }
 
             if (!context.Products.Any())
             {
-                var gram = context.ProductUnits.Where(x => x.Name.ToLower() == "gram").FirstOrDefault();
-                var ml = context.ProductUnits.Where(x => x.Name.ToLower() == "mililitr").FirstOrDefault();
+                var gram = context.ProductUnits.Where(x => x.Name.Equals("gram", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var ml = context.ProductUnits.Where(x => x.Name.Equals("mililitr", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
-                var strongAlcohol = context.ProductTypes.Where(x => x.Name.ToLower() == "mocny alkohol").FirstOrDefault();
-                var liqueur = context.ProductTypes.Where(x => x.Name.ToLower() == "likier").FirstOrDefault();
-                var juice = context.ProductTypes.Where(x => x.Name.ToLower() == "sok").FirstOrDefault();
-                var wine = context.ProductTypes.Where(x => x.Name.ToLower() == "wino").FirstOrDefault();
-                var bitter = context.ProductTypes.Where(x => x.Name.ToLower() == "bitter").FirstOrDefault();
+                var strongAlcohol = context.ProductTypes.Where(x => x.Name.Equals("mocny alkohol", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var liqueur = context.ProductTypes.Where(x => x.Name.Equals("likier", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var juice = context.ProductTypes.Where(x => x.Name.Equals("sok", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var wine = context.ProductTypes.Where(x => x.Name.Equals("wino", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var bitter = context.ProductTypes.Where(x => x.Name.Equals("bitter", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
                 var products = new List<Product>
                 {
@@ -128,19 +128,19 @@ namespace DrinkingPassion.Api.Infrastructure.Data.ContextSeedData
                     }
                 };
 
-                context.AddRange(products);
+                await context.AddRangeAsync(products);
 
                 await context.SaveChangesAsync();
             }
 
             if (!context.Cocktails.Any())
             {
-                var tequila = context.Products.Where(x => x.Name.ToLower() == "tequila").FirstOrDefault();
-                var limeJuice = context.Products.Where(x => x.Name.ToLower() == "sok z limonki").FirstOrDefault();
-                var tripleSec = context.Products.Where(x => x.Name.ToLower() == "triple sec").FirstOrDefault();
-                var gin = context.Products.Where(x => x.Name.ToLower() == "gin").FirstOrDefault();
-                var vermouth = context.Products.Where(x => x.Name.ToLower() == "wermut").FirstOrDefault();
-                var campari = context.Products.Where(x => x.Name.ToLower() == "campari").FirstOrDefault();
+                var tequila = context.Products.Where(x => x.Name.Equals("tequila", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var limeJuice = context.Products.Where(x => x.Name.Equals("sok z limonki", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var tripleSec = context.Products.Where(x => x.Name.Equals("triple sec", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var gin = context.Products.Where(x => x.Name.Equals("gin", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var vermouth = context.Products.Where(x => x.Name.Equals("wermut", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+                var campari = context.Products.Where(x => x.Name.Equals("campari", System.StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
                 var cocktails = new List<Cocktail>();
 

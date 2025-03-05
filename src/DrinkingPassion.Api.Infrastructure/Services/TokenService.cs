@@ -1,6 +1,8 @@
 ﻿using DrinkingPassion.Api.Core.Entities.Identity;
 using DrinkingPassion.Api.Core.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -15,10 +17,18 @@ namespace DrinkingPassion.Api.Infrastructure.Services
         private readonly IConfiguration _config;
         private readonly SymmetricSecurityKey _key;
 
-        public TokenService(IConfiguration config)
+        public TokenService(IConfiguration config, IWebHostEnvironment env)
         {
             _config = config;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
+
+            if (env.IsDevelopment())
+            {
+                _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
+            }
+            else
+            {
+                // Option for production: use environment variable or Azure Key Vault
+            }
         }
 
         public string CreateToken(AppUser user, IList<string> roles)

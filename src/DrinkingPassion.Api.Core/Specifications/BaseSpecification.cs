@@ -6,19 +6,18 @@ namespace DrinkingPassion.Api.Core.Specifications
 {
     public abstract class BaseSpecification<T> : DrinkingPassion.Api.Core.Specifications.ISpecification<T>
     {
-        public BaseSpecification(Expression<Func<T, bool>> criteria)
+        protected BaseSpecification(Expression<Func<T, bool>> criteria)
         {
             Criteria = criteria;
         }
 
-        public BaseSpecification()
+        protected BaseSpecification()
         {
-
         }
 
         public Expression<Func<T, bool>> Criteria { get; }
 
-        public List<Expression<Func<T, object>>> Includes { get; } = 
+        public List<Expression<Func<T, object>>> Includes { get; } =
             new List<Expression<Func<T, object>>>();
 
         public List<string> IncludeStrings { get; } = new List<string>();

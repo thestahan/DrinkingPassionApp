@@ -4,6 +4,8 @@ using DrinkingPassion.Api.Core.Entities.Identity;
 using DrinkingPassion.Api.Core.Interfaces;
 using DrinkingPassion.Api.Core.Specifications.Ingredients;
 using DrinkingPassion.Api.Core.Specifications.Products;
+using DrinkingPassion.Api.Dtos.Ingredients;
+using DrinkingPassion.Api.Dtos.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +25,13 @@ namespace DrinkingPassion.Api.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
 
-        public ProductsController(IGenericRepository<Product> productsRepo, IGenericRepository<ProductUnit> productUnitsRepo, IGenericRepository<ProductType> productTypesRepo, IMapper mapper, UserManager<AppUser> userManager, IGenericRepository<Ingredient> ingredientsRepo)
+        public ProductsController(
+            IGenericRepository<Product> productsRepo,
+            IGenericRepository<ProductUnit> productUnitsRepo,
+            IGenericRepository<ProductType> productTypesRepo,
+            IMapper mapper,
+            UserManager<AppUser> userManager,
+            IGenericRepository<Ingredient> ingredientsRepo)
         {
             _productsRepo = productsRepo;
             _productUnitsRepo = productUnitsRepo;
@@ -35,19 +43,19 @@ namespace DrinkingPassion.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet("Public")]
-        public async Task<ActionResult<IReadOnlyList<Dtos.Products.ProductToReturnDto>>> GetPublicProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetPublicProducts()
         {
             var spec = new ProductsWithTypesAndUnitsSpecification(false);
 
             var products = await _productsRepo.ListAsync(spec);
 
-            var productsToReturn = _mapper.Map<IReadOnlyList<Dtos.Products.ProductToReturnDto>>(products);
+            var productsToReturn = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
 
             return Ok(productsToReturn);
         }
 
         [HttpGet("Private")]
-        public async Task<ActionResult<IReadOnlyList<Dtos.Products.ProductToReturnDto>>> GetPrivateProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetPrivateProducts()
         {
             var user = await GetAuthorizedUser();
 
@@ -55,13 +63,13 @@ namespace DrinkingPassion.Api.Controllers
 
             var products = await _productsRepo.ListAsync(spec);
 
-            var productsToReturn = _mapper.Map<IReadOnlyList<Dtos.Products.ProductToReturnDto>>(products);
+            var productsToReturn = _mapper.Map<IReadOnlyList<ProductToReturnDto>>(products);
 
             return Ok(productsToReturn);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dtos.Products.ProductToReturnDto>> GetProduct(int id)
+        public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {
             var user = await GetAuthorizedUser();
 
@@ -72,16 +80,16 @@ namespace DrinkingPassion.Api.Controllers
             if (product == null ||
                 product.IsPrivate && product.AuthorId != user.Id)
             {
-                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
-            var productToReturn = _mapper.Map<Dtos.Products.ProductToReturnDto>(product);
+            var productToReturn = _mapper.Map<ProductToReturnDto>(product);
 
             return Ok(productToReturn);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Dtos.Products.ProductToReturnDto>> AddProduct(Dtos.Products.ProductToAddDto product)
+        public async Task<ActionResult<ProductToReturnDto>> AddProduct(ProductToAddDto product)
         {
             var user = await GetAuthorizedUser();
 
@@ -91,14 +99,14 @@ namespace DrinkingPassion.Api.Controllers
 
             if (!productTypeExists)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Typ produktu o podanym id nie istnieje"));
+                return BadRequest(new Errors.ApiResponse(400, "Typ produktu o podanym id nie istnieje"));
             }
 
             bool productUnitExists = await _productUnitsRepo.EntityExistsAsync(product.ProductUnitId);
 
             if (!productUnitExists)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Jednostka o podanym id nie istnieje"));
+                return BadRequest(new Errors.ApiResponse(400, "Jednostka o podanym id nie istnieje"));
             }
 
             var productToAdd = _mapper.Map<Product>(product);
@@ -116,13 +124,13 @@ namespace DrinkingPassion.Api.Controllers
 
             var createdProductWithTypeAndUnit = await _productsRepo.GetEntityWithSpec(spec);
 
-            var productToReturn = _mapper.Map<Dtos.Products.ProductToReturnDto>(createdProductWithTypeAndUnit);
+            var productToReturn = _mapper.Map<ProductToReturnDto>(createdProductWithTypeAndUnit);
 
             return CreatedAtAction(nameof(GetProduct), new { id = productToReturn.Id }, productToReturn);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateProduct(int id, Dtos.Products.ProductToUpdateDto productToUpdate)
+        public async Task<ActionResult> UpdateProduct(int id, ProductToUpdateDto productToUpdate)
         {
             var user = await GetAuthorizedUser();
 
@@ -132,19 +140,19 @@ namespace DrinkingPassion.Api.Controllers
 
             if (!productTypeExists)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Typ produktu o podanym id nie istnieje"));
+                return BadRequest(new Errors.ApiResponse(400, "Typ produktu o podanym id nie istnieje"));
             }
 
             bool productUnitExists = await _productUnitsRepo.EntityExistsAsync(productToUpdate.ProductUnitId);
 
             if (!productUnitExists)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Jednostka o podanym id nie istnieje"));
+                return BadRequest(new Errors.ApiResponse(400, "Jednostka o podanym id nie istnieje"));
             }
 
             if (id != productToUpdate.Id)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Id URI zgadza się z id produktu"));
+                return BadRequest(new Errors.ApiResponse(400, "Id URI zgadza się z id produktu"));
             }
 
             var product = await _productsRepo.GetByIdAsync(id);
@@ -153,7 +161,7 @@ namespace DrinkingPassion.Api.Controllers
                 product.IsPrivate && product.AuthorId != user.Id ||
                 !product.IsPrivate && !isAdmin)
             {
-                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
             product.Name = productToUpdate.Name;
@@ -176,9 +184,9 @@ namespace DrinkingPassion.Api.Controllers
 
             if (product == null ||
                 !product.IsPrivate && !isAdmin ||
-                product.IsPrivate && product.AuthorId != product.AuthorId)
+                product.IsPrivate && product.AuthorId != user.Id)
             {
-                return NotFound(new DrinkingPassion.Api.Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiResponse(404));
             }
 
             await _productsRepo.DeleteAsync(product);
@@ -188,7 +196,7 @@ namespace DrinkingPassion.Api.Controllers
 
         [Authorize]
         [HttpGet("IsPartOfCocktail")]
-        public async Task<bool> IngredientIsPartOfAnyCocktail([FromQuery] DrinkingPassion.Api.Dtos.Ingredients.IngredientAsPartOfCocktailDto dto)
+        public async Task<bool> IngredientIsPartOfAnyCocktail([FromQuery] IngredientAsPartOfCocktailDto dto)
         {
             var user = await GetAuthorizedUser();
 
