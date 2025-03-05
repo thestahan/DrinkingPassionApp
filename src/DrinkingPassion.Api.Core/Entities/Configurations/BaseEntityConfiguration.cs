@@ -6,7 +6,7 @@ namespace DrinkingPassion.Api.Core.Entities.Configurations
 {
     public static class BaseEntityConfiguration
     {
-        private static void Configure<TEntity, T>(ModelBuilder modelBuilder)
+        private static void Configure<TEntity>(ModelBuilder modelBuilder)
             where TEntity : BaseEntity
         {
             modelBuilder.Entity<TEntity>(builder =>

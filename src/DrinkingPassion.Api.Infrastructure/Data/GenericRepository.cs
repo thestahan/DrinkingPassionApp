@@ -19,7 +19,7 @@ namespace DrinkingPassion.Api.Infrastructure.Data
 
         public async Task<T> AddAsync(T entity)
         {
-            _context.Set<T>().Add(entity);
+            await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
 
             return entity;

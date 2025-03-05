@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DrinkingPassion.Api.Infrastructure.Data.ContextSeedData
 {
-    public class AppRolesDbContextSeed
+    public static class AppRolesDbContextSeed
     {
         public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
