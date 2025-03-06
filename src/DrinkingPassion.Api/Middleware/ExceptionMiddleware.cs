@@ -11,10 +11,12 @@ namespace DrinkingPassion.Api.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<DrinkingPassion.Api.Middleware.ExceptionMiddleware> _logger;
+        private readonly ILogger<ExceptionMiddleware> _logger;
         private readonly IHostEnvironment _env;
 
-        public ExceptionMiddleware(RequestDelegate next, ILogger<DrinkingPassion.Api.Middleware.ExceptionMiddleware> logger,
+        public ExceptionMiddleware(
+            RequestDelegate next,
+            ILogger<ExceptionMiddleware> logger,
             IHostEnvironment env)
         {
             _next = next;
@@ -35,8 +37,8 @@ namespace DrinkingPassion.Api.Middleware
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 var response = _env.IsDevelopment()
-                    ? new DrinkingPassion.Api.Errors.ApiException((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString())
-                    : new DrinkingPassion.Api.Errors.ApiException((int)HttpStatusCode.InternalServerError);
+                    ? new Errors.ApiInternalErrorResponse((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace?.ToString())
+                    : new Errors.ApiInternalErrorResponse((int)HttpStatusCode.InternalServerError);
 
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 

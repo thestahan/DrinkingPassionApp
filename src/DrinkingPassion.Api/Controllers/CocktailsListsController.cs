@@ -40,6 +40,11 @@ namespace DrinkingPassion.Api.Controllers
         {
             var user = await GetAuthorizedUser();
 
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
             var spec = new CocktailsListsForUser(user.Id);
 
             var cocktailsLists = await _listsRepo.ListAsync(spec);
@@ -53,6 +58,11 @@ namespace DrinkingPassion.Api.Controllers
         public async Task<ActionResult<Dtos.CocktailsLists.CocktailsListDetailsDto>> GetCocktailsListDetails(int id)
         {
             var user = await GetAuthorizedUser();
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
             var spec = new CocktailsListForUserByIdWithCocktails(user.Id, id);
 
@@ -132,6 +142,11 @@ namespace DrinkingPassion.Api.Controllers
         {
             var user = await GetAuthorizedUser();
 
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
             if (dto.Cocktails.Count == 0)
             {
                 return BadRequest(new Errors.ApiResponse(400));
@@ -148,9 +163,9 @@ namespace DrinkingPassion.Api.Controllers
                 return BadRequest(new Errors.ApiResponse(400));
             }
 
-            if (dto.Id != 0)
+            if (dto.Id.HasValue && dto.Id != 0)
             {
-                var listSpec = new CocktailsListByIdWithCocktails(dto.Id);
+                var listSpec = new CocktailsListByIdWithCocktails(dto.Id.Value);
 
                 var listFromDb = await _listsRepo.GetEntityWithSpec(listSpec);
 
@@ -197,7 +212,7 @@ namespace DrinkingPassion.Api.Controllers
             return NoContent();
         }
 
-        private async Task<AppUser> GetAuthorizedUser()
+        private async Task<AppUser?> GetAuthorizedUser()
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
 

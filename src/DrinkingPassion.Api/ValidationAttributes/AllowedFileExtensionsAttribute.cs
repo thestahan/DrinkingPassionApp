@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
 namespace DrinkingPassion.Api.ValidationAttributes
 {
+    [AttributeUsage(AttributeTargets.Property)]
     public class AllowedFileExtensionsAttribute : ValidationAttribute
     {
         private readonly string[] _extensions;
@@ -14,7 +16,7 @@ namespace DrinkingPassion.Api.ValidationAttributes
             _extensions = extensions;
         }
 
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             if (value is IFormFile file)
             {

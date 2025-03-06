@@ -2,7 +2,7 @@
 
 namespace DrinkingPassion.Api.Helpers
 {
-    public class CocktailHelpers
+    public static class CocktailHelpers
     {
         public static Cocktail ApplyCocktailInfoChangesToCocktail(Dtos.Cocktails.CocktailInfoToUpdateDto toUpdate, Cocktail cocktail)
         {

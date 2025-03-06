@@ -8,8 +8,6 @@ namespace DrinkingPassion.WebApp.Features.Login.Pages;
 
 public partial class LoginPage : FluxorComponent
 {
-    private MudForm _form = default!;
-
     private void SubmitForm()
     {
         Dispatcher.Dispatch(new Store.LoginSubmitAction(Model));
@@ -25,6 +23,8 @@ public partial class LoginPage : FluxorComponent
             NavigationManager.NavigateTo("/");
         }
     }
+
+    protected MudForm Form = default!;
 
     [CascadingParameter]
     protected Task<AuthenticationState> AuthState { get; set; } = default!;

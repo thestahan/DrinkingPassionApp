@@ -44,7 +44,7 @@ namespace DrinkingPassion.Api
                 }
             }
 
-            host.Run();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -56,7 +56,13 @@ namespace DrinkingPassion.Api
                         return;
                     }
 
-                    var client = new SecretClient(new Uri(Environment.GetEnvironmentVariable("VaultUri")), new DefaultAzureCredential());
+                    var vaultUri = Environment.GetEnvironmentVariable("VaultUri");
+                    if (string.IsNullOrEmpty(vaultUri))
+                    {
+                        throw new InvalidOperationException("VaultUri is missing");
+                    }
+
+                    var client = new SecretClient(new Uri(vaultUri), new DefaultAzureCredential());
 
                     config.AddAzureKeyVault(client, new AzureKeyVaultConfigurationOptions());
                 })
