@@ -6,9 +6,9 @@ namespace DrinkingPassion.Api.Dtos.Ingredients
     {
         [Required]
         [Range(.1, 1000)]
-        public double Amount { get; set; }
+        public required double Amount { get; set; }
 
         [Required]
-        public int ProductId { get; set; }
+        public required int ProductId { get; set; }
     }
 }

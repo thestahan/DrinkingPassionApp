@@ -4,10 +4,10 @@ namespace DrinkingPassion.Api.Dtos.Accounts
 {
     public class UserLoginReturnDto
     {
-        public string Email { get; set; }
-        public string DisplayName { get; set; }
-        public string Token { get; set; }
-        public string TokenExpiration { get; set; }
-        public ICollection<string> Roles { get; set; }
+        public required string Email { get; set; }
+        public required string DisplayName { get; set; }
+        public required string Token { get; set; }
+        public required string TokenExpiration { get; set; }
+        public required ICollection<string> Roles { get; set; }
     }
 }

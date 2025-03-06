@@ -2,12 +2,12 @@
 {
     public class ProductToReturnDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string ProductUnit { get; set; }
-        public string ProductUnitAbbreviation { get; set; }
-        public int ProductUnitId { get; set; }
-        public string ProductType { get; set; }
-        public int ProductTypeId { get; set; }
+        public required int Id { get; set; }
+        public required string Name { get; set; }
+        public required string ProductUnit { get; set; }
+        public required string ProductUnitAbbreviation { get; set; }
+        public required int ProductUnitId { get; set; }
+        public required string ProductType { get; set; }
+        public required int ProductTypeId { get; set; }
     }
 }

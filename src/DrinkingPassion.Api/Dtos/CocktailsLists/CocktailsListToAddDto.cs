@@ -5,11 +5,11 @@ namespace DrinkingPassion.Api.Dtos.CocktailsLists
 {
     public class CocktailsListToAddDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
-        public IReadOnlyList<int> Cocktails { get; set; } = new List<int>();
+        public required IReadOnlyList<int> Cocktails { get; set; } = [];
     }
 }
