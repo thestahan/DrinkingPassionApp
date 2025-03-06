@@ -6,10 +6,10 @@ namespace DrinkingPassion.Api.Dtos.Accounts
     {
         [Required]
         [MinLength(8)]
-        public string CurrentPassword { get; set; }
+        public required string CurrentPassword { get; set; }
 
         [Required]
         [MinLength(8)]
-        public string NewPassword { get; set; }
+        public required string NewPassword { get; set; }
     }
 }

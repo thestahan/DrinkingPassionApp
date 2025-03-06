@@ -2,8 +2,8 @@
 {
     public class CocktailBasicInfoDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public bool IsPrivate { get; set; }
+        public required int Id { get; set; }
+        public required string Name { get; set; }
+        public required bool IsPrivate { get; set; }
     }
 }

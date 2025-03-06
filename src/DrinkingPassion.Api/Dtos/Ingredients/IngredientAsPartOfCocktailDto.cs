@@ -2,7 +2,7 @@
 {
     public class IngredientAsPartOfCocktailDto
     {
-        public int Id { get; set; }
-        public bool IsPrivate { get; set; }
+        public required int Id { get; set; }
+        public required bool IsPrivate { get; set; }
     }
 }

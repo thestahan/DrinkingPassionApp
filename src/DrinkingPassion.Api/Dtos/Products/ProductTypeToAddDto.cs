@@ -6,6 +6,6 @@ namespace DrinkingPassion.Api.Dtos.Products
     {
         [StringLength(maximumLength: 60, MinimumLength = 3)]
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
     }
 }

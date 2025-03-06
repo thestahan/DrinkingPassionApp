@@ -6,15 +6,15 @@ namespace DrinkingPassion.Api.Dtos.Products
     {
         [Required]
         [StringLength(maximumLength: 60, MinimumLength = 2)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
-        public bool IsPrivate { get; set; }
+        public required bool IsPrivate { get; set; }
 
         [Required]
-        public int ProductUnitId { get; set; }
+        public required int ProductUnitId { get; set; }
 
         [Required]
-        public int ProductTypeId { get; set; }
+        public required int ProductTypeId { get; set; }
     }
 }

@@ -2,10 +2,10 @@
 {
     public class CocktailToReturnDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Picture { get; set; }
-        public string BaseIngredient { get; set; }
+        public required int Id { get; set; }
+        public required string Name { get; set; }
+        public string? Picture { get; set; }
+        public string? BaseIngredient { get; set; }
         public int IngredientsCount { get; set; }
         public bool IsPrivate { get; set; }
     }
