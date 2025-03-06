@@ -28,7 +28,7 @@ namespace DrinkingPassion.Api.Core.Entities.Configurations
             {
                 if (entityType.ClrType.IsSubclassOf(typeof(BaseEntity)))
                 {
-                    method.MakeGenericMethod(entityType.ClrType, typeof(BaseEntity)).Invoke(null, new[] { modelBuilder });
+                    method.MakeGenericMethod(entityType.ClrType).Invoke(null, new object[] { modelBuilder });
                 }
             }
 

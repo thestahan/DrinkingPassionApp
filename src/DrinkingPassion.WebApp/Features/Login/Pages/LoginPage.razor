@@ -6,7 +6,7 @@
 <MudGrid Class="d-flex justify-center">
     <MudItem xs="12" sm="7">
         <MudText Typo="Typo.h5" Color="Color.Primary">Logowanie</MudText>
-        <MudForm @ref="_form">
+        <MudForm @ref="Form">
             <MudTextField T="string" Label="Adres email" @bind-Value="Model.Email" />
             <MudTextField T="string" Label="Hasło" InputType="InputType.Password" @bind-Value="Model.Password" />
             <MudButton Disabled="@LoginState.Value.IsSending"
