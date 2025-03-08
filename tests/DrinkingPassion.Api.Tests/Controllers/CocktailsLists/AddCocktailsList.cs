@@ -37,7 +37,9 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
         public async Task ReturnsBadRequest_When_NameIsInvalid(string name)
         {
             // Arrange
-            var dto = new CocktailsListToAddDto { Name = name };
+            var dto = new CocktailsListToAddDto { Name = name, Cocktails = [] };
+
+            _userManagerMock.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(new AppUser { Id = "123" });
 
             var controller = new CocktailsListsController(_cocktailsListsRepoMock.Object,
                                                           _userManagerMock.Object,
@@ -58,7 +60,7 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
         public async Task ReturnsBadRequest_When_CocktailsCountIsZero()
         {
             // Arrange
-            var dto = new CocktailsListToAddDto();
+            var dto = new CocktailsListToAddDto { Name = "Name", Cocktails = [] };
 
             _userManagerMock.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(new AppUser { Id = "123" });
 

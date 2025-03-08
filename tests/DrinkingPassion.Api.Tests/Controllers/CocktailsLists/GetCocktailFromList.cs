@@ -80,7 +80,7 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
             _userManagerMock.Setup(u => u.FindByNameAsync(_username)).ReturnsAsync(new AppUser { UserName = _username });
             _cocktailsListsRepoMock.Setup(c => c.EntityExistsWithSpecAsync(It.IsAny<CocktailsListWithCocktailExists>())).ReturnsAsync(true);
             _cocktailsRepoMock.Setup(c => c.GetEntityWithSpec(It.IsAny<CocktailWithIngredientsSpecification>())).ReturnsAsync(new Cocktail { Id = 1 });
-            _mapperMock.Setup(m => m.Map<CocktailDetailsToReturnDto>(It.IsAny<Cocktail>())).Returns(new CocktailDetailsToReturnDto { Id = 1 });
+            _mapperMock.Setup(m => m.Map<CocktailDetailsToReturnDto>(It.IsAny<Cocktail>())).Returns(new CocktailDetailsToReturnDto { Id = 1, Name = string.Empty, BaseIngredient = string.Empty, IngredientsCount = 1 });
 
             var controller = new CocktailsListsController(_cocktailsListsRepoMock.Object,
                                                           _userManagerMock.Object,

@@ -36,7 +36,7 @@ namespace DrinkingPassion.Api.Controllers
         [HttpGet("Details")]
         public async Task<ActionResult<Dtos.Accounts.UserDetailsDto>> GetUserDetails()
         {
-            var email = User.FindFirstValue(ClaimTypes.Email);
+            var email = User.FindFirstValue(ClaimTypes.Email)!;
 
             var user = await _userManager.FindByEmailAsync(email);
 
@@ -104,7 +104,7 @@ namespace DrinkingPassion.Api.Controllers
 
             return new Dtos.Accounts.UserLoginReturnDto
             {
-                Email = user.Email,
+                Email = user.Email!,
                 DisplayName = user.DisplayName,
                 Token = jwt,
                 TokenExpiration = "86400",
@@ -146,7 +146,7 @@ namespace DrinkingPassion.Api.Controllers
 
             return new Dtos.Accounts.UserRegisterReturnDto
             {
-                Email = user.Email,
+                Email = user.Email!,
                 DisplayName = user.DisplayName
             };
         }
@@ -203,9 +203,14 @@ namespace DrinkingPassion.Api.Controllers
         [HttpPatch("ChangePassword")]
         public async Task<ActionResult> ChangePassword(Dtos.Accounts.ChangePasswordDto passwordDto)
         {
-            var email = User.FindFirstValue(ClaimTypes.Email);
+            var email = User.FindFirstValue(ClaimTypes.Email)!;
 
             var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null)
+            {
+                return BadRequest(new Errors.ApiResponse(400));
+            }
 
             var result = await _userManager.ChangePasswordAsync(user, passwordDto.CurrentPassword, passwordDto.NewPassword);
 
@@ -221,9 +226,14 @@ namespace DrinkingPassion.Api.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUserProfile(Dtos.Accounts.UserUpdateDto updateDto)
         {
-            var email = User.FindFirstValue(ClaimTypes.Email);
+            var email = User.FindFirstValue(ClaimTypes.Email)!;
 
             var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null)
+            {
+                return BadRequest(new Errors.ApiResponse(400));
+            }
 
             user.FirstName = updateDto.FirstName;
             user.LastName = updateDto.LastName;
