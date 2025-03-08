@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,6 +23,7 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
         private Mock<IGenericRepository<CocktailsList>> _cocktailsListsRepoMock;
         private Mock<IGenericRepository<Cocktail>> _cocktailsRepoMock;
         private Mock<IMapper> _mapperMock;
+        private static DateTime _currentDate = DateTime.Now;
 
         [SetUp]
         public void SetUp()
@@ -73,8 +75,8 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
         private static List<CocktailsListDto> GetMappedTestCocktailsLists() =>
             new()
             {
-                new CocktailsListDto { Id = 1 },
-                new CocktailsListDto { Id = 2 },
+                new CocktailsListDto { Id = 1, Name = "Test 1", Slug = string.Empty, CocktailsCount = 1, CreatedDate = _currentDate },
+                new CocktailsListDto { Id = 2, Name = "Test 2", Slug = string.Empty, CocktailsCount = 1, CreatedDate = _currentDate },
             };
     }
 }
