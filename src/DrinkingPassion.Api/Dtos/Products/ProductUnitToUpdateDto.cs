@@ -1,17 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 
 namespace DrinkingPassion.Api.Dtos.Products;
 
 public class ProductUnitToUpdateDto : ICommandDto
 {
-    [StringLength(maximumLength: 15, MinimumLength = 1)]
-    [Required]
     public required string Abbreviation { get; set; }
-
-    [Required]
     public int Id { get; set; }
-
-    [StringLength(maximumLength: 30, MinimumLength = 2)]
-    [Required]
     public required string Name { get; set; }
+}
+
+public class ProductUnitToUpdateDtoValidator : AbstractValidator<ProductUnitToUpdateDto>
+{
+    public ProductUnitToUpdateDtoValidator()
+    {
+        RuleFor(x => x.Abbreviation).NotEmpty().Length(1, 15);
+        RuleFor(x => x.Id).GreaterThan(0);
+        RuleFor(x => x.Name).NotEmpty().Length(2, 30);
+    }
 }

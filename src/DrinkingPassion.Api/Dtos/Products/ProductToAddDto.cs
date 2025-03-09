@@ -1,19 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 
 namespace DrinkingPassion.Api.Dtos.Products;
 
 public class ProductToAddDto : ICommandDto
 {
-    [Required]
     public required bool IsPrivate { get; set; }
-
-    [Required]
-    [StringLength(maximumLength: 60, MinimumLength = 2)]
     public required string Name { get; set; }
-
-    [Required]
     public required int ProductTypeId { get; set; }
-
-    [Required]
     public required int ProductUnitId { get; set; }
+}
+
+public class ProductToAddDtoValidator : AbstractValidator<ProductToAddDto>
+{
+    public ProductToAddDtoValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().Length(2, 60);
+        RuleFor(x => x.ProductTypeId).GreaterThan(0);
+        RuleFor(x => x.ProductUnitId).GreaterThan(0);
+    }
 }

@@ -1,25 +1,25 @@
 ﻿using DrinkingPassion.Api.Core.Entities.Enums;
-using System.ComponentModel.DataAnnotations;
+using FluentValidation;
 
 namespace DrinkingPassion.Api.Dtos.Accounts;
 
 public class UserUpdateDto : ICommandDto
 {
-    [Required]
     public required BartenderType BartenderType { get; set; }
-
-    [Required]
-    [StringLength(40, MinimumLength = 3)]
     public required string DisplayName { get; set; }
-
-    [Required]
-    [EmailAddress]
-    [StringLength(60, MinimumLength = 4)]
     public required string Email { get; set; }
-
-    [StringLength(60, MinimumLength = 2)]
     public string? FirstName { get; set; }
-
-    [StringLength(60, MinimumLength = 2)]
     public string? LastName { get; set; }
+}
+
+public class UserUpdateDtoValidator : AbstractValidator<UserUpdateDto>
+{
+    public UserUpdateDtoValidator()
+    {
+        RuleFor(x => x.BartenderType).IsInEnum();
+        RuleFor(x => x.DisplayName).NotEmpty().Length(3, 40);
+        RuleFor(x => x.Email).NotEmpty().EmailAddress().Length(4, 60);
+        RuleFor(x => x.FirstName).Length(2, 60);
+        RuleFor(x => x.LastName).Length(2, 60);
+    }
 }

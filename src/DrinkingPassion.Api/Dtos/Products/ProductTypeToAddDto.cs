@@ -1,10 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
 
 namespace DrinkingPassion.Api.Dtos.Products;
 
 public class ProductTypeToAddDto : ICommandDto
 {
-    [StringLength(maximumLength: 60, MinimumLength = 3)]
-    [Required]
     public required string Name { get; set; }
+}
+
+public class ProductTypeToAddDtoValidator : AbstractValidator<ProductTypeToAddDto>
+{
+    public ProductTypeToAddDtoValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().Length(3, 60);
+    }
 }

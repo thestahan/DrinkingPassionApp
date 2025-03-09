@@ -9,6 +9,7 @@
     <PackageVersion Include="Azure.Identity" Version="1.13.2" />
     <PackageVersion Include="Azure.Storage.Blobs" Version="12.23.0" />
     <PackageVersion Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageVersion Include="Fluxor.Blazor.Web" Version="6.6.0" />
     <PackageVersion Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.6.0" />
     <PackageVersion Include="MailKit" Version="4.10.0" />
