@@ -65,7 +65,7 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
             // Arrange
             _userManagerMock.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(new AppUser { Id = "123" });
             _cocktailsListsRepoMock.Setup(c => c.GetEntityWithSpec(It.IsAny<CocktailsListForUserByIdWithCocktails>())).ReturnsAsync(new CocktailsList { Id = 1 });
-            _mapperMock.Setup(m => m.Map<CocktailsListDetailsDto>(It.IsAny<CocktailsList>())).Returns(new CocktailsListDetailsDto { Id = 1 });
+            _mapperMock.Setup(m => m.Map<CocktailsListDetailsToReturnDto>(It.IsAny<CocktailsList>())).Returns(new CocktailsListDetailsToReturnDto { Id = 1 });
 
             var controller = new CocktailsListsController(_cocktailsListsRepoMock.Object,
                                                           _userManagerMock.Object,
@@ -80,11 +80,11 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
 
             //Act
             var result = (await controller.GetCocktailsListDetails(1)).Result as ObjectResult;
-            var mappedList = result.Value as CocktailsListDetailsDto;
+            var mappedList = result.Value as CocktailsListDetailsToReturnDto;
 
             // Assert
             Assert.That(mappedList, Is.Not.Null);
-            Assert.That(mappedList, Is.InstanceOf<CocktailsListDetailsDto>());
+            Assert.That(mappedList, Is.InstanceOf<CocktailsListDetailsToReturnDto>());
             Assert.That(mappedList, Has.Property("Id").EqualTo(1));
         }
     }

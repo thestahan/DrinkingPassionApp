@@ -2,29 +2,27 @@
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace DrinkingPassion.Api.Dtos.Cocktails
+namespace DrinkingPassion.Api.Dtos.Cocktails;
+
+public class CocktailToManageDto : ICommandDto
 {
-    public class CocktailToManageDto
-    {
-        public int? Id { get; set; }
+    public int BaseProductId { get; set; }
 
-        [Required]
-        [StringLength(maximumLength: 60, MinimumLength = 2)]
-        public required string Name { get; set; }
+    public string? Description { get; set; }
+    public int? Id { get; set; }
 
-        [MaxFileSize(5 * 1024 * 1014)]
-        [AllowedFileExtensions([".jpg", ".jpeg", ".png"])]
-        public IFormFile? Picture { get; set; }
+    [Required]
+    public required string Ingredients { get; set; }
 
-        public string? Description { get; set; }
+    public bool IsPrivate { get; set; }
 
-        public string? PreparationInstruction { get; set; }
+    [Required]
+    [StringLength(maximumLength: 60, MinimumLength = 2)]
+    public required string Name { get; set; }
 
-        public int BaseProductId { get; set; }
+    [MaxFileSize(5 * 1024 * 1014)]
+    [AllowedFileExtensions([".jpg", ".jpeg", ".png"])]
+    public IFormFile? Picture { get; set; }
 
-        [Required]
-        public required string Ingredients { get; set; }
-
-        public bool IsPrivate { get; set; }
-    }
+    public string? PreparationInstruction { get; set; }
 }

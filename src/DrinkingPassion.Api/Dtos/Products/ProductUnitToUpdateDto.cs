@@ -1,18 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DrinkingPassion.Api.Dtos.Products
+namespace DrinkingPassion.Api.Dtos.Products;
+
+public class ProductUnitToUpdateDto : ICommandDto
 {
-    public class ProductUnitToUpdateDto
-    {
-        [Required]
-        public int Id { get; set; }
+    [StringLength(maximumLength: 15, MinimumLength = 1)]
+    [Required]
+    public required string Abbreviation { get; set; }
 
-        [StringLength(maximumLength: 30, MinimumLength = 2)]
-        [Required]
-        public required string Name { get; set; }
+    [Required]
+    public int Id { get; set; }
 
-        [StringLength(maximumLength: 15, MinimumLength = 1)]
-        [Required]
-        public required string Abbreviation { get; set; }
-    }
+    [StringLength(maximumLength: 30, MinimumLength = 2)]
+    [Required]
+    public required string Name { get; set; }
 }

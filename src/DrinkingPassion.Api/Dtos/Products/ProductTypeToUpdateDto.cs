@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DrinkingPassion.Api.Dtos.Products
-{
-    public class ProductTypeToUpdateDto
-    {
-        [Required]
-        public int Id { get; set; }
+namespace DrinkingPassion.Api.Dtos.Products;
 
-        [StringLength(maximumLength: 60, MinimumLength = 3)]
-        [Required]
-        public required string Name { get; set; }
-    }
+public class ProductTypeToUpdateDto : ICommandDto
+{
+    [Required]
+    public int Id { get; set; }
+
+    [StringLength(maximumLength: 60, MinimumLength = 3)]
+    [Required]
+    public required string Name { get; set; }
 }

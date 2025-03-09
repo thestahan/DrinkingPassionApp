@@ -28,7 +28,7 @@ namespace DrinkingPassion.Api.Helpers
                 .ForMember(
                     dest => dest.BaseIngredient,
                     opt => opt.MapFrom(src => src.BaseProduct.Name));
-            CreateMap<Cocktail, Dtos.Cocktails.CocktailBasicInfoDto>();
+            CreateMap<Cocktail, Dtos.Cocktails.CocktailBasicInfoToReturnDto>();
             CreateMap<Ingredient, Dtos.Ingredients.IngredientToReturnDto>()
                 .ForMember(
                     dest => dest.Name,
@@ -61,7 +61,7 @@ namespace DrinkingPassion.Api.Helpers
                     opt => opt.MapFrom(src => src.ProductType.Id));
             CreateMap<Dtos.Products.ProductToAddDto, Product>();
             CreateMap<Dtos.Products.ProductToUpdateDto, Product>();
-            CreateMap<AppUser, Dtos.Accounts.UserDetailsDto>();
+            CreateMap<AppUser, Dtos.Accounts.UserDetailsToReturnDto>();
             CreateMap<Dtos.Accounts.UserRegisterDto, AppUser>()
                 .ForMember(
                     dest => dest.UserName,
@@ -70,8 +70,8 @@ namespace DrinkingPassion.Api.Helpers
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));
-            CreateMap<CocktailsList, Dtos.CocktailsLists.CocktailsListDetailsDto>();
-            CreateMap<CocktailsList, Dtos.CocktailsLists.CocktailsListDto>();
+            CreateMap<CocktailsList, Dtos.CocktailsLists.CocktailsListDetailsToReturnDto>();
+            CreateMap<CocktailsList, Dtos.CocktailsLists.CocktailsListToReturnDto>();
             CreateMap<Dtos.CocktailsLists.CocktailsListToAddDto, CocktailsList>()
                 .ForMember(
                     dest => dest.Cocktails,

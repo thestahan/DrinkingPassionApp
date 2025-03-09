@@ -96,7 +96,7 @@ namespace DrinkingPassion.Api.Controllers
 
         [Authorize]
         [HttpGet("AvailableCocktailsForUser")]
-        public async Task<ActionResult<List<CocktailBasicInfoDto>>> GetCocktailsAvailableForUser()
+        public async Task<ActionResult<List<CocktailBasicInfoToReturnDto>>> GetCocktailsAvailableForUser()
         {
             var user = await GetAuthorizedUser();
 
@@ -104,7 +104,7 @@ namespace DrinkingPassion.Api.Controllers
 
             var cocktails = await _cocktailsRepo.ListAsync(spec);
 
-            var mappedCocktails = _mapper.Map<IReadOnlyList<CocktailBasicInfoDto>>(cocktails);
+            var mappedCocktails = _mapper.Map<IReadOnlyList<CocktailBasicInfoToReturnDto>>(cocktails);
 
             return Ok(mappedCocktails);
         }

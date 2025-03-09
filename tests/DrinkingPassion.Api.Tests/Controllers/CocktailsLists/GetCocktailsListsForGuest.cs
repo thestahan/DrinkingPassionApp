@@ -75,7 +75,7 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
             //Arrange
             _userManagerMock.Setup(u => u.FindByNameAsync(username)).ReturnsAsync(new AppUser());
             _cocktailsListsRepoMock.Setup(r => r.GetEntityWithSpec(It.IsAny<CocktailsListByUserIdAndSlug>())).ReturnsAsync(new CocktailsList { Id = 1 });
-            _mapperMock.Setup(m => m.Map<CocktailsListDetailsDto>(It.IsAny<CocktailsList>())).Returns(new CocktailsListDetailsDto { Id = 1 });
+            _mapperMock.Setup(m => m.Map<CocktailsListDetailsToReturnDto>(It.IsAny<CocktailsList>())).Returns(new CocktailsListDetailsToReturnDto { Id = 1 });
 
             var controller = new CocktailsListsController(_cocktailsListsRepoMock.Object,
                                                           _userManagerMock.Object,
@@ -84,7 +84,7 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
 
             //Act
             var result = (await controller.GetCocktailsListForGuest(username, slug)).Result as ObjectResult;
-            var list = result.Value as CocktailsListDetailsDto;
+            var list = result.Value as CocktailsListDetailsToReturnDto;
 
             //Assert
             Assert.That(result.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
