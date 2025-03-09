@@ -34,13 +34,13 @@ namespace DrinkingPassion.Api.Controllers
 
         [Authorize]
         [HttpGet("Details")]
-        public async Task<ActionResult<Dtos.Accounts.UserDetailsDto>> GetUserDetails()
+        public async Task<ActionResult<Dtos.Accounts.UserDetailsToReturnDto>> GetUserDetails()
         {
             var email = User.FindFirstValue(ClaimTypes.Email)!;
 
             var user = await _userManager.FindByEmailAsync(email);
 
-            var userToReturn = _mapper.Map<Dtos.Accounts.UserDetailsDto>(user);
+            var userToReturn = _mapper.Map<Dtos.Accounts.UserDetailsToReturnDto>(user);
 
             return userToReturn;
         }
@@ -152,7 +152,7 @@ namespace DrinkingPassion.Api.Controllers
         }
 
         [HttpPatch("ChangeForgottenPassword")]
-        public async Task<ActionResult<bool>> ChangeForgottenPassword(Dtos.Accounts.ChangeForgottenPasswordDto dto)
+        public async Task<ActionResult<bool>> ChangeForgottenPassword(Dtos.Accounts.UserChangeForgottenPasswordDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
 
@@ -176,7 +176,7 @@ namespace DrinkingPassion.Api.Controllers
         }
 
         [HttpPatch("ConfirmEmail")]
-        public async Task<ActionResult> ConfirmEmail(Dtos.Accounts.ConfirmEmailDto confirmEmail)
+        public async Task<ActionResult> ConfirmEmail(Dtos.Accounts.UserConfirmEmailDto confirmEmail)
         {
             var user = await _userManager.FindByEmailAsync(confirmEmail.Email);
 
@@ -201,7 +201,7 @@ namespace DrinkingPassion.Api.Controllers
 
         [Authorize]
         [HttpPatch("ChangePassword")]
-        public async Task<ActionResult> ChangePassword(Dtos.Accounts.ChangePasswordDto passwordDto)
+        public async Task<ActionResult> ChangePassword(Dtos.Accounts.UserChangePasswordDto passwordDto)
         {
             var email = User.FindFirstValue(ClaimTypes.Email)!;
 

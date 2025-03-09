@@ -40,7 +40,7 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
         {
             //Arrange
             _cocktailsListsRepoMock.Setup(c => c.ListAsync(It.IsAny<CocktailsListsForUser>())).ReturnsAsync(GetTestCocktailsLists());
-            _mapperMock.Setup(m => m.Map<List<CocktailsListDto>>(It.IsAny<IEnumerable<CocktailsList>>())).Returns(GetMappedTestCocktailsLists());
+            _mapperMock.Setup(m => m.Map<List<CocktailsListToReturnDto>>(It.IsAny<IEnumerable<CocktailsList>>())).Returns(GetMappedTestCocktailsLists());
             _userManagerMock.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(new AppUser { Id = "123" });
 
             var controller = new CocktailsListsController(_cocktailsListsRepoMock.Object,
@@ -56,11 +56,11 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
 
             //Act
             var result = (await controller.GetCocktailsLists()).Result as ObjectResult;
-            var lists = result.Value as List<CocktailsListDto>;
+            var lists = result.Value as List<CocktailsListToReturnDto>;
 
             //Assert
             Assert.That(lists, Is.Not.Null);
-            Assert.That(lists, Is.InstanceOf<IEnumerable<CocktailsListDto>>());
+            Assert.That(lists, Is.InstanceOf<IEnumerable<CocktailsListToReturnDto>>());
             Assert.That(lists, Has.Exactly(2).Items);
             Assert.That(lists[0], Has.Property("Id").EqualTo(1));
         }
@@ -72,11 +72,11 @@ namespace DrinkingPassion.Api.Tests.Controllers.CocktailsLists
                 new CocktailsList { Id = 2 },
             };
 
-        private static List<CocktailsListDto> GetMappedTestCocktailsLists() =>
+        private static List<CocktailsListToReturnDto> GetMappedTestCocktailsLists() =>
             new()
             {
-                new CocktailsListDto { Id = 1, Name = "Test 1", Slug = string.Empty, CocktailsCount = 1, CreatedDate = _currentDate },
-                new CocktailsListDto { Id = 2, Name = "Test 2", Slug = string.Empty, CocktailsCount = 1, CreatedDate = _currentDate },
+                new CocktailsListToReturnDto { Id = 1, Name = "Test 1", Slug = string.Empty, CocktailsCount = 1, CreatedDate = _currentDate },
+                new CocktailsListToReturnDto { Id = 2, Name = "Test 2", Slug = string.Empty, CocktailsCount = 1, CreatedDate = _currentDate },
             };
     }
 }

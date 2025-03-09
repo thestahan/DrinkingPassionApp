@@ -1,9 +1,8 @@
-﻿namespace DrinkingPassion.Api.Dtos.Products
+﻿namespace DrinkingPassion.Api.Dtos.Products;
+
+public class ProductUnitToReturnDto : IQueryDto
 {
-    public class ProductUnitToReturnDto
-    {
-        public required int Id { get; set; }
-        public required string Name { get; set; }
-        public required string Abbreviation { get; set; }
-    }
+    public required string Abbreviation { get; set; }
+    public required int Id { get; set; }
+    public required string Name { get; set; }
 }

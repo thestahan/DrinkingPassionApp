@@ -2,10 +2,13 @@
 using DrinkingPassion.Api.Core.Interfaces;
 using DrinkingPassion.Api.Infrastructure.Data;
 using DrinkingPassion.Api.Infrastructure.Services;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using System.Reflection;
 
 namespace DrinkingPassion.Api.Extensions
 {
@@ -19,6 +22,10 @@ namespace DrinkingPassion.Api.Extensions
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             services.AddSingleton(x => new BlobServiceClient(config["AzureBlobStorageConnString"]));
+
+            // Add FluentValidation
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
