@@ -1,4 +1,6 @@
-﻿namespace DrinkingPassion.Api.Dtos.Products;
+﻿using DrinkingPassion.Shared.Models;
+
+namespace DrinkingPassion.Api.Dtos.Products;
 
 public class ProductUnitToReturnDto : IQueryDto
 {

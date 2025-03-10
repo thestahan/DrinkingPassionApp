@@ -1,4 +1,6 @@
-﻿namespace DrinkingPassion.Api.Dtos.Cocktails;
+﻿using DrinkingPassion.Shared.Models;
+
+namespace DrinkingPassion.Api.Dtos.Cocktails;
 
 public class CocktailBasicInfoToReturnDto : IQueryDto
 {

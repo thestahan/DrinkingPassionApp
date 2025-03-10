@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿using DrinkingPassion.Shared.Models.Users;
+using DrinkingPassion.WebApp.Shared;
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 
 namespace DrinkingPassion.WebApp.Features.Login.Store;
@@ -8,12 +10,11 @@ public record LoginState
     public string? ErrorMessage { get; init; }
     public bool IsError { get; init; }
     public bool IsSending { get; init; }
-    public Dtos.LoginDto LoginDto { get; set; } = default!;
+    public UserLoginDto LoginDto { get; set; } = default!;
 }
 
 public class LoginFeature : Feature<LoginState>
 {
-
     protected override LoginState GetInitialState()
     {
         return new()
@@ -21,7 +22,7 @@ public class LoginFeature : Feature<LoginState>
             IsSending = false,
             IsError = false,
             ErrorMessage = null,
-            LoginDto = new Dtos.LoginDto(),
+            LoginDto = new UserLoginDto { Email = string.Empty, Password = string.Empty },
         };
     }
 
@@ -33,7 +34,6 @@ public class LoginFeature : Feature<LoginState>
 
 public static class LoginReducers
 {
-
     [ReducerMethod]
     public static LoginState OnLoginFailure(LoginState state, LoginFailureAction action)
     {
@@ -53,6 +53,7 @@ public static class LoginReducers
             IsSending = true
         };
     }
+
     [ReducerMethod]
     public static LoginState OnLoginSuccess(LoginState state, LoginSuccessAction _)
     {
@@ -98,5 +99,5 @@ public class LoginEffects
 }
 
 public record LoginSuccessAction(Auth.User User);
-public record LoginFailureAction(Shared.ApiErrorResponse ApiErrorResponse);
-public record LoginSubmitAction(Dtos.LoginDto LoginDto);
+public record LoginFailureAction(ApiErrorResponse ApiErrorResponse);
+public record LoginSubmitAction(UserLoginDto LoginDto);

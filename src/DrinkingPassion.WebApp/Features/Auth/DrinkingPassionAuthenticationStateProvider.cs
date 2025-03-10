@@ -1,5 +1,4 @@
-﻿using DrinkingPassion.WebApp.Features.Login.Dtos;
-using DrinkingPassion.WebApp.Services.Interfaces;
+﻿using DrinkingPassion.WebApp.Services.Interfaces;
 using DrinkingPassion.WebApp.Shared;
 using Fluxor;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -37,7 +36,7 @@ public class DrinkingPassionAuthenticationStateProvider : AuthenticationStatePro
         return new(principal);
     }
 
-    public async Task<OneOf<User, ApiErrorResponse>> Login(LoginDto loginDto)
+    public async Task<OneOf<User, ApiErrorResponse>> Login(DrinkingPassion.Shared.Models.Users.UserLoginDto loginDto)
     {
         OneOf<User, ApiErrorResponse> loginResult = await _usersService.LoginUser(loginDto);
 

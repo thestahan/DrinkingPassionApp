@@ -1,11 +1,11 @@
-﻿using DrinkingPassion.WebApp.Features.Cocktails.Dtos;
-using DrinkingPassion.WebApp.Shared;
+﻿using DrinkingPassion.Shared.Models;
+using DrinkingPassion.Shared.Models.Cocktails;
 
 namespace DrinkingPassion.WebApp.Services.Interfaces;
 
 public interface ICocktailsService
 {
-    public Task<CocktailDetails?> GetCocktailDetails(int id);
+    public Task<CocktailDetailsToReturnDto?> GetCocktailDetails(int id);
 
-    public Task<Pagination<CocktailDto>?> GetPublicCocktails(int pageIndex);
+    public Task<Pagination<CocktailToReturnDto>?> GetPublicCocktails(int pageIndex);
 }

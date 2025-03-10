@@ -1,4 +1,4 @@
-﻿using DrinkingPassion.WebApp.Features.Products.Dtos;
+﻿using DrinkingPassion.Shared.Models.Products;
 using DrinkingPassion.WebApp.Services.Interfaces;
 using System.Net.Http.Json;
 
@@ -23,18 +23,18 @@ public class ProductsService : IProductsService
         await _httpClient.DeleteAsync($"api/products/{id}");
     }
 
-    public async Task<ProductDto> GetProduct(int id)
+    public async Task<ProductToReturnDto> GetProduct(int id)
     {
         var request = new HttpRequestMessage(HttpMethod.Get, $"api/products/{id}");
 
-        return await _httpClient.GetFromJsonAsync<ProductDto>(request.RequestUri!.ToString())!;
+        return await _httpClient.GetFromJsonAsync<ProductToReturnDto>(request.RequestUri!.ToString())!;
     }
 
-    public async Task<ICollection<ProductDto>> GetProducts()
+    public async Task<ICollection<ProductToReturnDto>> GetProducts()
     {
         var request = new HttpRequestMessage(HttpMethod.Get, $"api/products/public");
 
-        return await _httpClient.GetFromJsonAsync<ICollection<ProductDto>>(request.RequestUri!.ToString())!;
+        return await _httpClient.GetFromJsonAsync<ICollection<ProductToReturnDto>>(request.RequestUri!.ToString())!;
     }
 
     public async Task UpdateProduct(int id, ProductToUpdateDto product)

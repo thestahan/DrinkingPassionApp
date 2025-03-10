@@ -2,6 +2,8 @@
 using DrinkingPassion.Api.Core.Entities;
 using DrinkingPassion.Api.Core.Interfaces;
 using DrinkingPassion.Api.Core.Specifications.ProductTypes;
+using DrinkingPassion.Api.Dtos.Products;
+using DrinkingPassion.Api.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -23,56 +25,56 @@ namespace DrinkingPassion.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<Dtos.Products.ProductTypeToReturnDto>>> GetProductTypes()
+        public async Task<ActionResult<IReadOnlyList<ProductTypeToReturnDto>>> GetProductTypes()
         {
             var spec = new ProductTypesOrderedByNameSpec();
 
             var types = await _repo.ListAsync(spec);
 
-            var typesToReturn = _mapper.Map<IReadOnlyList<Dtos.Products.ProductTypeToReturnDto>>(types);
+            var typesToReturn = _mapper.Map<IReadOnlyList<ProductTypeToReturnDto>>(types);
 
             return Ok(typesToReturn);
         }
 
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Dtos.Products.ProductTypeToReturnDto>> GetProductTypeById(int id)
+        public async Task<ActionResult<ProductTypeToReturnDto>> GetProductTypeById(int id)
         {
             var type = await _repo.GetByIdAsync(id);
 
             if (type == null)
             {
-                return NotFound(new Errors.ApiResponse(404));
+                return NotFound(new ApiErrorResponse(404));
             }
 
-            var typeToReturn = _mapper.Map<Dtos.Products.ProductTypeToReturnDto>(type);
+            var typeToReturn = _mapper.Map<ProductTypeToReturnDto>(type);
 
             return Ok(typeToReturn);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Dtos.Products.ProductTypeToAddDto>> AddProductType(Dtos.Products.ProductTypeToAddDto typeToAddDto)
+        public async Task<ActionResult<ProductTypeToAddDto>> AddProductType(ProductTypeToAddDto typeToAddDto)
         {
             var type = _mapper.Map<ProductType>(typeToAddDto);
 
             var createdType = await _repo.AddAsync(type);
 
-            var typeToReturn = _mapper.Map<Dtos.Products.ProductTypeToReturnDto>(createdType);
+            var typeToReturn = _mapper.Map<ProductTypeToReturnDto>(createdType);
 
             return CreatedAtAction(nameof(GetProductTypeById), new { id = typeToReturn.Id }, typeToReturn);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateProductType(int id, Dtos.Products.ProductTypeToUpdateDto typeToUpdate)
+        public async Task<ActionResult> UpdateProductType(int id, ProductTypeToUpdateDto typeToUpdate)
         {
             if (id != typeToUpdate.Id)
             {
-                return BadRequest(new Errors.ApiResponse(400, "Id does not match with entity's id"));
+                return BadRequest(new ApiErrorResponse(400, "Id does not match with entity's id"));
             }
 
             if (!await _repo.EntityExistsAsync(id))
             {
-                return BadRequest(new Errors.ApiResponse(400, "Entity does not exist"));
+                return BadRequest(new ApiErrorResponse(400, "Entity does not exist"));
             }
 
             var type = _mapper.Map<ProductType>(typeToUpdate);
@@ -87,7 +89,7 @@ namespace DrinkingPassion.Api.Controllers
         {
             if (!await _repo.DeleteByIdAsync(id))
             {
-                return NotFound(new Errors.ApiResponse(404));
+                return NotFound(new ApiErrorResponse(404));
             }
 
             return NoContent();

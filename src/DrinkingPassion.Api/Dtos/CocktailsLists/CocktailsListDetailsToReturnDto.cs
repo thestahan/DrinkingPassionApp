@@ -1,4 +1,5 @@
-﻿using DrinkingPassion.Api.Dtos.Cocktails;
+﻿using DrinkingPassion.Shared.Models;
+using DrinkingPassion.Shared.Models.Cocktails;
 using System;
 using System.Collections.Generic;
 

@@ -1,4 +1,4 @@
-﻿namespace DrinkingPassion.Api.Dtos.Ingredients;
+﻿namespace DrinkingPassion.Shared.Models.Ingredients;
 
 public class IngredientToReturnDto : IQueryDto
 {

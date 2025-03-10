@@ -1,6 +1,13 @@
 ﻿using AutoMapper;
 using DrinkingPassion.Api.Core.Entities;
 using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Dtos.Accounts;
+using DrinkingPassion.Api.Dtos.Cocktails;
+using DrinkingPassion.Api.Dtos.CocktailsLists;
+using DrinkingPassion.Api.Dtos.Ingredients;
+using DrinkingPassion.Api.Dtos.Products;
+using DrinkingPassion.Shared.Models.Cocktails;
+using DrinkingPassion.Shared.Models.Ingredients;
 
 namespace DrinkingPassion.Api.Helpers
 {
@@ -8,28 +15,28 @@ namespace DrinkingPassion.Api.Helpers
     {
         public MappingProfiles()
         {
-            CreateMap<ProductUnit, Dtos.Products.ProductUnitToReturnDto>();
-            CreateMap<Dtos.Products.ProductUnitToAddDto, ProductUnit>();
-            CreateMap<Dtos.Products.ProductUnitToUpdateDto, ProductUnit>();
-            CreateMap<ProductType, Dtos.Products.ProductTypeToReturnDto>();
-            CreateMap<Dtos.Products.ProductTypeToAddDto, ProductType>();
-            CreateMap<Dtos.Products.ProductTypeToUpdateDto, ProductType>();
-            CreateMap<Cocktail, Dtos.Cocktails.CocktailDetailsToReturnDto>()
+            CreateMap<ProductUnit, ProductUnitToReturnDto>();
+            CreateMap<ProductUnitToAddDto, ProductUnit>();
+            CreateMap<ProductUnitToUpdateDto, ProductUnit>();
+            CreateMap<ProductType, ProductTypeToReturnDto>();
+            CreateMap<ProductTypeToAddDto, ProductType>();
+            CreateMap<ProductTypeToUpdateDto, ProductType>();
+            CreateMap<Cocktail, CocktailDetailsToReturnDto>()
                 .ForMember(
                     dest => dest.Picture,
                     opt => opt.MapFrom<CocktailUrlResolver>())
                 .ForMember(
                     dest => dest.BaseIngredient,
                     opt => opt.MapFrom(src => src.BaseProduct.Name));
-            CreateMap<Cocktail, Dtos.Cocktails.CocktailToReturnDto>()
+            CreateMap<Cocktail, CocktailToReturnDto>()
                 .ForMember(
                     dest => dest.Picture,
                     opt => opt.MapFrom<CocktailUrlResolver>())
                 .ForMember(
                     dest => dest.BaseIngredient,
                     opt => opt.MapFrom(src => src.BaseProduct.Name));
-            CreateMap<Cocktail, Dtos.Cocktails.CocktailBasicInfoToReturnDto>();
-            CreateMap<Ingredient, Dtos.Ingredients.IngredientToReturnDto>()
+            CreateMap<Cocktail, CocktailBasicInfoToReturnDto>();
+            CreateMap<Ingredient, IngredientToReturnDto>()
                 .ForMember(
                     dest => dest.Name,
                     opt => opt.MapFrom(src => src.Product.Name))
@@ -41,9 +48,9 @@ namespace DrinkingPassion.Api.Helpers
             CreateMap<Dtos.Cocktails.CocktailToManageDto, Cocktail>()
                 .ForMember(dest => dest.Ingredients, opt => opt.Ignore())
                 .ForMember(dest => dest.Picture, opt => opt.Ignore());
-            CreateMap<Dtos.Ingredients.IngredientToAddDto, Ingredient>();
-            CreateMap<Dtos.Ingredients.IngredientToUpdateDto, Ingredient>();
-            CreateMap<Product, Dtos.Products.ProductToReturnDto>()
+            CreateMap<IngredientToAddDto, Ingredient>();
+            CreateMap<IngredientToUpdateDto, Ingredient>();
+            CreateMap<Product, DrinkingPassion.Shared.Models.Products.ProductToReturnDto>()
                 .ForMember(
                     dest => dest.ProductUnit,
                     opt => opt.MapFrom(src => src.ProductUnit.Name))
@@ -59,20 +66,20 @@ namespace DrinkingPassion.Api.Helpers
                 .ForMember(
                     dest => dest.ProductTypeId,
                     opt => opt.MapFrom(src => src.ProductType.Id));
-            CreateMap<Dtos.Products.ProductToAddDto, Product>();
-            CreateMap<Dtos.Products.ProductToUpdateDto, Product>();
-            CreateMap<AppUser, Dtos.Accounts.UserDetailsToReturnDto>();
-            CreateMap<Dtos.Accounts.UserRegisterDto, AppUser>()
+            CreateMap<DrinkingPassion.Shared.Models.Products.ProductToAddDto, Product>();
+            CreateMap<DrinkingPassion.Shared.Models.Products.ProductToUpdateDto, Product>();
+            CreateMap<AppUser, UserDetailsToReturnDto>();
+            CreateMap<UserRegisterDto, AppUser>()
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));
-            CreateMap<Dtos.Accounts.UserUpdateDto, AppUser>()
+            CreateMap<UserUpdateDto, AppUser>()
                 .ForMember(
                     dest => dest.UserName,
                     opt => opt.MapFrom(src => src.Email));
-            CreateMap<CocktailsList, Dtos.CocktailsLists.CocktailsListDetailsToReturnDto>();
-            CreateMap<CocktailsList, Dtos.CocktailsLists.CocktailsListToReturnDto>();
-            CreateMap<Dtos.CocktailsLists.CocktailsListToAddDto, CocktailsList>()
+            CreateMap<CocktailsList, CocktailsListDetailsToReturnDto>();
+            CreateMap<CocktailsList, CocktailsListToReturnDto>();
+            CreateMap<CocktailsListToAddDto, CocktailsList>()
                 .ForMember(
                     dest => dest.Cocktails,
                     opt => opt.Ignore());

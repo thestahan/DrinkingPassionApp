@@ -5,7 +5,7 @@ using DrinkingPassion.Api.Core.Entities.Identity;
 using DrinkingPassion.Api.Core.Interfaces;
 using DrinkingPassion.Api.Core.Specifications.Cocktails;
 using DrinkingPassion.Api.Core.Specifications.CocktailsLists;
-using DrinkingPassion.Api.Dtos.Cocktails;
+using DrinkingPassion.Shared.Models.Cocktails;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

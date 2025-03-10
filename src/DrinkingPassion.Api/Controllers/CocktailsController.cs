@@ -6,6 +6,8 @@ using DrinkingPassion.Api.Core.Specifications.Cocktails;
 using DrinkingPassion.Api.Dtos.Cocktails;
 using DrinkingPassion.Api.Dtos.Ingredients;
 using DrinkingPassion.Api.Infrastructure.Services;
+using DrinkingPassion.Shared.Models;
+using DrinkingPassion.Shared.Models.Cocktails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace DrinkingPassion.Api.Controllers
 {
-    public class CocktailsController : DrinkingPassion.Api.Controllers.BaseApiController
+    public class CocktailsController : BaseApiController
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<Cocktail> _cocktailsRepo;
@@ -46,7 +48,7 @@ namespace DrinkingPassion.Api.Controllers
         }
 
         [HttpGet("Public")]
-        public async Task<ActionResult<Helpers.Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
             if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
             {
@@ -63,13 +65,13 @@ namespace DrinkingPassion.Api.Controllers
 
             var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
 
-            return Ok(new Helpers.Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
+            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
                 cocktailParams.PageSize, totalItems, data));
         }
 
         [Authorize]
         [HttpGet("Private")]
-        public async Task<ActionResult<Helpers.Pagination<CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
+        public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
             if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
             {
@@ -90,7 +92,7 @@ namespace DrinkingPassion.Api.Controllers
 
             var data = _mapper.Map<IReadOnlyList<CocktailToReturnDto>>(cocktailsFromDb);
 
-            return Ok(new Helpers.Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
+            return Ok(new Pagination<CocktailToReturnDto>(cocktailParams.PageIndex,
                 cocktailParams.PageSize, totalItems, data));
         }
 
@@ -118,7 +120,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (cocktail == null)
             {
-                return NotFound(new Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiErrorResponse(404));
             }
 
             if (cocktail.IsPrivate)
@@ -127,7 +129,7 @@ namespace DrinkingPassion.Api.Controllers
 
                 if (user == null || cocktail.AuthorId != user.Id)
                 {
-                    return NotFound(new Errors.ApiResponse(404));
+                    return NotFound(new Errors.ApiErrorResponse(404));
                 }
             }
 
@@ -168,12 +170,12 @@ namespace DrinkingPassion.Api.Controllers
 
             if (cocktail == null)
             {
-                return NotFound(new Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiErrorResponse(404));
             }
 
             if (!cocktail.IsPrivate && !isAdmin)
             {
-                return Unauthorized(new Errors.ApiResponse(401));
+                return Unauthorized(new Errors.ApiErrorResponse(401));
             }
 
             await _cocktailsRepo.DeleteAsync(cocktail);
@@ -241,7 +243,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (cocktailFromDb == null)
             {
-                return NotFound(new Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiErrorResponse(404));
             }
 
             bool hasPictureUpdate = await ProcessPictureUpload(dto, cocktailFromDto, cocktailFromDb);

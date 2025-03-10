@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace DrinkingPassion.Api.Dtos.Accounts;
+namespace DrinkingPassion.Shared.Models.Users;
 
 public class UserLoginDto : ICommandDto
 {
@@ -8,7 +8,7 @@ public class UserLoginDto : ICommandDto
     public required string Password { get; set; }
 }
 
-public class UserLoginDtoValidator : AbstractValidator<UserLoginDto>
+public class UserLoginDtoValidator : AbstractValidator<DrinkingPassion.Shared.Models.Users.UserLoginDto>
 {
     public UserLoginDtoValidator()
     {

@@ -1,6 +1,6 @@
-﻿using DrinkingPassion.WebApp.Features.Cocktails.Dtos;
+﻿using DrinkingPassion.Shared.Models;
+using DrinkingPassion.Shared.Models.Cocktails;
 using DrinkingPassion.WebApp.Services.Interfaces;
-using DrinkingPassion.WebApp.Shared;
 using Fluxor;
 
 namespace DrinkingPassion.WebApp.Features.Cocktails.Store;
@@ -11,7 +11,7 @@ public record PublicCocktailsState
     public bool IsError { get; init; }
     public bool IsInitialized { get; init; }
     public bool IsLoading { get; init; }
-    public Pagination<CocktailDto>? PaginatedCocktails { get; init; }
+    public Pagination<CocktailToReturnDto>? PaginatedCocktails { get; init; }
 }
 
 public class PublicCocktailsFeature : Feature<PublicCocktailsState>
@@ -87,5 +87,5 @@ public class PublicCocktailsEffects(ICocktailsService cocktailsService)
 }
 
 public record FetchPublicCocktailsAction(int PageIndex);
-public record FetchPublicCocktailsSuccessAction(Pagination<CocktailDto> PaginatedCocktails);
+public record FetchPublicCocktailsSuccessAction(Pagination<CocktailToReturnDto> PaginatedCocktails);
 public record FetchPublicCocktailsFailureAction(string ErrorMessage);

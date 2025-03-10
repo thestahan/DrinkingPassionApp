@@ -1,4 +1,5 @@
-﻿using Fluxor;
+﻿using DrinkingPassion.Shared.Models.Users;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -35,7 +36,7 @@ public partial class LoginPage : FluxorComponent
     [Inject]
     public IState<Store.LoginState> LoginState { get; set; } = default!;
 
-    public Dtos.LoginDto Model => LoginState.Value.LoginDto;
+    public UserLoginDto Model => LoginState.Value.LoginDto;
 
     [Inject]
     public NavigationManager NavigationManager { get; set; } = default!;

@@ -1,4 +1,6 @@
-﻿namespace DrinkingPassion.Api.Dtos.Ingredients;
+﻿using DrinkingPassion.Shared.Models;
+
+namespace DrinkingPassion.Api.Dtos.Ingredients;
 
 public class IngredientAsPartOfCocktailDto : IQueryDto
 {

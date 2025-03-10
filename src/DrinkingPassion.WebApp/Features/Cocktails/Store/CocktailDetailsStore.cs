@@ -1,10 +1,11 @@
-﻿using Fluxor;
+﻿using DrinkingPassion.Shared.Models.Cocktails;
+using Fluxor;
 
 namespace DrinkingPassion.WebApp.Features.Cocktails.Store;
 
 public record CocktailDetailsState
 {
-    public Dtos.CocktailDetails? CocktailDetails { get; init; }
+    public CocktailDetailsToReturnDto? CocktailDetails { get; init; }
     public string ErrorMessage { get; init; } = string.Empty;
     public bool IsError { get; init; }
     public bool IsInitialized { get; set; }
@@ -13,7 +14,6 @@ public record CocktailDetailsState
 
 public class CocktailDetailsFeature : Feature<CocktailDetailsState>
 {
-
     protected override CocktailDetailsState GetInitialState()
     {
         return new()
@@ -92,5 +92,5 @@ public class CocktailDetailsEffects
 }
 
 public record FetchCocktailDetailsAction(int CocktailId);
-public record FetchCocktailDetailsSuccessAction(Dtos.CocktailDetails CocktailDetails);
+public record FetchCocktailDetailsSuccessAction(CocktailDetailsToReturnDto CocktailDetails);
 public record FetchCocktailDetailsFailureAction(string ErrorMessage);

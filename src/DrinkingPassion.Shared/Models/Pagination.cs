@@ -1,4 +1,4 @@
-﻿namespace DrinkingPassion.WebApp.Shared;
+﻿namespace DrinkingPassion.Shared.Models;
 
 public class Pagination<T> where T : class
 {
@@ -10,9 +10,8 @@ public class Pagination<T> where T : class
         Data = data;
     }
 
-    public int Count { get; set; }
-    public IReadOnlyList<T> Data { get; set; }
-
     public int PageIndex { get; set; }
     public int PageSize { get; set; }
+    public int Count { get; set; }
+    public IReadOnlyList<T> Data { get; set; }
 }
