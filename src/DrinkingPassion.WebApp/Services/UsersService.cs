@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using DrinkingPassion.Shared.Models.Users;
 using Newtonsoft.Json;
 using OneOf;
 using System.IdentityModel.Tokens.Jwt;
@@ -46,7 +47,7 @@ public class UsersService : Interfaces.IUsersService
         return Features.Auth.User.FromClaimsPrincipal(claimsPrincipal);
     }
 
-    public async Task<OneOf<Features.Auth.User, Shared.ApiErrorResponse>> LoginUser(Features.Login.Dtos.LoginDto loginDto)
+    public async Task<OneOf<Features.Auth.User, Shared.ApiErrorResponse>> LoginUser(UserLoginDto loginDto)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"api/accounts/login")
         {
@@ -62,7 +63,7 @@ public class UsersService : Interfaces.IUsersService
             return JsonConvert.DeserializeObject<Shared.ApiErrorResponse>(responseContent)!;
         }
 
-        var returnDto = JsonConvert.DeserializeObject<Features.Login.Dtos.LoginReturnDto>(responseContent)!;
+        var returnDto = JsonConvert.DeserializeObject<UserLoginReturnDto>(responseContent)!;
         var claimsPrincipal = CreateClaimsPrincipalFromToken(returnDto.Token);
         var user = Features.Auth.User.FromClaimsPrincipal(claimsPrincipal);
 

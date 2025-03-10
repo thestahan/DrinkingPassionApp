@@ -1,4 +1,4 @@
-namespace DrinkingPassion.Api.Dtos;
+namespace DrinkingPassion.Shared.Models;
 
 /// <summary>
 /// Marker interface for DTOs used in command operations (create, update, delete)

@@ -2,12 +2,12 @@
 
 namespace DrinkingPassion.Api.Errors
 {
-    public class ApiValidationErrorResponse : DrinkingPassion.Api.Errors.ApiResponse
+    public class ApiValidationErrorResponse : ApiErrorResponse
     {
         public ApiValidationErrorResponse() : base(400)
         {
         }
 
-        public IEnumerable<string> Errors { get; set; }
+        public required IEnumerable<string> Errors { get; set; }
     }
 }

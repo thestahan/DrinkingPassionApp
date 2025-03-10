@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DrinkingPassion.Shared.Models;
+using FluentValidation;
 
 namespace DrinkingPassion.Api.Dtos.Ingredients;
 

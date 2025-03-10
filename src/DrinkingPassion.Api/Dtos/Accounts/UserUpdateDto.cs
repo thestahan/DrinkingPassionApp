@@ -1,4 +1,5 @@
 ﻿using DrinkingPassion.Api.Core.Entities.Enums;
+using DrinkingPassion.Shared.Models;
 using FluentValidation;
 
 namespace DrinkingPassion.Api.Dtos.Accounts;

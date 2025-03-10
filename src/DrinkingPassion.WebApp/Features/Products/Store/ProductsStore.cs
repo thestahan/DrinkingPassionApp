@@ -1,4 +1,5 @@
-﻿using Fluxor;
+﻿using DrinkingPassion.Shared.Models.Products;
+using Fluxor;
 
 namespace DrinkingPassion.WebApp.Features.Products.Store;
 
@@ -8,12 +9,11 @@ public record ProductsState
     public bool IsError { get; init; }
     public bool IsInitialized { get; init; }
     public bool IsLoading { get; init; }
-    public ICollection<Dtos.ProductDto>? PaginatedProducts { get; init; }
+    public ICollection<ProductToReturnDto>? PaginatedProducts { get; init; }
 }
 
 public class ProductsFeature : Feature<ProductsState>
 {
-
     protected override ProductsState GetInitialState()
     {
         return new()
@@ -92,5 +92,5 @@ public class ProductsEffects
 }
 
 public record class FetchProductsAction();
-public record class FetchProductsSuccessAction(ICollection<Dtos.ProductDto> PaginatedProducts);
+public record class FetchProductsSuccessAction(ICollection<ProductToReturnDto> PaginatedProducts);
 public record class FetchProductsFailureAction(string ErrorMessage);

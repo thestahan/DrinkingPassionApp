@@ -1,4 +1,5 @@
 ﻿using DrinkingPassion.Api.Core.Entities.Identity;
+using DrinkingPassion.Api.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +38,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (roleExists)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Such role already exists"));
+                return BadRequest(new ApiErrorResponse(400, "Such role already exists"));
             }
 
             var roleResult = await _roleManager.CreateAsync(new IdentityRole(name));
@@ -46,20 +47,20 @@ namespace DrinkingPassion.Api.Controllers
         }
 
         [HttpPost("AddUserToRole")]
-        public async Task<ActionResult> AddUserToRole(DrinkingPassion.Api.Dtos.Roles.AddUserToRoleDto dto)
+        public async Task<ActionResult> AddUserToRole(Dtos.Roles.AddUserToRoleDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.UserEmail);
 
             if (user == null)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "User with atemptted email wasn't found"));
+                return BadRequest(new ApiErrorResponse(400, "User with atemptted email wasn't found"));
             }
 
             var roleExists = await _roleManager.RoleExistsAsync(dto.Role);
 
             if (!roleExists)
             {
-                return BadRequest(new DrinkingPassion.Api.Errors.ApiResponse(400, "Attempted role doesn't exist"));
+                return BadRequest(new ApiErrorResponse(400, "Attempted role doesn't exist"));
             }
 
             await _userManager.AddToRoleAsync(user, dto.Role);

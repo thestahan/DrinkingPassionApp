@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DrinkingPassion.Shared.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 

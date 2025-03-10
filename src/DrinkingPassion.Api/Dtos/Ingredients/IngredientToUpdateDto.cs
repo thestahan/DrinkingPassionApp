@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using DrinkingPassion.Shared.Models;
+using FluentValidation;
 using System;
 using System.ComponentModel.DataAnnotations;
 

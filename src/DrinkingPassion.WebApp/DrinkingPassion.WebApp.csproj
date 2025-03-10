@@ -16,4 +16,7 @@
     <PackageReference Include="OneOf" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DrinkingPassion.Shared\DrinkingPassion.Shared.csproj" />
+  </ItemGroup>
 </Project>

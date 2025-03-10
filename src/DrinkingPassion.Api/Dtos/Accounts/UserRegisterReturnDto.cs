@@ -1,4 +1,6 @@
-﻿namespace DrinkingPassion.Api.Dtos.Accounts;
+﻿using DrinkingPassion.Shared.Models;
+
+namespace DrinkingPassion.Api.Dtos.Accounts;
 
 public class UserRegisterReturnDto : IQueryDto
 {

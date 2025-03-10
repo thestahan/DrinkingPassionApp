@@ -1,14 +1,16 @@
-﻿namespace DrinkingPassion.WebApp.Services.Interfaces;
+﻿using DrinkingPassion.Shared.Models.Products;
+
+namespace DrinkingPassion.WebApp.Services.Interfaces;
 
 public interface IProductsService
 {
-
-    Task CreateProduct(Features.Products.Dtos.ProductToAddDto product);
+    Task CreateProduct(ProductToAddDto product);
 
     Task DeleteProductAsync(int id);
 
-    Task<Features.Products.Dtos.ProductDto> GetProduct(int id);
-    Task<ICollection<Features.Products.Dtos.ProductDto>> GetProducts();
+    Task<ProductToReturnDto> GetProduct(int id);
 
-    Task UpdateProduct(int id, Features.Products.Dtos.ProductToUpdateDto product);
+    Task<ICollection<ProductToReturnDto>> GetProducts();
+
+    Task UpdateProduct(int id, ProductToUpdateDto product);
 }

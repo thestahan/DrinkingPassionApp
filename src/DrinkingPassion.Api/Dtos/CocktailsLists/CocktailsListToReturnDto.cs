@@ -1,8 +1,9 @@
-﻿using System;
+﻿using DrinkingPassion.Shared.Models;
+using System;
 
 namespace DrinkingPassion.Api.Dtos.CocktailsLists;
 
-public class CocktailsListToReturnDto
+public class CocktailsListToReturnDto : IQueryDto
 {
     public required int CocktailsCount { get; set; }
     public required DateTime CreatedDate { get; set; }

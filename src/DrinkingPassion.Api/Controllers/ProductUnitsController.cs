@@ -42,7 +42,7 @@ namespace DrinkingPassion.Api.Controllers
 
             if (unit == null)
             {
-                return NotFound(new Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiErrorResponse(404));
             }
 
             var unitToReturn = _mapper.Map<Dtos.Products.ProductUnitToReturnDto>(unit);
@@ -67,12 +67,12 @@ namespace DrinkingPassion.Api.Controllers
         {
             if (id != unitToUpdate.Id)
             {
-                return BadRequest(new Errors.ApiResponse(400, "Id does not match with entity's id"));
+                return BadRequest(new Errors.ApiErrorResponse(400, "Id does not match with entity's id"));
             }
 
             if (!await _repo.EntityExistsAsync(id))
             {
-                return BadRequest(new Errors.ApiResponse(400, "Entity does not exist"));
+                return BadRequest(new Errors.ApiErrorResponse(400, "Entity does not exist"));
             }
 
             var unit = _mapper.Map<ProductUnit>(unitToUpdate);
@@ -87,7 +87,7 @@ namespace DrinkingPassion.Api.Controllers
         {
             if (!await _repo.DeleteByIdAsync(id))
             {
-                return NotFound(new Errors.ApiResponse(404));
+                return NotFound(new Errors.ApiErrorResponse(404));
             }
 
             return NoContent();

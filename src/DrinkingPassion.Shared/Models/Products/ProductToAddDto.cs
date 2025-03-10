@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace DrinkingPassion.Api.Dtos.Products;
+namespace DrinkingPassion.Shared.Models.Products;
 
 public class ProductToAddDto : ICommandDto
 {

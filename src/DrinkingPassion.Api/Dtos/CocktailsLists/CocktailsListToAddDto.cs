@@ -1,9 +1,10 @@
-﻿using FluentValidation;
+﻿using DrinkingPassion.Shared.Models;
+using FluentValidation;
 using System.Collections.Generic;
 
 namespace DrinkingPassion.Api.Dtos.CocktailsLists;
 
-public class CocktailsListToAddDto
+public class CocktailsListToAddDto : ICommandDto
 {
     public required IReadOnlyList<int> Cocktails { get; set; } = [];
     public int? Id { get; set; }

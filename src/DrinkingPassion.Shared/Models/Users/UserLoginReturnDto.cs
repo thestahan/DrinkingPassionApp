@@ -1,7 +1,4 @@
-﻿using DrinkingPassion.Shared.Models;
-using System.Collections.Generic;
-
-namespace DrinkingPassion.Api.Dtos.Accounts;
+﻿namespace DrinkingPassion.Shared.Models.Users;
 
 public class UserLoginReturnDto : IQueryDto
 {
