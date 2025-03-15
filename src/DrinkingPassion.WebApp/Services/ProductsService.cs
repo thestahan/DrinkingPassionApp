@@ -30,11 +30,11 @@ public class ProductsService : IProductsService
         return await _httpClient.GetFromJsonAsync<ProductToReturnDto>(request.RequestUri!.ToString())!;
     }
 
-    public async Task<ICollection<ProductToReturnDto>> GetProducts()
+    public async Task<IReadOnlyList<ProductToReturnDto>> GetProducts()
     {
         var request = new HttpRequestMessage(HttpMethod.Get, $"api/products/public");
 
-        return await _httpClient.GetFromJsonAsync<ICollection<ProductToReturnDto>>(request.RequestUri!.ToString())!;
+        return await _httpClient.GetFromJsonAsync<IReadOnlyList<ProductToReturnDto>>(request.RequestUri!.ToString())!;
     }
 
     public async Task UpdateProduct(int id, ProductToUpdateDto product)

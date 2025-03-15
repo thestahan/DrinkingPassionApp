@@ -75,7 +75,14 @@ public class PublicCocktailsEffects(ICocktailsService cocktailsService)
     {
         try
         {
-            var paginatedCocktails = await cocktailsService.GetPublicCocktails(action.PageIndex);
+            var paginatedCocktails = await cocktailsService.GetPublicCocktails(
+                action.PageIndex,
+                action.PageSize,
+                action.CocktailName,
+                action.IngredientsExactCount,
+                action.IngredientsList,
+                action.Sort
+            );
 
             dispatcher.Dispatch(new FetchPublicCocktailsSuccessAction(paginatedCocktails!));
         }
@@ -86,6 +93,13 @@ public class PublicCocktailsEffects(ICocktailsService cocktailsService)
     }
 }
 
-public record FetchPublicCocktailsAction(int PageIndex);
+public record FetchPublicCocktailsAction(
+    int PageIndex,
+    int PageSize = 10,
+    string? CocktailName = null,
+    int? IngredientsExactCount = null,
+    List<int>? IngredientsList = null,
+    string? Sort = null
+);
 public record FetchPublicCocktailsSuccessAction(Pagination<CocktailToReturnDto> PaginatedCocktails);
 public record FetchPublicCocktailsFailureAction(string ErrorMessage);

@@ -7,5 +7,12 @@ public interface ICocktailsService
 {
     public Task<CocktailDetailsToReturnDto?> GetCocktailDetails(int id);
 
-    public Task<Pagination<CocktailToReturnDto>?> GetPublicCocktails(int pageIndex);
+    Task<Pagination<CocktailToReturnDto>> GetPublicCocktails(
+        int pageIndex,
+        int pageSize,
+        string? cocktailName = null,
+        int? ingredientsExactCount = null,
+        List<int>? ingredientsList = null,
+        string? sort = null
+    );
 }

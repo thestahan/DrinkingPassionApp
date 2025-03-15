@@ -12,7 +12,6 @@ namespace DrinkingPassion.Api.Core.Specifications.Cocktails
 
         public int? ProductId { get; set; }
         public string Sort { get; set; }
-        public string Ingredients { get; set; }
         public List<int> IngredientsList { get; set; } = [];
         public int IngredientsExactCount { get; set; }
 

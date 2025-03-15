@@ -1,25 +1,72 @@
 ﻿@page "/cocktails"
 @using DrinkingPassion.WebApp.Features.Cocktails.Store
+@using DrinkingPassion.WebApp.Features.Products.Store
+@using PublicCocktailsState = DrinkingPassion.WebApp.Features.Cocktails.Store.PublicCocktailsState
+@using FetchPublicCocktailsAction = DrinkingPassion.WebApp.Features.Cocktails.Store.FetchPublicCocktailsAction
+@using PublicProductsState = DrinkingPassion.WebApp.Features.Products.Store.PublicProductsState
+@using FetchPublicProductsAction = DrinkingPassion.WebApp.Features.Products.Store.FetchPublicProductsAction
 @inherits FluxorComponent
 
 @inject IDispatcher Dispatcher
-@inject IState<DrinkingPassion.WebApp.Features.Cocktails.Store.PublicCocktailsState> PublicCocktailsState
+@inject IState<PublicCocktailsState> PublicCocktailsState
+@inject IState<PublicProductsState> PublicProductsState
 @inject NavigationManager Navigation
 
 <MudText Typo="Typo.h4" Align="Align.Center" Class="py-2">
     Koktajle
 </MudText>
 
+<MudExpansionPanels>
+    <MudExpansionPanel Text="Filtry">
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="4">
+                <MudTextField Label="Nazwa koktajlu"
+                @bind-Value="cocktailNameFilter"
+                DebounceInterval="300"
+                Immediate="false"
+                OnDebounceIntervalElapsed="ApplyFilters" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudNumericField Label="Dokładna liczba składników"
+                    Value="@ingredientsExactCountFilter"
+                    Min="1"
+                    ValueChanged="@(async (int? val) => { ingredientsExactCountFilter = val; await ApplyFilters(); })" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudSelect T="string" Label="Sortuj" @bind-Value="sortFilter" AnchorOrigin="Origin.BottomCenter" SelectedValuesChanged="ApplyFilters">
+                    <MudSelectItem T="string" Value="@("NAME_DESC")">Nazwa A-Z</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("NAME_ASC")">Nazwa Z-A</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("INGREDIENTS_COUNT_ASC")">Ilość składników rosnąco</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("INGREDIENTS_COUNT_DESC")">Ilość składników malejąco</MudSelectItem>
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudSelect T="int" Label="Składniki" SelectedValues="@selectedIngredients" MultiSelection="true" AnchorOrigin="Origin.BottomCenter" 
+                    ToStringFunc="(int id) => PublicProductsState.Value.Products.FirstOrDefault(p => p.Id == id)?.Name ?? id.ToString()"
+                    SelectedValuesChanged="@(async (IEnumerable<int> values) => { selectedIngredients = values.ToList(); await ApplyFilters(); })">
+                    @foreach (var product in PublicProductsState.Value.Products) 
+                    {
+                        <MudSelectItem T="int" Value="@product.Id"> @product.Name </MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12">
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="ClearFilters">Wyczyść filtry</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplyFilters" Class="ml-2">Zastosuj filtry</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
 @if (PublicCocktailsState.Value.IsLoading)
 {
-    <p><em>Ładowanie...</em></p>
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="my-4" />
 }
 else
 {
     if (PublicCocktailsState.Value.IsError)
     {
-        <p><em>Coś poszło nie tak!</em></p>
-        <p>@PublicCocktailsState.Value.ErrorMessage</p>
+        <MudAlert Severity="Severity.Error" Class="my-4">@PublicCocktailsState.Value.ErrorMessage</MudAlert>
     }
     else if (PublicCocktailsState.Value.IsInitialized)
     {
@@ -32,53 +79,112 @@ else
                             <MudCardMedia Image="@cocktail.Picture" Height="300" />
                             <MudCardContent>
                                 <MudText Typo="Typo.h5">@cocktail.Name</MudText>
-                                    <MudText Typo="Typo.body2">Główny składnik: @cocktail.BaseIngredient</MudText>
-                                    <MudText Typo="Typo.body2">Liczba składników: @cocktail.IngredientsCount</MudText>
-                                </MudCardContent>
-                                <MudCardActions>
-                                    <MudButton Variant="Variant.Text"
-                                               Color="Color.Primary"
-                                               OnClick="(() => NavigateToCocktailDetails(cocktail.Id))">
-                                        Szczegóły
-                                    </MudButton>
-                                </MudCardActions>
-                            </MudCard>
-                        </MudItem>
+                                <MudText Typo="Typo.body2">Główny składnik: @cocktail.BaseIngredient</MudText>
+                                <MudText Typo="Typo.body2">Liczba składników: @cocktail.IngredientsCount</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Text"
+                                Color="Color.Primary"
+                                OnClick="(() => NavigateToCocktailDetails(cocktail.Id))">
+                                    Szczegóły
+                                </MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
                 }
             </MudGrid>
 
             @if (PagesCount > 1)
             {
                 <MudPagination Selected="@(PublicCocktailsState.Value.PaginatedCocktails!.PageIndex)"
-                               Count="PagesCount"
-                               Class="align-self-center"
-                               SelectedChanged="((pageIndex) => GoToPage(pageIndex))" />
+                Count="@PagesCount"
+                Class="align-self-center"
+                SelectedChanged="GoToPage" />
             }
         </MudContainer>
     }
 }
 
 @code {
-    public int PagesCount =>
-        PublicCocktailsState.Value.PaginatedCocktails!.Count / PublicCocktailsState.Value.PaginatedCocktails!.PageSize;
+    private string cocktailNameFilter = string.Empty;
+    private int? ingredientsExactCountFilter;
+    private string? sortFilter;
+    private List<int> selectedIngredients = new();
+    private CancellationTokenSource? _filterDelayCts;
+
+    public int PagesCount => PublicCocktailsState.Value.IsInitialized
+           ? (PublicCocktailsState.Value.PaginatedCocktails!.PageSize > 0 ? (int)Math.Ceiling((double)PublicCocktailsState.Value.PaginatedCocktails!.Count / PublicCocktailsState.Value.PaginatedCocktails!.PageSize) : 0)
+           : 0;
 
     protected override void OnInitialized()
     {
         if (!PublicCocktailsState.Value.IsInitialized)
         {
-            Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Cocktails.Store.FetchPublicCocktailsAction(1));
+            Dispatcher.Dispatch(new FetchPublicCocktailsAction(1));
+        }
+
+        if (!PublicProductsState.Value.IsInitialized)
+        {
+            Dispatcher.Dispatch(new FetchPublicProductsAction());
         }
 
         base.OnInitialized();
     }
 
+    private async Task ApplyFilters()
+    {
+
+        _filterDelayCts?.Cancel();
+        _filterDelayCts = new CancellationTokenSource();
+
+        try
+        {
+            await Task.Delay(300, _filterDelayCts.Token);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+
+
+        Dispatcher.Dispatch(new FetchPublicCocktailsAction(
+            1,
+            CocktailName: cocktailNameFilter,
+            IngredientsExactCount: ingredientsExactCountFilter,
+            IngredientsList: selectedIngredients,
+            Sort: sortFilter
+        ));
+    }
+
+    private async Task ClearFilters()
+    {
+        cocktailNameFilter = string.Empty;
+        ingredientsExactCountFilter = null;
+        selectedIngredients.Clear();
+        sortFilter = null;
+        await InvokeAsync(StateHasChanged);
+        await ApplyFilters();
+    }
+
     private void GoToPage(int pageIndex)
     {
-        Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Cocktails.Store.FetchPublicCocktailsAction(pageIndex));
+        Dispatcher.Dispatch(new FetchPublicCocktailsAction(
+            pageIndex,
+            CocktailName: cocktailNameFilter,
+            IngredientsExactCount: ingredientsExactCountFilter,
+             IngredientsList: selectedIngredients,
+            Sort: sortFilter
+        ));
     }
 
     private void NavigateToCocktailDetails(int id)
     {
         Navigation.NavigateTo($"/cocktails/{id}");
+    }
+
+    private async Task NumericFieldChanged(int? value)
+    {
+        ingredientsExactCountFilter = value;
+        await ApplyFilters();
     }
 }

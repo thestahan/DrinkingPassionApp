@@ -10,7 +10,7 @@ public interface IProductsService
 
     Task<ProductToReturnDto> GetProduct(int id);
 
-    Task<ICollection<ProductToReturnDto>> GetProducts();
+    Task<IReadOnlyList<ProductToReturnDto>> GetProducts();
 
     Task UpdateProduct(int id, ProductToUpdateDto product);
 }
