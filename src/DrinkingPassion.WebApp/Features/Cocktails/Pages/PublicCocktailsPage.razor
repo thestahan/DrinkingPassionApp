@@ -12,80 +12,113 @@
 @inject IState<PublicProductsState> PublicProductsState
 @inject NavigationManager Navigation
 
-<MudText Typo="Typo.h4" Align="Align.Center" Class="py-2">
-    Koktajle
-</MudText>
+<MudText Typo="Typo.h3" Align="Align.Center" Class="mt-6 mb-4" Color="Color.Primary">Koktajle</MudText>
 
-<MudExpansionPanels>
-    <MudExpansionPanel Text="Filtry">
-        <MudGrid>
-            <MudItem xs="12" sm="6" md="4">
-                <MudTextField Label="Nazwa koktajlu"
-                @bind-Value="cocktailNameFilter"
-                DebounceInterval="300"
-                Immediate="false"
-                OnDebounceIntervalElapsed="ApplyFilters" />
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudNumericField Label="Dokładna liczba składników"
-                    Value="@ingredientsExactCountFilter"
-                    Min="1"
-                    ValueChanged="@(async (int? val) => { ingredientsExactCountFilter = val; await ApplyFilters(); })" />
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudSelect T="string" Label="Sortuj" @bind-Value="sortFilter" AnchorOrigin="Origin.BottomCenter" SelectedValuesChanged="ApplyFilters">
-                    <MudSelectItem T="string" Value="@("NAME_DESC")">Nazwa A-Z</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("NAME_ASC")">Nazwa Z-A</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("INGREDIENTS_COUNT_ASC")">Ilość składników rosnąco</MudSelectItem>
-                    <MudSelectItem T="string" Value="@("INGREDIENTS_COUNT_DESC")">Ilość składników malejąco</MudSelectItem>
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="4">
-                <MudSelect T="int" Label="Składniki" SelectedValues="@selectedIngredients" MultiSelection="true" AnchorOrigin="Origin.BottomCenter" 
-                    ToStringFunc="(int id) => PublicProductsState.Value.Products.FirstOrDefault(p => p.Id == id)?.Name ?? id.ToString()"
-                    SelectedValuesChanged="@(async (IEnumerable<int> values) => { selectedIngredients = values.ToList(); await ApplyFilters(); })">
-                    @foreach (var product in PublicProductsState.Value.Products) 
-                    {
-                        <MudSelectItem T="int" Value="@product.Id"> @product.Name </MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-            <MudItem xs="12">
-                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="ClearFilters">Wyczyść filtry</MudButton>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ApplyFilters" Class="ml-2">Zastosuj filtry</MudButton>
-            </MudItem>
-        </MudGrid>
-    </MudExpansionPanel>
-</MudExpansionPanels>
+<MudPaper Elevation="0" Class="mb-6 rounded-lg">
+    <MudExpansionPanels Dense="true">
+        <MudExpansionPanel Text="Filtry" Icon="@Icons.Material.Filled.FilterList" Class="pa-0">
+            <MudGrid Spacing="3" Class="pb-4">
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField Label="Nazwa koktajlu"
+                                  @bind-Value="_cocktailNameFilter"
+                                  DebounceInterval="300"
+                                  Variant="Variant.Outlined"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  Adornment="Adornment.End"
+                                  Immediate="false"
+                                  FullWidth="true"
+                                  OnDebounceIntervalElapsed="ApplyFilters" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudNumericField Label="Dokładna liczba składników"
+                                     Value="@_ingredientsExactCountFilter"
+                                     Min="1"
+                                     Variant="Variant.Outlined"
+                                     FullWidth="true"
+                                     ValueChanged="@(async (int? val) => { _ingredientsExactCountFilter = val; await ApplyFilters(); })" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="string" Label="Sortuj" @bind-Value="_sortFilter"
+                               AnchorOrigin="Origin.BottomCenter"
+                               Variant="Variant.Outlined"
+                               FullWidth="true"
+                               SelectedValuesChanged="ApplyFilters">
+                        <MudSelectItem T="string" Value="@("NAME_DESC")">Nazwa A-Z</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("NAME_ASC")">Nazwa Z-A</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("INGREDIENTS_COUNT_ASC")">Ilość składników rosnąco</MudSelectItem>
+                        <MudSelectItem T="string" Value="@("INGREDIENTS_COUNT_DESC")">Ilość składników malejąco</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="int" Label="Składniki"
+                               SelectedValues="@_selectedIngredients"
+                               MultiSelection="true"
+                               AnchorOrigin="Origin.BottomCenter"
+                               Variant="Variant.Outlined"
+                               FullWidth="true"
+                               ToStringFunc="(int id) => PublicProductsState.Value.Products.FirstOrDefault(p => p.Id == id)?.Name ?? id.ToString()"
+                               SelectedValuesChanged="@(async (IEnumerable<int> values) => { _selectedIngredients = values.ToList(); await ApplyFilters(); })">
+                        @foreach (var product in PublicProductsState.Value.Products)
+                        {
+                            <MudSelectItem T="int" Value="@product.Id"> @product.Name </MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" Class="d-flex justify-space-between align-center mt-2">
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Secondary"
+                               OnClick="ClearFilters"
+                               StartIcon="@Icons.Material.Filled.Clear"
+                               Size="Size.Medium"
+                               Class="px-6">
+                        Wyczyść filtry
+                    </MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudPaper>
 
 @if (PublicCocktailsState.Value.IsLoading)
 {
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" Class="my-4" />
+    <MudContainer Class="d-flex justify-center my-8">
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+    </MudContainer>
 }
 else
 {
     if (PublicCocktailsState.Value.IsError)
     {
-        <MudAlert Severity="Severity.Error" Class="my-4">@PublicCocktailsState.Value.ErrorMessage</MudAlert>
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Class="my-4">
+            <MudText>@PublicCocktailsState.Value.ErrorMessage</MudText>
+        </MudAlert>
     }
     else if (PublicCocktailsState.Value.IsInitialized)
     {
-        <MudContainer Class="d-flex flex-column flex-grow-1 gap-4 py-2">
-            <MudGrid>
+        <MudContainer MaxWidth="MaxWidth.False" Class="px-0">
+            <MudGrid Spacing="4">
                 @foreach (var cocktail in PublicCocktailsState.Value.PaginatedCocktails!.Data)
                 {
-                    <MudItem xs="12" sm="6" lg="4">
-                        <MudCard Outlined="true">
-                            <MudCardMedia Image="@cocktail.Picture" Height="300" />
+                    <MudItem xs="12" sm="6" lg="4" xl="3">
+                        <MudCard Elevation="4" Class="rounded-lg h-100 cocktail-card overflow-hidden">
+                            <MudCardMedia Image="@cocktail.Picture" Height="300" Class="cocktail-image" />
                             <MudCardContent>
-                                <MudText Typo="Typo.h5">@cocktail.Name</MudText>
-                                <MudText Typo="Typo.body2">Główny składnik: @cocktail.BaseIngredient</MudText>
-                                <MudText Typo="Typo.body2">Liczba składników: @cocktail.IngredientsCount</MudText>
+                                <MudText Typo="Typo.h5" Color="Color.Primary" Class="text-truncate">@cocktail.Name</MudText>
+                                <MudDivider Class="my-2" />
+                                <div class="d-flex align-center mb-2">
+                                    <MudIcon Icon="@Icons.Material.Filled.LocalBar" Size="Size.Small" Class="mr-2" />
+                                    <MudText Typo="Typo.body1">Główny składnik: @cocktail.BaseIngredient</MudText>
+                                </div>
+                                <div class="d-flex align-center">
+                                    <MudIcon Icon="@Icons.Material.Filled.List" Size="Size.Small" Class="mr-2" />
+                                    <MudText Typo="Typo.body2">Liczba składników: @cocktail.IngredientsCount</MudText>
+                                </div>
                             </MudCardContent>
-                            <MudCardActions>
+                            <MudCardActions Class="d-flex justify-end">
                                 <MudButton Variant="Variant.Text"
-                                Color="Color.Primary"
-                                OnClick="(() => NavigateToCocktailDetails(cocktail.Id))">
+                                           Color="Color.Primary"
+                                           EndIcon="@Icons.Material.Filled.ReadMore"
+                                           OnClick="(() => NavigateToCocktailDetails(cocktail.Id))">
                                     Szczegóły
                                 </MudButton>
                             </MudCardActions>
@@ -96,20 +129,43 @@ else
 
             @if (PagesCount > 1)
             {
-                <MudPagination Selected="@(PublicCocktailsState.Value.PaginatedCocktails!.PageIndex)"
-                Count="@PagesCount"
-                Class="align-self-center"
-                SelectedChanged="GoToPage" />
+                <MudContainer Class="d-flex justify-center my-6">
+                    <MudPagination Selected="@(PublicCocktailsState.Value.PaginatedCocktails!.PageIndex)"
+                                   Count="@PagesCount"
+                                   Color="Color.Primary"
+                                   Size="Size.Medium"
+                                   Variant="Variant.Filled"
+                                   SelectedChanged="GoToPage" />
+                </MudContainer>
             }
         </MudContainer>
     }
 }
 
+<style>
+    .cocktail-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .cocktail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2) !important;
+        }
+
+    .cocktail-image {
+        transition: transform 0.5s ease;
+    }
+
+    .cocktail-card:hover .cocktail-image {
+        transform: scale(1.05);
+    }
+</style>
+
 @code {
-    private string cocktailNameFilter = string.Empty;
-    private int? ingredientsExactCountFilter;
-    private string? sortFilter;
-    private List<int> selectedIngredients = new();
+    private string _cocktailNameFilter = string.Empty;
+    private int? _ingredientsExactCountFilter;
+    private string? _sortFilter;
+    private List<int> _selectedIngredients = new();
     private CancellationTokenSource? _filterDelayCts;
 
     public int PagesCount => PublicCocktailsState.Value.IsInitialized
@@ -149,19 +205,19 @@ else
 
         Dispatcher.Dispatch(new FetchPublicCocktailsAction(
             1,
-            CocktailName: cocktailNameFilter,
-            IngredientsExactCount: ingredientsExactCountFilter,
-            IngredientsList: selectedIngredients,
-            Sort: sortFilter
+            CocktailName: _cocktailNameFilter,
+            IngredientsExactCount: _ingredientsExactCountFilter,
+            IngredientsList: _selectedIngredients,
+            Sort: _sortFilter
         ));
     }
 
     private async Task ClearFilters()
     {
-        cocktailNameFilter = string.Empty;
-        ingredientsExactCountFilter = null;
-        selectedIngredients.Clear();
-        sortFilter = null;
+        _cocktailNameFilter = string.Empty;
+        _ingredientsExactCountFilter = null;
+        _selectedIngredients.Clear();
+        _sortFilter = null;
         await InvokeAsync(StateHasChanged);
         await ApplyFilters();
     }
@@ -170,10 +226,10 @@ else
     {
         Dispatcher.Dispatch(new FetchPublicCocktailsAction(
             pageIndex,
-            CocktailName: cocktailNameFilter,
-            IngredientsExactCount: ingredientsExactCountFilter,
-             IngredientsList: selectedIngredients,
-            Sort: sortFilter
+            CocktailName: _cocktailNameFilter,
+            IngredientsExactCount: _ingredientsExactCountFilter,
+             IngredientsList: _selectedIngredients,
+            Sort: _sortFilter
         ));
     }
 
@@ -184,7 +240,7 @@ else
 
     private async Task NumericFieldChanged(int? value)
     {
-        ingredientsExactCountFilter = value;
+        _ingredientsExactCountFilter = value;
         await ApplyFilters();
     }
 }
