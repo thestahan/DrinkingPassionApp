@@ -168,9 +168,24 @@ else
     private List<int> _selectedIngredients = new();
     private CancellationTokenSource? _filterDelayCts;
 
-    public int PagesCount => PublicCocktailsState.Value.IsInitialized
-           ? (PublicCocktailsState.Value.PaginatedCocktails!.PageSize > 0 ? (int)Math.Ceiling((double)PublicCocktailsState.Value.PaginatedCocktails!.Count / PublicCocktailsState.Value.PaginatedCocktails!.PageSize) : 0)
-           : 0;
+    public int PagesCount
+    {
+        get
+        {
+            if (!PublicCocktailsState.Value.IsInitialized)
+            {
+                return 0;
+            }
+            var paginatedData = PublicCocktailsState.Value.PaginatedCocktails!;
+
+            if (paginatedData.PageSize <= 0)
+            {
+                return 0;
+            }
+
+            return (int)Math.Ceiling((double)paginatedData.Count / paginatedData.PageSize);
+        }
+    }
 
     protected override void OnInitialized()
     {
@@ -189,19 +204,7 @@ else
 
     private async Task ApplyFilters()
     {
-
-        _filterDelayCts?.Cancel();
-        _filterDelayCts = new CancellationTokenSource();
-
-        try
-        {
-            await Task.Delay(300, _filterDelayCts.Token);
-        }
-        catch (TaskCanceledException)
-        {
-            return;
-        }
-
+        await DebounceAction();
 
         Dispatcher.Dispatch(new FetchPublicCocktailsAction(
             1,
@@ -238,9 +241,25 @@ else
         Navigation.NavigateTo($"/cocktails/{id}");
     }
 
-    private async Task NumericFieldChanged(int? value)
+    private async Task DebounceAction()
     {
-        _ingredientsExactCountFilter = value;
-        await ApplyFilters();
+        if (_filterDelayCts != null)
+        {
+            await _filterDelayCts.CancelAsync();
+        }
+
+        using (var cts = new CancellationTokenSource())
+        {
+            _filterDelayCts = cts;
+
+            try
+            {
+                await Task.Delay(300, cts.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                return;
+            }
+        }
     }
 }

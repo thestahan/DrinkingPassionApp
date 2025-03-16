@@ -21,7 +21,7 @@ public class CocktailsService : ICocktailsService
         return await _httpClient.GetFromJsonAsync<CocktailDetailsToReturnDto>(request.RequestUri!.ToString());
     }
 
-    public async Task<Pagination<CocktailToReturnDto>?> GetPublicCocktails(
+    public async Task<Pagination<CocktailToReturnDto>> GetPublicCocktails(
         int pageIndex,
         int pageSize,
         string? cocktailName = null,
