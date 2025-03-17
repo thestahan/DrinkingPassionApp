@@ -50,11 +50,6 @@ namespace DrinkingPassion.Api.Controllers
         [HttpGet("Public")]
         public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
-            if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
-            {
-                cocktailParams.IngredientsList = JsonConvert.DeserializeObject<List<int>>(cocktailParams.Ingredients);
-            }
-
             var spec = new CocktailsWithIngredientsCountSpecification(cocktailParams, false);
 
             var countSpec = new CocktailsWithFiltersForCountSpecification(cocktailParams, false);
@@ -73,11 +68,6 @@ namespace DrinkingPassion.Api.Controllers
         [HttpGet("Private")]
         public async Task<ActionResult<Pagination<CocktailToReturnDto>>> GetPrivateCocktails([FromQuery] CocktailSpecParams cocktailParams)
         {
-            if (!string.IsNullOrEmpty(cocktailParams.Ingredients))
-            {
-                cocktailParams.IngredientsList = JsonConvert.DeserializeObject<List<int>>(cocktailParams.Ingredients);
-            }
-
             var email = User.FindFirstValue(ClaimTypes.Email);
 
             var user = await _userManager.FindByEmailAsync(email);

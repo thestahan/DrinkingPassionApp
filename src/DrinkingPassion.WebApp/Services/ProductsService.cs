@@ -23,18 +23,20 @@ public class ProductsService : IProductsService
         await _httpClient.DeleteAsync($"api/products/{id}");
     }
 
-    public async Task<ProductToReturnDto> GetProduct(int id)
+    public async Task<ProductToReturnDto?> GetProduct(int id)
     {
         var request = new HttpRequestMessage(HttpMethod.Get, $"api/products/{id}");
 
-        return await _httpClient.GetFromJsonAsync<ProductToReturnDto>(request.RequestUri!.ToString())!;
+        return await _httpClient.GetFromJsonAsync<ProductToReturnDto>(request.RequestUri!.ToString());
     }
 
-    public async Task<ICollection<ProductToReturnDto>> GetProducts()
+    public async Task<IReadOnlyList<ProductToReturnDto>> GetProducts()
     {
         var request = new HttpRequestMessage(HttpMethod.Get, $"api/products/public");
 
-        return await _httpClient.GetFromJsonAsync<ICollection<ProductToReturnDto>>(request.RequestUri!.ToString())!;
+        var result = await _httpClient.GetFromJsonAsync<IReadOnlyList<ProductToReturnDto>>(request.RequestUri!.ToString());
+
+        return result ?? new List<ProductToReturnDto>().AsReadOnly();
     }
 
     public async Task UpdateProduct(int id, ProductToUpdateDto product)

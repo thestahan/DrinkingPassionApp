@@ -8,9 +8,9 @@ public interface IProductsService
 
     Task DeleteProductAsync(int id);
 
-    Task<ProductToReturnDto> GetProduct(int id);
+    Task<ProductToReturnDto?> GetProduct(int id);
 
-    Task<ICollection<ProductToReturnDto>> GetProducts();
+    Task<IReadOnlyList<ProductToReturnDto>> GetProducts();
 
     Task UpdateProduct(int id, ProductToUpdateDto product);
 }

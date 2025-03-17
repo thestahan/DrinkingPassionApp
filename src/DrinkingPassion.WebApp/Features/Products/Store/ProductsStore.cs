@@ -3,38 +3,38 @@ using Fluxor;
 
 namespace DrinkingPassion.WebApp.Features.Products.Store;
 
-public record ProductsState
+public record PublicProductsState
 {
     public string ErrorMessage { get; init; } = string.Empty;
     public bool IsError { get; init; }
     public bool IsInitialized { get; init; }
     public bool IsLoading { get; init; }
-    public ICollection<ProductToReturnDto>? PaginatedProducts { get; init; }
+    public IReadOnlyList<ProductToReturnDto> Products { get; init; } = [];
 }
 
-public class ProductsFeature : Feature<ProductsState>
+public class PublicProductsFeature : Feature<PublicProductsState>
 {
-    protected override ProductsState GetInitialState()
+    protected override PublicProductsState GetInitialState()
     {
         return new()
         {
             IsInitialized = false,
             IsLoading = false,
             IsError = false,
-            PaginatedProducts = null
+            Products = []
         };
     }
 
     public override string GetName()
     {
-        return nameof(ProductsFeature);
+        return nameof(PublicProductsFeature);
     }
 }
 
 public static class ProductsReducers
 {
     [ReducerMethod]
-    public static ProductsState OnFetchProducts(ProductsState state, FetchProductsAction _)
+    public static PublicProductsState OnFetchProducts(PublicProductsState state, FetchPublicProductsAction _)
     {
         return state with
         {
@@ -43,7 +43,7 @@ public static class ProductsReducers
     }
 
     [ReducerMethod]
-    public static ProductsState OnFetchProductsFailure(ProductsState state, FetchProductsFailureAction action)
+    public static PublicProductsState OnFetchProductsFailure(PublicProductsState state, FetchPublicProductsFailureAction action)
     {
         return state with
         {
@@ -55,42 +55,35 @@ public static class ProductsReducers
     }
 
     [ReducerMethod]
-    public static ProductsState OnFetchProductsSuccess(ProductsState state, FetchProductsSuccessAction action)
+    public static PublicProductsState OnFetchProductsSuccess(PublicProductsState state, FetchPublicProductsSuccessAction action)
     {
         return state with
         {
             IsInitialized = true,
             IsLoading = false,
             IsError = false,
-            PaginatedProducts = action.PaginatedProducts
+            Products = action.Products
         };
     }
 }
 
-public class ProductsEffects
+public class ProductsEffects(Services.Interfaces.IProductsService productsService)
 {
-    private readonly Services.Interfaces.IProductsService _productsService;
-
-    public ProductsEffects(Services.Interfaces.IProductsService productsService)
-    {
-        _productsService = productsService;
-    }
-
     [EffectMethod]
-    public async Task HandleFetchProductsAction(FetchProductsAction action, IDispatcher dispatcher)
+    public async Task HandleFetchProductsAction(FetchPublicProductsAction action, IDispatcher dispatcher)
     {
         try
         {
-            var products = await _productsService.GetProducts();
-            dispatcher.Dispatch(new FetchProductsSuccessAction(products));
+            var products = await productsService.GetProducts();
+            dispatcher.Dispatch(new FetchPublicProductsSuccessAction(products));
         }
         catch (Exception e)
         {
-            dispatcher.Dispatch(new FetchProductsFailureAction(e.Message));
+            dispatcher.Dispatch(new FetchPublicProductsFailureAction(e.Message));
         }
     }
 }
 
-public record class FetchProductsAction();
-public record class FetchProductsSuccessAction(ICollection<ProductToReturnDto> PaginatedProducts);
-public record class FetchProductsFailureAction(string ErrorMessage);
+public record class FetchPublicProductsAction();
+public record class FetchPublicProductsSuccessAction(IReadOnlyList<ProductToReturnDto> Products);
+public record class FetchPublicProductsFailureAction(string ErrorMessage);

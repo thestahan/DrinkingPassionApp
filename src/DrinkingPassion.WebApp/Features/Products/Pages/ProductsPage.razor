@@ -3,7 +3,7 @@
 @inherits FluxorComponent
 
 @inject IDispatcher Dispatcher
-@inject IState<DrinkingPassion.WebApp.Features.Products.Store.ProductsState> ProductsState
+@inject IState<DrinkingPassion.WebApp.Features.Products.Store.PublicProductsState> ProductsState
 @inject NavigationManager Navigation
 
 <MudText Typo="Typo.h4" Align="Align.Center" Class="py-2">
@@ -23,7 +23,7 @@ else
     }
     else if (ProductsState.Value.IsInitialized)
     {
-        <MudDataGrid Items="ProductsState.Value.PaginatedProducts!">
+        <MudDataGrid Items="ProductsState.Value.Products!">
             <Columns>
                 <PropertyColumn Property="x => x.Name" Title="Nazwa" />
                 <PropertyColumn Property="x => x.ProductType" Title="Typ" />
@@ -39,7 +39,7 @@ else
     {
         if (!ProductsState.Value.IsInitialized)
         {
-            Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Products.Store.FetchProductsAction());
+            Dispatcher.Dispatch(new DrinkingPassion.WebApp.Features.Products.Store.FetchPublicProductsAction());
         }
 
         base.OnInitialized();
