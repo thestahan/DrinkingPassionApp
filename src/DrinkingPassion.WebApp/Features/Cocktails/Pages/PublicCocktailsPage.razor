@@ -243,23 +243,11 @@ else
 
     private async Task DebounceAction()
     {
-        if (_filterDelayCts != null)
-        {
-            await _filterDelayCts.CancelAsync();
-        }
+        _filterDelayCts?.Cancel();
+        _filterDelayCts?.Dispose();
 
-        using (var cts = new CancellationTokenSource())
-        {
-            _filterDelayCts = cts;
+        _filterDelayCts = new CancellationTokenSource();
 
-            try
-            {
-                await Task.Delay(300, cts.Token);
-            }
-            catch (TaskCanceledException)
-            {
-                return;
-            }
-        }
+        await Task.Delay(300, _filterDelayCts.Token);
     }
 }
